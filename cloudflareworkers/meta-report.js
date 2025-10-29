@@ -1,5 +1,5 @@
 /**
- * Version: 1.0.0
+ * Version: 2.0.0
  * FB Ads Insights → Google Sheets / S3 / BigQuery (Cloudflare Worker)
  * -------------------------------------------------------------------
  * Supports one or all accounts (via env prefix), e.g. FRM-145669.
@@ -14,6 +14,7 @@
  * - /?dest=both                     → Push data to both S3 and Sheets (default)
  * - /?table=meta_stats2             → Specify BigQuery table name (default: meta_stats)
  * - /?schema_migrate=true           → Add new columns to existing BigQuery table (publisher_platform, platform_position, device_platform)
+ * - /?sync=true                     → Force synchronous processing (bypass queue, for testing only)
  * - /?clear_kv=true                 → Delete KV Storage pairs
  * 
  * Date Parameters:
@@ -22,14 +23,45 @@
  * - mode=backfill&lookback=Ny: N years back from today (e.g., 1y = 12 months)
  * - Default (no params): Last 7 days
  * 
+ * Queue Processing (NEW in v2.0):
+ * - Daily and Backfill modes automatically use Cloudflare Queues when META_REPORT_QUEUE is configured
+ * - Daily mode: Single 7-day chunk per account (prevents CPU timeout on large datasets)
+ * - Backfill mode: Splits date ranges into 2-3 day chunks to avoid Facebook API timeouts
+ *   - Chunk size: 2 days for >6 month lookback, 3 days otherwise
+ * - Each chunk processed independently by queue consumer
+ * - Returns 202 Accepted with request ID for queue-based processing
+ * - Monitor logs in Cloudflare dashboard for queue processing status
+ * - Use ?sync=true to force synchronous processing (not recommended for large datasets)
+ * 
+ * Structured Logging (NEW in v2.0):
+ * - All operations logged as JSON with timestamp, level, event, and context
+ * - Log levels: INFO, WARN, ERROR
+ * - Key events logged: API calls, BigQuery operations, queue messages, errors
+ * - View logs in Cloudflare Dashboard → Workers → Logs (Real-time Logs)
+ * - Example log: {"timestamp":"2024-01-01T12:00:00.000Z","level":"INFO","event":"FacebookAPICallCompleted","account_id":"FRM-145669","rows_fetched":1250}
+ * 
+ * BigQuery Retry Logic (NEW in v2.0):
+ * - Automatic retry with exponential backoff for concurrent change errors
+ * - Handles: concurrent updates, transaction conflicts, deadline exceeded, backend errors
+ * - Max 5 retries with delays: 1s, 2s, 4s, 8s, 16s
+ * - All retry attempts logged for observability
+ * 
  * Features:
- * - Auto-splits large requests into weekly chunks on Facebook API timeout
+ * - Auto-splits large requests into smaller chunks on Facebook API timeout (weekly/daily)
  * - Includes platform/position/device breakdowns for granular reporting
  * - Automatic deduplication in BigQuery (keeps latest retrieved_at, prioritizes breakdown data)
+ * - Concurrent-safe BigQuery writes with retry logic
  * 
  * Manual vs Scheduled:
  * - Manual requests: Require ?account=FRM-xxxxx parameter (single account)
  * - Scheduled/Cron: Processes ALL accounts automatically (no account param needed)
+ * 
+ * Required Environment Variables:
+ * - {ACCOUNT_ID}-FB_ACCESS_TOKEN: Facebook API access token
+ * - {ACCOUNT_ID}-FB_ACCOUNT_ID: Facebook Ad account ID
+ * - BQ_PROJECT_ID, BQ_DATASET, BQ_TABLE_NAME: BigQuery configuration
+ * - GS_CLIENT_EMAIL, GS_PRIVATE_KEY: Google Service Account credentials
+ * - META_REPORT_QUEUE: Cloudflare Queue binding (required for queue-based backfill)
  */
 
 export default {
@@ -50,13 +82,304 @@ export default {
       });
   
       return await handleRequest(req, env, ctx);
+    },
+
+    async queue(batch, env, ctx) {
+      return handleQueueBatch(batch, env, ctx);
     }
   };
+
+  // Structured logging helper
+  function log(level, event, details = {}) {
+    console.log(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level,
+      event,
+      ...details
+    }));
+  }
+
+  // BigQuery retry wrapper with exponential backoff
+  async function retryBQOperation(operation, operationName, maxRetries = 5) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        const isRetryable = 
+          error.message?.toLowerCase().includes('concurrent') ||
+          error.message?.toLowerCase().includes('transaction') ||
+          error.message?.toLowerCase().includes('deadline exceeded') ||
+          error.message?.toLowerCase().includes('backend error') ||
+          (error.status && [409, 500, 503].includes(error.status));
+
+        if (!isRetryable || attempt === maxRetries - 1) {
+          log("ERROR", "BigQueryOperationFailed", { 
+            operation: operationName, 
+            attempt: attempt + 1,
+            error: error.message,
+            final: true
+          });
+          throw error;
+        }
+
+        const delayMs = Math.pow(2, attempt) * 1000;
+        log("WARN", "BigQueryRetryAttempt", { 
+          operation: operationName, 
+          attempt: attempt + 1,
+          delay_ms: delayMs,
+          error: error.message
+        });
+        await sleep(delayMs);
+      }
+    }
+  }
+
+  // Queue batch handler
+  async function handleQueueBatch(batch, env, ctx) {
+    log("INFO", "QueueBatchReceived", { message_count: batch.messages.length });
+
+    for (const message of batch.messages) {
+      try {
+        const { accountId, fbToken, fbAccountId, startDate, endDate, destination, tableName, requestId } = message.body;
+        
+        log("INFO", "QueueMessageProcessing", { 
+          account_id: accountId, 
+          date_range: { from: startDate, to: endDate },
+          request_id: requestId
+        });
+
+        // Process the chunk (fetch from Facebook API and write to destination)
+        await processDateChunk(env, accountId, fbToken, fbAccountId, startDate, endDate, destination, tableName, requestId);
+
+        message.ack();
+        log("INFO", "QueueMessageSuccess", { 
+          account_id: accountId, 
+          date_range: { from: startDate, to: endDate },
+          request_id: requestId
+        });
+      } catch (error) {
+        log("ERROR", "QueueMessageError", { 
+          account_id: message.body?.accountId,
+          error: error.message,
+          stack: error.stack
+        });
+        message.retry();
+      }
+    }
+  }
+
+  // Process a single date chunk (used by queue consumer)
+  async function processDateChunk(env, accountId, fbToken, fbAccountId, startDate, endDate, destination, tableName, requestId) {
+    const nowDate = new Date();
+    const now = nowDate.toISOString();
+    const iso = d => d.toISOString().split("T")[0];
+
+    const BASE_FIELDS = [
+      "date_start", "campaign_name", "adset_name", "ad_name",
+      "spend", "impressions", "clicks", "frequency", "reach"
+    ];
+
+    const FIELDS = [
+      ...BASE_FIELDS,
+      "conversions",
+      "conversion_values"
+    ];
+
+    const BASE_ACTIONS = ["Purchase", "PurchasePlus", "PurchaseAttempt", "PurchasePlusAttempt", "Lead"];
+    const BRANDS = ["BP", "PC", "LC", "PS", "RL", "FF", "SF"];
+    const ACTION_TYPES = BASE_ACTIONS.flatMap(action => 
+      BRANDS.map(brand => `offsite_conversion.fb_pixel_custom.${action}-S2S-${brand}`)
+    );
+    const WINDOWS = ["value", "1d_view", "7d_view", "28d_view", "1d_click", "7d_click", "28d_click", "1d_view_first_conversion", "7d_view_first_conversion", "1d_click_first_conversion", "7d_click_first_conversion"];
+    const ACTION_WINDOWS = ["1d_click", "7d_click", "28d_click", "1d_view", "7d_view", "28d_view", "7d_view_first_conversion", "1d_click_first_conversion", "7d_click_first_conversion", "1d_view_first_conversion"];
+    const shortAction = s => s.replace(/^offsite_conversion\.fb_pixel_custom\./, "");
+
+    const acct = fbAccountId.startsWith("act_") ? fbAccountId : `act_${fbAccountId}`;
+    const accountRows = [];
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    log("INFO", "FacebookAPICallStarted", { 
+      account_id: accountId, 
+      date_range: { from: startDate, to: endDate }
+    });
+
+    const fbURL =
+      `https://graph.facebook.com/v23.0/${acct}/insights` +
+      `?time_increment=1&level=ad&fields=${FIELDS.join(",")}` +
+      `&breakdowns=publisher_platform,platform_position,device_platform` +
+      `&time_range=${encodeURIComponent(JSON.stringify({ since: startDate, until: endDate }))}` +
+      `&action_attribution_windows=${encodeURIComponent(JSON.stringify(ACTION_WINDOWS))}` +
+      `&limit=9999&access_token=${encodeURIComponent(fbToken)}`;
+
+    const fbRes = await fetch(fbURL);
+    const fbData = await fbRes.json();
+
+    // Handle timeout errors by splitting into smaller chunks
+    if (fbData.error && fbData.error.error_subcode === 1504018) {
+      log("WARN", "FacebookAPITimeout", { 
+        account_id: accountId, 
+        date_range: { from: startDate, to: endDate },
+        action: "splitting_to_daily"
+      });
+      
+      // Split into daily chunks
+      let dayStart = new Date(startDateObj);
+      while (dayStart < endDateObj) {
+        const dayEnd = new Date(dayStart);
+        dayEnd.setDate(dayStart.getDate() + 1);
+        const dayUntil = dayEnd > endDateObj ? endDateObj : dayEnd;
+        
+        const dayURL =
+          `https://graph.facebook.com/v23.0/${acct}/insights` +
+          `?time_increment=1&level=ad&fields=${FIELDS.join(",")}` +
+          `&breakdowns=publisher_platform,platform_position,device_platform` +
+          `&time_range=${encodeURIComponent(JSON.stringify({ since: iso(dayStart), until: iso(dayUntil) }))}` +
+          `&action_attribution_windows=${encodeURIComponent(JSON.stringify(ACTION_WINDOWS))}` +
+          `&limit=9999&access_token=${encodeURIComponent(fbToken)}`;
+        
+        const dayRes = await fetch(dayURL);
+        const dayData = await dayRes.json();
+        
+        if (dayData.error) {
+          log("ERROR", "FacebookAPIError", { 
+            account_id: accountId, 
+            date_range: { from: iso(dayStart), to: iso(dayUntil) },
+            error: dayData.error.message,
+            error_code: dayData.error.code,
+            error_subcode: dayData.error.error_subcode
+          });
+          throw new Error(`FB API error: ${dayData.error.message}`);
+        }
+        
+        const dayRows = dayData.data ?? [];
+        accountRows.push(...dayRows);
+        
+        dayStart = dayEnd;
+      }
+    } else if (fbData.error) {
+      log("ERROR", "FacebookAPIError", { 
+        account_id: accountId, 
+        date_range: { from: startDate, to: endDate },
+        error: fbData.error.message,
+        error_code: fbData.error.code,
+        error_subcode: fbData.error.error_subcode
+      });
+      throw new Error(`FB API error: ${fbData.error.message}`);
+    } else {
+      const rows = fbData.data ?? [];
+      accountRows.push(...rows);
+    }
+
+    log("INFO", "FacebookAPICallCompleted", { 
+      account_id: accountId, 
+      date_range: { from: startDate, to: endDate },
+      rows_fetched: accountRows.length
+    });
+
+    // Write to BigQuery if requested
+    if (destination === "bq" || destination === "both") {
+      const toIsoDate = (val) => {
+        if (val instanceof Date) return val.toISOString().split("T")[0];
+        if (typeof val === "string") return val.trim().split("T")[0];
+        return String(val || "");
+      };
+
+      const bqObjects = accountRows.map(r => {
+        const conversions = Array.isArray(r.conversions) ? r.conversions : [];
+        const conversionValues = Array.isArray(r.conversion_values) ? r.conversion_values : [];
+        const findByType = (arr, actionType) => arr.find(x => x?.action_type === actionType) || {};
+        const breakdown = [];
+        for (const a of ACTION_TYPES) {
+          const conv = findByType(conversions, a);
+          const convVal = findByType(conversionValues, a);
+          for (const w of WINDOWS) {
+            breakdown.push({
+              goal_name: shortAction(a),
+              window: w === "value" ? "total" : w,
+              conversions: conv?.[w] != null ? Number(conv[w]) : 0,
+              conversion_value: convVal?.[w] != null ? Number(convVal[w]) : 0.0
+            });
+          }
+        }
+        return {
+          account_id: accountId,
+          retrieved_at: now,
+          date_start: toIsoDate(r.date_start),
+          campaign_name: r.campaign_name ?? "",
+          adset_name: r.adset_name ?? "",
+          ad_name: r.ad_name ?? "",
+          spend: r.spend != null ? Number(r.spend) : null,
+          impressions: r.impressions != null ? Number(r.impressions) : null,
+          clicks: r.clicks != null ? Number(r.clicks) : null,
+          frequency: r.frequency != null ? Number(r.frequency) : null,
+          reach: r.reach != null ? Number(r.reach) : null,
+          publisher_platform: r.publisher_platform ?? "",
+          platform_position: r.platform_position ?? "",
+          device_platform: r.device_platform ?? "",
+          goals_breakdown: breakdown
+        };
+      });
+
+      log("INFO", "BigQueryWriteStarted", { 
+        account_id: accountId, 
+        table_name: tableName,
+        row_count: bqObjects.length
+      });
+
+      const scopes = ["https://www.googleapis.com/auth/bigquery"];
+      const accessToken = await googleAccessToken(env, scopes);
+      
+      if (!accessToken) {
+        log("ERROR", "BigQueryAuthFailed", { account_id: accountId });
+        throw new Error("Google auth failed for BigQuery");
+      }
+
+      log("INFO", "BigQueryAuthSuccess", { account_id: accountId });
+
+      const metaArraySchema = buildBQMetaArraySchema();
+      await ensureBQTable(accessToken, env, tableName, metaArraySchema);
+      
+      log("INFO", "BigQueryTableVerified", { table_name: tableName });
+
+      await retryBQOperation(
+        async () => {
+          const loadResult = await bqLoadJson(accessToken, env, tableName, bqObjects, [], null, metaArraySchema);
+          log("INFO", "BigQueryWriteCompleted", { 
+            account_id: accountId, 
+            table_name: tableName,
+            rows_written: loadResult.outputRows
+          });
+          return loadResult;
+        },
+        "bqLoadJson"
+      );
+
+      // Deduplication with retry
+      log("INFO", "BigQueryDeduplicationStarted", { 
+        account_id: accountId, 
+        table_name: tableName
+      });
+
+      await retryBQOperation(
+        async () => {
+          await removeDuplicates(accessToken, env, tableName, [], null, metaArraySchema, [accountId]);
+          log("INFO", "BigQueryDeduplicationCompleted", { 
+            account_id: accountId, 
+            table_name: tableName
+          });
+        },
+        "removeDuplicates"
+      );
+    }
+  }
   
   async function handleRequest(req, env, ctx) {
     const allowedIps = ["2a06:98c0:3600::103", "195.158.92.167"];
     const cfHeader = req.headers.get("cf-connecting-ip");
     if (!req.headers.get("cf-worker-cron") && !allowedIps.includes(cfHeader)) {
+      log("WARN", "ForbiddenAccess", { ip: cfHeader });
       return new Response("Forbidden", { status: 403 });
     }
   
@@ -75,10 +398,22 @@ export default {
     const destination = url.searchParams.get("dest") || "both";
     const tableName = url.searchParams.get("table") || env.BQ_TABLE_NAME || "meta_stats";
     const schemaMigrate = (url.searchParams.get("schema_migrate") || "false").toLowerCase() === "true";
+    const forceSync = (url.searchParams.get("sync") || "false").toLowerCase() === "true";
   
     // Require account parameter for non-scheduled requests
     const isCron = req.headers.get("cf-worker-cron") === "true";
+    
+    log("INFO", "RequestReceived", { 
+      mode, 
+      account: accountFilter || "ALL",
+      date_range: { from: fromParam, to: toParam, lookback: lookbackParam },
+      destination,
+      table_name: tableName,
+      is_cron: isCron
+    });
+
     if (!isCron && !accountFilter) {
+      log("ERROR", "MissingAccountParameter", {});
       return new Response("Missing required parameter: ?account=FRM-xxxxx (or use scheduled/cron for all accounts)", { status: 400 });
     }
   
@@ -191,20 +526,153 @@ export default {
       .filter(id => !accountFilter || id === accountFilter);
   
     if (allAccountIds.length === 0) {
+      log("ERROR", "NoAccountsFound", { account_filter: accountFilter });
       return new Response("No matching accounts found in environment variables.", { status: 400 });
     }
   
+    log("INFO", "AccountsToProcess", { count: allAccountIds.length, accounts: allAccountIds });
+    resultMessages.push(`Found ${allAccountIds.length} accounts to process: ${allAccountIds.join(', ')}`);
+
+    // For backfill mode or daily mode with queue configured, use queue to process chunks
+    // Can be overridden with ?sync=true for testing/debugging
+    const useQueue = !forceSync && env.META_REPORT_QUEUE && (mode === "backfill" || mode === "daily");
+    
+    if (mode === "backfill" && useQueue) {
+      const iso = d => d.toISOString().split("T")[0];
+      const monthsBack = lookbackParam?.endsWith("y") ? parseInt(lookbackParam) * 12 : parseInt(lookbackParam || "6");
+      const lookbackMonths = Math.min(monthsBack || 6, 37);
+      const start = new Date(nowDate);
+      start.setMonth(start.getMonth() - lookbackMonths);
+      const end = new Date(nowDate);
+
+      // Determine chunk size: 2 days for >6 months, 3 days otherwise
+      const chunkDays = lookbackMonths > 6 ? 2 : 3;
+      const requestId = crypto.randomUUID();
+      let totalChunks = 0;
+
+      log("INFO", "BackfillQueueMode", { 
+        lookback_months: lookbackMonths,
+        chunk_days: chunkDays,
+        date_range: { from: iso(start), to: iso(end) },
+        request_id: requestId
+      });
+
+      for (const accountId of allAccountIds) {
+        const fbToken = env[`${accountId}-FB_ACCESS_TOKEN`];
+        const rawAcctId = env[`${accountId}-FB_ACCOUNT_ID`];
+        if (!fbToken || !rawAcctId) continue;
+
+        // Split into chunks
+        let cursor = new Date(start);
+        let chunks = 0;
+        while (cursor < end) {
+          const chunkEnd = new Date(cursor);
+          chunkEnd.setDate(cursor.getDate() + chunkDays);
+          const until = chunkEnd < end ? chunkEnd : end;
+
+          const message = {
+            accountId,
+            fbToken,
+            fbAccountId: rawAcctId,
+            startDate: iso(cursor),
+            endDate: iso(until),
+            destination,
+            tableName,
+            requestId
+          };
+
+          await env.META_REPORT_QUEUE.send(message);
+          chunks++;
+          totalChunks++;
+
+          cursor = chunkEnd;
+        }
+
+        log("INFO", "QueueChunksSent", { 
+          account_id: accountId,
+          chunks_sent: chunks,
+          date_range: { from: iso(start), to: iso(end) }
+        });
+      }
+
+      log("INFO", "BackfillQueued", { 
+        total_chunks: totalChunks,
+        accounts: allAccountIds.length,
+        request_id: requestId
+      });
+
+      return new Response(
+        `Backfill queued: ${totalChunks} chunks (${chunkDays}-day each) for ${allAccountIds.length} account(s)\nRequest ID: ${requestId}\nMonitor logs for processing status.`,
+        { status: 202, headers: { "content-type": "text/plain" } }
+      );
+    }
+
+    // For daily mode with queue configured, send as single chunk per account
+    if (mode === "daily" && useQueue) {
+      const iso = d => d.toISOString().split("T")[0];
+      const since = new Date(nowDate);
+      since.setDate(nowDate.getDate() - 6);
+      const requestId = crypto.randomUUID();
+      let totalChunks = 0;
+
+      log("INFO", "DailyQueueMode", { 
+        date_range: { from: iso(since), to: iso(nowDate) },
+        request_id: requestId
+      });
+
+      for (const accountId of allAccountIds) {
+        const fbToken = env[`${accountId}-FB_ACCESS_TOKEN`];
+        const rawAcctId = env[`${accountId}-FB_ACCOUNT_ID`];
+        if (!fbToken || !rawAcctId) continue;
+
+        const message = {
+          accountId,
+          fbToken,
+          fbAccountId: rawAcctId,
+          startDate: iso(since),
+          endDate: iso(nowDate),
+          destination,
+          tableName,
+          requestId
+        };
+
+        await env.META_REPORT_QUEUE.send(message);
+        totalChunks++;
+
+        log("INFO", "QueueChunksSent", { 
+          account_id: accountId,
+          chunks_sent: 1,
+          date_range: { from: iso(since), to: iso(nowDate) }
+        });
+      }
+
+      log("INFO", "DailyQueued", { 
+        total_chunks: totalChunks,
+        accounts: allAccountIds.length,
+        request_id: requestId
+      });
+
+      return new Response(
+        `Daily fetch queued: ${totalChunks} chunk(s) for ${allAccountIds.length} account(s)\nRequest ID: ${requestId}\nMonitor logs for processing status.`,
+        { status: 202, headers: { "content-type": "text/plain" } }
+      );
+    }
+
+    // For non-queue mode or when queue is not configured, process synchronously
     let newRows = [];
     let bqObjects = [];
-    resultMessages.push(`Found ${allAccountIds.length} accounts to process: ${allAccountIds.join(', ')}`);
   
     for (const accountId of allAccountIds) {
       const fbToken = env[`${accountId}-FB_ACCESS_TOKEN`];
       const rawAcctId = env[`${accountId}-FB_ACCOUNT_ID`];
-      if (!fbToken || !rawAcctId) continue;
+      if (!fbToken || !rawAcctId) {
+        log("WARN", "AccountCredentialsMissing", { account_id: accountId });
+        continue;
+      }
   
       const acct = rawAcctId.startsWith("act_") ? rawAcctId : `act_${rawAcctId}`;
       const accountRows = [];
+      log("INFO", "ProcessingAccount", { account_id: accountId, fb_account: acct, mode });
       resultMessages.push(`Processing account ${accountId} (${acct}) in ${mode} mode`);
   
       if ((fromDate || toDate)) {
@@ -224,6 +692,12 @@ export default {
             next.setMonth(next.getMonth() + 1);
             const until = next < endRange ? next : endRange;
   
+            log("INFO", "FacebookAPICallStarted", { 
+              account_id: accountId,
+              date_range: { from: iso(cursor), to: iso(until) },
+              mode: "custom_range_chunk"
+            });
+
             const fbURL =
               `https://graph.facebook.com/v23.0/${acct}/insights` +
               `?time_increment=1&level=ad&fields=${FIELDS.join(",")}` +
@@ -237,6 +711,11 @@ export default {
             
             // Handle timeout errors by splitting into smaller chunks
             if (fbData.error && fbData.error.error_subcode === 1504018) {
+              log("WARN", "FacebookAPITimeout", { 
+                account_id: accountId,
+                date_range: { from: iso(cursor), to: iso(until) },
+                action: "splitting_to_weekly"
+              });
               resultMessages.push(`Timeout for ${accountId} (${iso(cursor)} to ${iso(until)}), splitting into weekly chunks...`);
               
               // Split month into 7-day chunks
@@ -259,6 +738,14 @@ export default {
                 
                 if (weekData.error) {
                   const errDetails = JSON.stringify(weekData.error, null, 2);
+                  log("ERROR", "FacebookAPIError", { 
+                    account_id: accountId,
+                    date_range: { from: iso(weekStart), to: iso(weekUntil) },
+                    error: weekData.error.message,
+                    error_code: weekData.error.code,
+                    error_subcode: weekData.error.error_subcode,
+                    error_details: errDetails
+                  });
                   console.log(`FB error for ${accountId} (${iso(weekStart)} to ${iso(weekUntil)}): ${errDetails}`);
                   resultMessages.push(`FB API Error for ${accountId}: ${weekData.error.message || 'Unknown error'}`);
                   resultMessages.push(`Error details: ${errDetails}`);
@@ -268,6 +755,12 @@ export default {
                 
                 const weekRows = weekData.data ?? [];
                 accountRows.push(...weekRows);
+                log("INFO", "FacebookAPICallCompleted", { 
+                  account_id: accountId,
+                  date_range: { from: iso(weekStart), to: iso(weekUntil) },
+                  rows_fetched: weekRows.length,
+                  chunk_type: "weekly"
+                });
                 resultMessages.push(`Fetched ${weekRows.length} rows for ${accountId} (${iso(weekStart)} to ${iso(weekUntil)}) [weekly chunk]`);
                 
                 weekStart = weekEnd;
@@ -275,6 +768,14 @@ export default {
             } else if (fbData.error) {
               // Other errors (not timeout)
               const errDetails = JSON.stringify(fbData.error, null, 2);
+              log("ERROR", "FacebookAPIError", { 
+                account_id: accountId,
+                date_range: { from: iso(cursor), to: iso(until) },
+                error: fbData.error.message,
+                error_code: fbData.error.code,
+                error_subcode: fbData.error.error_subcode,
+                error_details: errDetails
+              });
               console.log(`FB error for ${accountId} (${iso(cursor)} to ${iso(until)}): ${errDetails}`);
               resultMessages.push(`FB API Error for ${accountId}: ${fbData.error.message || 'Unknown error'}`);
               resultMessages.push(`Error details: ${errDetails}`);
@@ -284,6 +785,12 @@ export default {
               // Success
               const monthRows = fbData.data ?? [];
               accountRows.push(...monthRows);
+              log("INFO", "FacebookAPICallCompleted", { 
+                account_id: accountId,
+                date_range: { from: iso(cursor), to: iso(until) },
+                rows_fetched: monthRows.length,
+                chunk_type: "monthly"
+              });
               resultMessages.push(`Fetched ${monthRows.length} rows for ${accountId} (${iso(cursor)} to ${iso(until)})`);
             }
             
@@ -296,9 +803,22 @@ export default {
         const start = new Date(nowDate);
         start.setMonth(start.getMonth() - lookbackMonths);
   
+        log("INFO", "BackfillSyncMode", { 
+          account_id: accountId,
+          lookback_months: lookbackMonths,
+          date_range: { from: iso(start), to: iso(nowDate) },
+          note: "Queue not configured, using synchronous processing"
+        });
+
         while (start < nowDate) {
           const end = new Date(start);
           end.setMonth(start.getMonth() + 1);
+
+          log("INFO", "FacebookAPICallStarted", { 
+            account_id: accountId,
+            date_range: { from: iso(start), to: iso(end) },
+            mode: "backfill_sync_chunk"
+          });
   
           const fbURL =
             `https://graph.facebook.com/v23.0/${acct}/insights` +
@@ -313,6 +833,11 @@ export default {
           
           // Handle timeout errors by splitting into smaller chunks
           if (fbData.error && fbData.error.error_subcode === 1504018) {
+            log("WARN", "FacebookAPITimeout", { 
+              account_id: accountId,
+              date_range: { from: iso(start), to: iso(end) },
+              action: "splitting_to_weekly"
+            });
             resultMessages.push(`Timeout for ${accountId} (${iso(start)} to ${iso(end)}), splitting into weekly chunks...`);
             
             // Split month into 7-day chunks
@@ -335,6 +860,14 @@ export default {
               
               if (weekData.error) {
                 const errDetails = JSON.stringify(weekData.error, null, 2);
+                log("ERROR", "FacebookAPIError", { 
+                  account_id: accountId,
+                  date_range: { from: iso(weekStart), to: iso(weekUntil) },
+                  error: weekData.error.message,
+                  error_code: weekData.error.code,
+                  error_subcode: weekData.error.error_subcode,
+                  error_details: errDetails
+                });
                 console.log(`FB error for ${accountId} (${iso(weekStart)} to ${iso(weekUntil)}): ${errDetails}`);
                 resultMessages.push(`FB API Error for ${accountId}: ${weekData.error.message || 'Unknown error'}`);
                 resultMessages.push(`Error details: ${errDetails}`);
@@ -344,6 +877,12 @@ export default {
               
               const weekRows = weekData.data ?? [];
               accountRows.push(...weekRows);
+              log("INFO", "FacebookAPICallCompleted", { 
+                account_id: accountId,
+                date_range: { from: iso(weekStart), to: iso(weekUntil) },
+                rows_fetched: weekRows.length,
+                chunk_type: "weekly"
+              });
               resultMessages.push(`Fetched ${weekRows.length} rows for ${accountId} (${iso(weekStart)} to ${iso(weekUntil)}) [weekly chunk]`);
               
               weekStart = weekEnd;
@@ -351,6 +890,14 @@ export default {
           } else if (fbData.error) {
             // Other errors (not timeout)
             const errDetails = JSON.stringify(fbData.error, null, 2);
+            log("ERROR", "FacebookAPIError", { 
+              account_id: accountId,
+              date_range: { from: iso(start), to: iso(end) },
+              error: fbData.error.message,
+              error_code: fbData.error.code,
+              error_subcode: fbData.error.error_subcode,
+              error_details: errDetails
+            });
             console.log(`FB error for ${accountId} (${iso(start)} to ${iso(end)}): ${errDetails}`);
             resultMessages.push(`FB API Error for ${accountId}: ${fbData.error.message || 'Unknown error'}`);
             resultMessages.push(`Error details: ${errDetails}`);
@@ -360,6 +907,12 @@ export default {
             // Success
             const monthRows = fbData.data ?? [];
             accountRows.push(...monthRows);
+            log("INFO", "FacebookAPICallCompleted", { 
+              account_id: accountId,
+              date_range: { from: iso(start), to: iso(end) },
+              rows_fetched: monthRows.length,
+              chunk_type: "monthly"
+            });
             resultMessages.push(`Fetched ${monthRows.length} rows for ${accountId} (${iso(start)} to ${iso(end)})`);
           }
           
@@ -368,6 +921,12 @@ export default {
       } else {
         const since = new Date(nowDate);
         since.setDate(nowDate.getDate() - 6);
+
+        log("INFO", "FacebookAPICallStarted", { 
+          account_id: accountId,
+          date_range: { from: iso(since), to: iso(nowDate) },
+          mode: "daily"
+        });
   
         const fbURL =
           `https://graph.facebook.com/v23.0/${acct}/insights` +
@@ -381,6 +940,15 @@ export default {
         const { data = [], error } = await fbRes.json();
         if (error) {
           const errDetails = JSON.stringify(error, null, 2);
+          log("ERROR", "FacebookAPIError", { 
+            account_id: accountId,
+            date_range: { from: iso(since), to: iso(nowDate) },
+            error: error.message,
+            error_code: error.code,
+            error_subcode: error.error_subcode,
+            error_details: errDetails,
+            mode: "daily"
+          });
           console.log(`FB error for ${accountId} (daily mode, ${iso(since)} to ${iso(nowDate)}): ${errDetails}`);
           resultMessages.push(`FB API Error for ${accountId}: ${error.message || 'Unknown error'}`);
           resultMessages.push(`Error details: ${errDetails}`);
@@ -388,6 +956,12 @@ export default {
           return new Response(`FB error for ${accountId}: ${error.message}\n\nFull error:\n${errDetails}\n\nDate range: ${iso(since)} to ${iso(nowDate)}`, { status: 500 });
         }
         accountRows.push(...data);
+        log("INFO", "FacebookAPICallCompleted", { 
+          account_id: accountId,
+          date_range: { from: iso(since), to: iso(nowDate) },
+          rows_fetched: data.length,
+          mode: "daily"
+        });
         resultMessages.push(`Fetched ${data.length} rows for ${accountId} (daily mode)`);
       }
   
@@ -445,14 +1019,18 @@ export default {
   
     if (destination === "bq" || destination === "both") {
       try {
+        log("INFO", "BigQueryOperationStarted", { destination, table_name: tableName });
         resultMessages.push("Starting BigQuery operations...");
         
         // BigQuery authentication
         const scopes = ["https://www.googleapis.com/auth/bigquery"];
+        log("INFO", "BigQueryAuthStarted", {});
         const accessToken = await googleAccessToken(env, scopes);
         if (!accessToken) {
+          log("ERROR", "BigQueryAuthFailed", {});
           errorMessages.push("Google auth failed for BigQuery");
         } else {
+          log("INFO", "BigQueryAuthSuccess", {});
           resultMessages.push("BigQuery authentication successful");
           // tableName already defined above
   
@@ -462,12 +1040,15 @@ export default {
           // Ensure table exists with goals_breakdown array schema
           const fqn = `${env.BQ_PROJECT_ID}.${env.BQ_DATASET}.${tableName}`;
           resultMessages.push(`Using BigQuery table: ${fqn}`);
+          log("INFO", "BigQueryTableVerificationStarted", { table_name: tableName, fqn });
           resultMessages.push(`Ensuring BigQuery table ${tableName} exists...`);
           const metaArraySchema = buildBQMetaArraySchema();
           await ensureBQTable(accessToken, env, tableName, metaArraySchema);
+          log("INFO", "BigQueryTableVerified", { table_name: tableName });
           
           // Add new columns if schema_migrate=true
           if (schemaMigrate) {
+            log("INFO", "BigQuerySchemaMigrationStarted", { table_name: tableName });
             resultMessages.push(`Running schema migration for ${tableName}...`);
             await bqQuery(accessToken, env,
               `ALTER TABLE \`${env.BQ_PROJECT_ID}\`.\`${env.BQ_DATASET}\`.\`${tableName}\`
@@ -481,6 +1062,7 @@ export default {
               `ALTER TABLE \`${env.BQ_PROJECT_ID}\`.\`${env.BQ_DATASET}\`.\`${tableName}\`
                ADD COLUMN IF NOT EXISTS device_platform STRING`,
               resultMessages).catch(() => {});
+            log("INFO", "BigQuerySchemaMigrationCompleted", { table_name: tableName });
             resultMessages.push(`Schema migration completed for ${tableName}`);
           }
           
@@ -491,9 +1073,14 @@ export default {
           resultMessages.push(`Prepared ${objects.length} BigQuery objects`);
           
           // Load data to BigQuery
+          log("INFO", "BigQueryDataLoadStarted", { table_name: tableName, row_count: objects.length });
           resultMessages.push("Loading data to BigQuery...");
-          const loadResult = await bqLoadJson(accessToken, env, tableName, objects, resultMessages, null, metaArraySchema);
+          const loadResult = await retryBQOperation(
+            async () => await bqLoadJson(accessToken, env, tableName, objects, resultMessages, null, metaArraySchema),
+            "bqLoadJson"
+          );
           
+          log("INFO", "BigQueryDataLoadCompleted", { table_name: tableName, rows_written: loadResult.outputRows });
           resultMessages.push(`Successfully uploaded ${loadResult.outputRows} rows to BigQuery table ${tableName}`);
   
           // Post-load verification
@@ -515,9 +1102,15 @@ export default {
           }
           
             // Remove duplicates after insertion (preserves partitioning)
+            log("INFO", "BigQueryDeduplicationStarted", { table_name: tableName, accounts: allAccountIds });
             resultMessages.push("Running post-insert deduplication cleanup...");
-            await removeDuplicates(accessToken, env, tableName, resultMessages, null, metaArraySchema, allAccountIds);
+            await retryBQOperation(
+              async () => await removeDuplicates(accessToken, env, tableName, resultMessages, null, metaArraySchema, allAccountIds),
+              "removeDuplicates"
+            );
+            log("INFO", "BigQueryDeduplicationCompleted", { table_name: tableName });
           
+          log("INFO", "BigQueryOperationCompleted", { table_name: tableName });
           resultMessages.push("BigQuery operations completed successfully");
   
           // Post-dedup verification
@@ -539,12 +1132,14 @@ export default {
           }
         }
       } catch (err) {
+        log("ERROR", "BigQueryError", { error: err.message, stack: err.stack });
         errorMessages.push(`BigQuery error: ${err.message}`);
         resultMessages.push(`BigQuery error details: ${err.stack || 'No stack trace available'}`);
       }
     }
   
     if (destination === "s3" || destination === "both") {
+      log("INFO", "S3OperationStarted", {});
       const region = env.S3_REGION || "eu-central-1";
       const bucket = env.S3_BUCKET;
       const accessKey = env.S3_ACCESS_KEY;
@@ -568,8 +1163,10 @@ export default {
       // Check if file already exists in S3
       const headRes = await fetch(endpoint, { method: "HEAD" });
       if (headRes.ok) {
+        log("INFO", "S3UploadSkipped", { key, reason: "file_exists" });
         resultMessages.push(`Skipped S3 upload: ${key} already exists`);
       } else {
+        log("INFO", "S3UploadStarted", { key, row_count: newRows.length });
         const payload = JSON.stringify({ headers: HEADERS, rows: newRows });
         const payloadHash = await digestHex(payload);
   
@@ -618,14 +1215,18 @@ export default {
         });
   
         if (!res.ok) {
-          errorMessages.push(`S3 upload failed: ${await res.text()}`);
+          const errorText = await res.text();
+          log("ERROR", "S3UploadFailed", { key, error: errorText });
+          errorMessages.push(`S3 upload failed: ${errorText}`);
         } else {
+          log("INFO", "S3UploadSuccess", { key, rows_uploaded: newRows.length });
           resultMessages.push(`Uploaded ${newRows.length} rows to S3 as ${key}`);
         }
       }
     }
   
     if (destination === "sheets" || destination === "both") {
+      log("INFO", "SheetsOperationStarted", {});
       // Step 1: Authenticate and get access token
       const jwtHeader = btoa(JSON.stringify({ alg: "RS256", typ: "JWT" }))
         .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
@@ -655,8 +1256,10 @@ export default {
       const access_token = tokJson.access_token;
   
       if (!access_token) {
+        log("ERROR", "SheetsAuthFailed", {});
         errorMessages.push("Google auth failed");
       } else {
+        log("INFO", "SheetsAuthSuccess", {});
         // Step 2: Fetch existing sheet values
         const getURL = `https://sheets.googleapis.com/v4/spreadsheets/${env.SPREADSHEET_ID}/values/${encodeURIComponent(env.RANGE_NAME)}?majorDimension=ROWS`;
         const getResp = await fetch(getURL, {
@@ -707,8 +1310,11 @@ export default {
         });
   
         if (!updateResp.ok) {
-          errorMessages.push(`Sheet overwrite error: ${await updateResp.text()}`);
+          const errorText = await updateResp.text();
+          log("ERROR", "SheetsWriteFailed", { error: errorText });
+          errorMessages.push(`Sheet overwrite error: ${errorText}`);
         } else {
+          log("INFO", "SheetsWriteSuccess", { rows_written: finalRows.length - 1 });
           resultMessages.push(`Overwrote sheet with ${finalRows.length - 1} deduplicated rows`);
         }
       }
@@ -723,6 +1329,12 @@ export default {
   
     const responseText = allMessages.join("\n");
     const status = errorMessages.length > 0 ? 500 : 200;
+
+    log("INFO", "RequestCompleted", { 
+      status, 
+      errors: errorMessages.length,
+      total_messages: allMessages.length 
+    });
   
     return new Response(responseText, {
       status: status,

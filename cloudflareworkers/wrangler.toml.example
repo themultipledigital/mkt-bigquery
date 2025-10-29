@@ -1,0 +1,62 @@
+# Example wrangler.toml configuration for meta-report worker with Queues
+# Copy this to wrangler.toml and update with your actual values
+
+name = "meta-report"
+main = "cloudflareworkers/meta-report.js"
+compatibility_date = "2024-10-29"
+
+# Queue Producer Binding
+# Allows the worker to send messages to the queue
+[[queues.producers]]
+binding = "META_REPORT_QUEUE"
+queue = "metaReportQueue"
+
+# Queue Consumer Configuration
+# Allows the worker to receive and process messages from the queue
+[[queues.consumers]]
+queue = "metaReportQueue"
+max_batch_size = 10           # Process up to 10 messages per batch
+max_batch_timeout = 30        # Wait max 30 seconds to collect batch
+max_retries = 3               # Retry failed messages up to 3 times
+dead_letter_queue = "metaReportQueue-dlq"  # Optional: store permanently failed messages
+
+# Environment Variables
+# Note: Sensitive values should be set via wrangler secret or Cloudflare Dashboard
+[env.production]
+
+[env.production.vars]
+# BigQuery Configuration
+BQ_PROJECT_ID = "your-gcp-project-id"
+BQ_DATASET = "your_dataset_name"
+BQ_TABLE_NAME = "meta_stats"
+BQ_LOCATION = "US"  # Optional: BigQuery location
+
+# Google Sheets Configuration (if using dest=sheets)
+SPREADSHEET_ID = "your-google-sheet-id"
+RANGE_NAME = "Sheet1!A:Z"
+
+# S3 Configuration (if using dest=s3)
+S3_REGION = "eu-central-1"
+S3_BUCKET = "your-bucket-name"
+
+# Note: Set these as secrets (not in wrangler.toml):
+# - FRM-{ACCOUNT_ID}-FB_ACCESS_TOKEN
+# - FRM-{ACCOUNT_ID}-FB_ACCOUNT_ID
+# - GS_CLIENT_EMAIL
+# - GS_PRIVATE_KEY
+# - S3_ACCESS_KEY
+# - S3_SECRET_KEY
+
+# Set secrets using:
+# wrangler secret put FRM-145669-FB_ACCESS_TOKEN
+# wrangler secret put GS_PRIVATE_KEY
+# etc.
+
+# Cron Triggers (Optional)
+# Run daily at 2 AM UTC for all accounts
+# [triggers]
+# crons = ["0 2 * * *"]
+
+# Rate Limiting (Optional)
+# limits = { cpu_ms = 300000 }  # 5 minutes max CPU time
+
