@@ -4,6 +4,7 @@
 
 -- BigQuery View: iConvert Affilka Union (Platin + Tycoon)
 -- Combines data from both mkt_platin and mkt_tycoon tables with custom field extractions for iConvert
+-- Version: 1.0.0
 SELECT 
   date,
   partner_id,

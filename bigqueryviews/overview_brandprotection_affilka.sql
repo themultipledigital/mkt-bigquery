@@ -4,6 +4,7 @@
 
 -- BigQuery View: Brand Protection Affilka Union (Platin + Tycoon)
 -- Combines data from both mkt_platin and mkt_tycoon tables with custom field extractions for Brand Protection
+-- Version: 1.0.0
 SELECT 
   date,
   partner_id,

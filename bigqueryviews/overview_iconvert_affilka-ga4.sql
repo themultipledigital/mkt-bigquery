@@ -4,6 +4,7 @@
 
 -- BigQuery View: iConvert Affilka Union with GA4 Integration (Platin + Tycoon)
 -- Combines data from both mkt_platin and mkt_tycoon tables with GA4 event data
+-- Version: 1.0.0
 WITH iconvert_affilka_data AS (
   SELECT 
     -- Convert affilka date to YYYYMMDD format to match GA4

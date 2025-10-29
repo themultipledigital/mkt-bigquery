@@ -7,6 +7,7 @@
 -- Returns standardized fields: data_source, date, partner_name, partner_id, spend, impressions, clicks, regs, ftds, deps, deposit_sum, ngr, ngr_0, brand, geo
 
 -- overview_brandprotection_affilka
+-- Version: 1.0.0
 SELECT 
   'Brand Protection' AS data_source,
   date,
