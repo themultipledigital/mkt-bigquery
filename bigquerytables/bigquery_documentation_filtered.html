@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Documentation - level-hope-462409-a8</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            color: #1a73e8;
+            border-bottom: 3px solid #1a73e8;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #1967d2;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8eaed;
+            font-size: 2em;
+        }
+        
+        h3 {
+            color: #174ea6;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        h4 {
+            color: #185abc;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.25em;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d01884;
+        }
+        
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.95em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background-color: #1a73e8;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .toc {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            color: #1a73e8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: #174ea6;
+            text-decoration: underline;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .summary-box h2 {
+            color: white;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-top: 0;
+        }
+        
+        .summary-box ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        
+        .summary-box li {
+            padding: 5px 0;
+            font-size: 1.1em;
+        }
+        
+        .summary-box h3 {
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .summary-box code {
+            background-color: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        
+        .join-guide {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .utm-box {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .utm-box strong {
+            color: #e65100;
+        }
+        
+        details {
+            margin-bottom: 20px;
+            border: 1px solid #e8eaed;
+            border-radius: 6px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #1a73e8;
+            padding: 5px;
+        }
+        
+        summary:hover {
+            color: #174ea6;
+        }
+        
+        .note {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+        
+        .note strong {
+            color: #1565c0;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+            display: none;
+        }
+        
+        .back-to-top:hover {
+            background-color: #174ea6;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        /* Syntax highlighting adjustments */
+        .hljs {
+            background-color: #282c34;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        
+        .metadata {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .metadata strong {
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="bigquery-project-documentation-level-hope-462409-a8-filtered">BigQuery Project Documentation: level-hope-462409-a8 (Filtered)</h1>
+<p><em>Generated automatically from BigQuery metadata - Filtered for specific tables</em></p>
+<div class="summary-box">
+
+## Summary
+
+- **Total Datasets**: 2
+- **Total Tables**: 4
+- **Total Views**: 1
+- **Total Objects**: 5
+
+</div>
+
+<h3 id="tables-documented">Tables Documented</h3>
+<ul>
+<li><code>mkt_channels.exo_stats</code></li>
+<li><code>mkt_channels.meta_stats</code></li>
+<li><code>mkt_channels.tj_campaign_stats</code></li>
+<li><code>mkt_channels.ts_stats_siteid</code></li>
+</ul>
+<h3 id="views-documented">Views Documented</h3>
+<ul>
+<li><code>tradedesk.ID42</code></li>
+</ul>
+<div class="join-guide">
+
+## Join Keys and Hierarchies
+
+This section explains the hierarchical structure and join keys for each table, based on how they're used in reporting views like `overview_meta_affilka` and `cohort_meta_affilka`.
+
+### meta_stats
+**Hierarchy:** Campaign → AdSet → Ad
+
+**Join Keys:**
+- **Campaign Level:** `campaign_name_custom` + `date_start`
+- **AdSet Level:** `campaign_name_custom` + `adset_name_custom` + `date_start`
+- **Ad Level (Full Granularity):** `campaign_name_custom` + `adset_name_custom` + `adname_custom` + `date_start`
+
+<div class="note">
+
+**Note:** The `*_custom` fields are created by applying transformations to the raw campaign_name, adset_name, and ad_name (LOWER, TRIM, and conditional logic). These cleaned fields are used for joining with conversion/CRM data.
+
+</div>
+
+**How to Join with Affilka Data:**
+
+The Meta UTM structure is: `utm_campaign={{campaign.name}}_{{adset.name}}_{{ad.name}}`
+
+In Affilka data, the full UTM campaign string contains all three levels concatenated with underscores. To join:
+
+
+<pre class="codehilite"><code class="language-sql">-- Extract campaign/adset/ad from Affilka utm_campaign
+WITH affilka_parsed AS (
+  SELECT 
+    utm_campaign,
+    LOWER(TRIM(SPLIT(utm_campaign, '_')[SAFE_OFFSET(0)])) AS campaign_name_custom,
+    LOWER(TRIM(SPLIT(utm_campaign, '_')[SAFE_OFFSET(1)])) AS adset_name_custom,
+    LOWER(TRIM(SPLIT(utm_campaign, '_')[SAFE_OFFSET(2)])) AS adname_custom,
+    date,
+    regs, ftds, deps, deposit_sum, ngr
+  FROM affilka_data
+)
+
+-- Join with meta_stats at ad level
+SELECT 
+  m.campaign_name_custom,
+  m.adset_name_custom,
+  m.adname_custom,
+  m.date_start,
+  m.spend,
+  m.impressions,
+  m.clicks,
+  a.regs,
+  a.ftds,
+  a.deps
+FROM `level-hope-462409-a8.mkt_channels.meta_stats_custom` m
+LEFT JOIN affilka_parsed a
+  ON m.campaign_name_custom = a.campaign_name_custom
+  AND m.adset_name_custom = a.adset_name_custom
+  AND m.adname_custom = a.adname_custom
+  AND m.date_start = a.date
+</code></pre>
+
+
+
+### exo_stats  
+**Hierarchy:** Campaign → Site → Variation
+
+**Join Keys:**
+- **Campaign Level:** `campaign_id` or `campaign_name` + `date`
+- **Site Level:** `campaign_id` + `site_id` + `date`
+- **Variation Level (Full Granularity):** `campaign_id` + `site_id` + `variation_id` + `date`
+
+**Alternative Identifiers:** Can also use `site_hostname` instead of `site_id` for site-level joins
+
+**How to Join with Affilka Data:**
+
+The ExoClick UTM structure is: `utm_campaign=de_pc_dsp-exo_psp_mob_ios-xvideos_excl-none_300x100`
+
+The entire `utm_campaign` value in Affilka corresponds to the campaign identifier. Additionally, the `siteid={zone_id}` parameter maps to ExoClick's `site_id`.
+
+
+<pre class="codehilite"><code class="language-sql">-- Join ExoClick performance with Affilka conversions
+SELECT 
+  e.campaign_name,
+  e.site_id,
+  e.date,
+  e.impressions,
+  e.clicks,
+  e.cost,
+  a.regs,
+  a.ftds,
+  a.deps,
+  a.deposit_sum
+FROM `level-hope-462409-a8.mkt_channels.exo_stats` e
+LEFT JOIN affilka_data a
+  ON LOWER(TRIM(e.campaign_name)) = LOWER(TRIM(a.utm_campaign))
+  AND e.site_id = a.siteid
+  AND e.date = a.date
+</code></pre>
+
+
+
+### tj_campaign_stats
+**Hierarchy:** Campaign (single level)
+
+**Join Keys:**
+- **Campaign Level:** `campaign_id` or `campaign_name` + `date`
+
+<div class="note">
+
+**Note:** This table only has campaign-level data, no ad set or creative breakdown
+
+</div>
+
+**How to Join with Affilka Data:**
+
+The TrafficJunky UTM structure is: `utm_campaign=de_pc_pop-tj_psp_mob_ios-pornhub-straight_excl-none`
+
+The entire `utm_campaign` value in Affilka corresponds to the campaign identifier. Additionally, the `siteid` parameter is fixed per campaign, and `tj_cid={ACLID}` is used for click tracking.
+
+
+<pre class="codehilite"><code class="language-sql">-- Join TrafficJunky performance with Affilka conversions
+SELECT 
+  t.campaign_name,
+  t.date,
+  t.impressions,
+  t.clicks,
+  t.cost,
+  a.regs,
+  a.ftds,
+  a.deps,
+  a.deposit_sum
+FROM `level-hope-462409-a8.mkt_channels.tj_campaign_stats` t
+LEFT JOIN affilka_data a
+  ON LOWER(TRIM(t.campaign_name)) = LOWER(TRIM(a.utm_campaign))
+  AND t.date = a.date
+</code></pre>
+
+
+
+### ts_stats_siteid
+**Hierarchy:** Campaign → Site → Banner
+
+**Join Keys:**
+- **Campaign Level:** `campaign_id` or `campaign_name` + `date`
+- **Site Level:** `campaign_id` + `site_id` + `date`
+- **Banner Level (Full Granularity):** `campaign_id` + `site_id` + `banner_id` + `date`
+
+**How to Join with Affilka Data:**
+
+<div class="note">
+
+**Note:** TrafficStars campaigns are not currently active. This table is maintained for historical completeness.
+
+</div>
+
+The TrafficStars UTM structure follows a similar pattern to other channels. The `utm_campaign` in Affilka would map to the campaign identifier, and `site_id` would be used as an additional join key.
+
+
+<pre class="codehilite"><code class="language-sql">-- Join TrafficStars performance with Affilka conversions (historical)
+SELECT 
+  ts.campaign_name,
+  ts.site_id,
+  ts.date,
+  ts.impressions,
+  ts.clicks,
+  ts.cost,
+  a.regs,
+  a.ftds,
+  a.deps
+FROM `level-hope-462409-a8.mkt_channels.ts_stats_siteid` ts
+LEFT JOIN affilka_data a
+  ON LOWER(TRIM(ts.campaign_name)) = LOWER(TRIM(a.utm_campaign))
+  AND ts.site_id = a.siteid
+  AND ts.date = a.date
+</code></pre>
+
+
+
+### tradedesk.ID42
+**Hierarchy:** Campaign → Ad Group → Creative
+
+**Join Keys:**
+- **Campaign Level:** `Campaign_ID` or `Campaign` + `Date`
+- **Ad Group Level:** `Campaign_ID` + `Ad_Group_ID` + `Date`
+- **Creative Level (Full Granularity):** `Campaign_ID` + `Ad_Group_ID` + `Creative_ID` + `Date`
+
+**Important:** Date format is `DD/MM/YYYY` (string), should be converted using `PARSE_DATE('%d/%m/%Y', Date)` for proper date operations
+
+**How to Join with Affilka Data:**
+
+Trade Desk has native conversion tracking built into the platform via conversion pixels and server-to-server (S2S) tracking. The conversion metrics (`Click_Conversion_01`, `View_Through_Conversion_01`, etc.) are already included in the ID42 view.
+
+If you need to join Trade Desk performance with Affilka data for additional analysis:
+
+
+<pre class="codehilite"><code class="language-sql">-- Join Trade Desk performance with Affilka conversions
+-- Note: Trade Desk already has its own conversion tracking
+SELECT 
+  td.Campaign,
+  td.Ad_Group,
+  PARSE_DATE('%d/%m/%Y', td.Date) AS date,
+  td.Advertiser_Cost_USD,
+  td.Impressions,
+  td.Clicks,
+  td.Click_Conversion_01 AS td_conversions,
+  a.regs AS affilka_regs,
+  a.ftds AS affilka_ftds,
+  a.deps AS affilka_deps
+FROM `level-hope-462409-a8.tradedesk.ID42` td
+LEFT JOIN affilka_data a
+  ON LOWER(TRIM(td.Campaign)) = LOWER(TRIM(a.utm_campaign))
+  AND PARSE_DATE('%d/%m/%Y', td.Date) = a.date
+WHERE PARSE_DATE('%d/%m/%Y', td.Date) &gt;= '2025-09-01'
+</code></pre>
+
+
+
+<div class="note">
+
+**Note:** Trade Desk conversions are tracked via their own attribution system, not through UTM parameters. The platform's native conversion data (Click_Conversion, View_Through_Conversion) is generally more reliable than external tracking for this channel.
+
+</div>
+
+### Best Practices for Joining with Affilka Data
+
+1. **Always aggregate before joining** - Group by your join keys to prevent cartesian products
+2. **Include date in join keys** - Most joins should include the date dimension
+3. **Use FULL OUTER JOIN** when combining ad performance with conversion data to capture:
+   - Days with spend but no conversions
+   - Conversions that occur outside the active campaign window (attribution lag)
+4. **Month-level aggregation** - For cohort analysis, aggregate to monthly level first to avoid many-to-many joins
+5. **Use custom/cleaned fields** - Join on `*_custom` fields (lowercased, trimmed) rather than raw campaign names for consistency
+6. **Parse UTM parameters correctly**:
+   - **Meta:** Split `utm_campaign` by underscore to extract campaign/adset/ad: `SPLIT(utm_campaign, '_')`
+   - **ExoClick/TrafficJunky/TrafficStars:** Use the entire `utm_campaign` as the campaign identifier
+   - **Trade Desk:** Primarily relies on native conversion tracking, external joins are secondary
+7. **Include site-level joins** when available:
+   - ExoClick: Use `siteid` from UTM to join on `site_id`
+   - TrafficStars: Use `siteid` from UTM to join on `site_id`
+   - TrafficJunky: `siteid` is typically fixed per campaign
+8. **Handle attribution windows** - Conversions may occur days after the ad interaction, consider using wider date ranges or window functions
+
+</div>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#join-keys-and-hierarchies">Join Keys and Hierarchies</a></li>
+<li><a href="#mkt-channels">mkt_channels</a></li>
+<li><a href="#tradedesk">tradedesk</a></li>
+</ul>
+<h2 id="mkt_channels">mkt_channels</h2>
+<p><strong>Location</strong>: US
+<strong>Created</strong>: 2025-09-12 08:37:10.475000+00:00
+<strong>Modified</strong>: 2025-09-12 08:37:10.475000+00:00</p>
+<p><strong>Tables</strong>: 8 | <strong>Views</strong>: 3</p>
+<h3 id="tables-in-mkt_channels">Tables in mkt_channels</h3>
+<h4 id="exo_stats">exo_stats</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.exo_stats</code>
+<strong>Rows</strong>: 18,534
+<strong>Size</strong>: 12.31 MB
+<strong>Created</strong>: 2025-09-24 11:43:03.923000+00:00
+<strong>Modified</strong>: 2025-10-11 18:01:24.814000+00:00</p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date</td>
+<td>DATE</td>
+<td>REQUIRED</td>
+<td>Date of the campaign activity</td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>STRING</td>
+<td>REQUIRED</td>
+<td>Unique identifier for the ExoClick campaign</td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the campaign</td>
+</tr>
+<tr>
+<td>site_id</td>
+<td>STRING</td>
+<td>REQUIRED</td>
+<td>Unique identifier for the site where ads were displayed</td>
+</tr>
+<tr>
+<td>site_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the site</td>
+</tr>
+<tr>
+<td>site_hostname</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Hostname of the site</td>
+</tr>
+<tr>
+<td>variation_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Identifier for the ad variation</td>
+</tr>
+<tr>
+<td>variation_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the ad variation</td>
+</tr>
+<tr>
+<td>variation_url</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>URL of the ad variation</td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of ad impressions</td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of clicks on the ad</td>
+</tr>
+<tr>
+<td>goals</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Total number of goal conversions</td>
+</tr>
+<tr>
+<td>conversion_value</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Total value of conversions</td>
+</tr>
+<tr>
+<td>cost</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Total cost/spend for the campaign</td>
+</tr>
+<tr>
+<td>retrieved_at</td>
+<td>TIMESTAMP</td>
+<td>REQUIRED</td>
+<td>Timestamp when data was retrieved from ExoClick API</td>
+</tr>
+<tr>
+<td>goals_breakdown</td>
+<td>RECORD</td>
+<td>REPEATED</td>
+<td>Detailed breakdown of conversions by goal type</td>
+</tr>
+<tr>
+<td>↳ goal_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the goal</td>
+</tr>
+<tr>
+<td>↳ goal_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the goal (e.g., registration, deposit, first_deposit)</td>
+</tr>
+<tr>
+<td>↳ conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of conversions for this specific goal</td>
+</tr>
+<tr>
+<td>↳ conversion_value</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Value of conversions for this specific goal</td>
+</tr>
+</tbody>
+</table>
+<div class="utm-box">
+
+**UTM Parameters:**
+
+<pre class="codehilite"><code>utm_source=adn
+utm_medium=exo-dsp
+utm_campaign=de_pc_dsp-exo_psp_mob_ios-xvideos_excl-none_300x100
+utm_landing=welcome-page-registration-modal
+siteid={zone_id}
+utm_creative=big-bass-splash
+exo_cid={conversions_tracking}
+</code></pre>
+
+
+
+</div>
+
+<hr />
+<h4 id="meta_stats">meta_stats</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.meta_stats</code>
+<strong>Rows</strong>: 23,200
+<strong>Size</strong>: 429.29 MB
+<strong>Created</strong>: 2025-09-23 13:36:53.592000+00:00
+<strong>Modified</strong>: 2025-10-27 12:01:35.708000+00:00</p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>account_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Meta/Facebook Ad Account ID</td>
+</tr>
+<tr>
+<td>retrieved_at</td>
+<td>TIMESTAMP</td>
+<td>NULLABLE</td>
+<td>Timestamp when data was retrieved from Meta API</td>
+</tr>
+<tr>
+<td>date_start</td>
+<td>DATE</td>
+<td>NULLABLE</td>
+<td>Start date of the campaign activity</td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the Meta campaign</td>
+</tr>
+<tr>
+<td>adset_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the ad set within the campaign</td>
+</tr>
+<tr>
+<td>ad_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the individual ad</td>
+</tr>
+<tr>
+<td>spend</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Total ad spend in USD</td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Number of times ads were displayed</td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Number of clicks on the ads</td>
+</tr>
+<tr>
+<td>frequency</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Average number of times each person saw the ad</td>
+</tr>
+<tr>
+<td>reach</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Number of unique people who saw the ads</td>
+</tr>
+<tr>
+<td>goals_breakdown</td>
+<td>RECORD</td>
+<td>REPEATED</td>
+<td>S2S conversion tracking breakdown by goal and attribution window</td>
+</tr>
+<tr>
+<td>↳ goal_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the conversion goal (e.g., Purchase-S2S-BP, PurchasePlus-S2S-PC)</td>
+</tr>
+<tr>
+<td>↳ window</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Attribution window (e.g., 1d_click, 7d_click, 1d_view, total)</td>
+</tr>
+<tr>
+<td>↳ conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of conversions for this goal and window</td>
+</tr>
+<tr>
+<td>↳ conversion_value</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Total value of conversions for this goal and window</td>
+</tr>
+<tr>
+<td>publisher_platform</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Platform where ad was shown (e.g., facebook, instagram)</td>
+</tr>
+<tr>
+<td>platform_position</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Position of the ad on the platform (e.g., feed, story)</td>
+</tr>
+<tr>
+<td>device_platform</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Device type (e.g., mobile, desktop)</td>
+</tr>
+</tbody>
+</table>
+<div class="utm-box">
+
+**UTM Parameters:**
+
+<pre class="codehilite"><code>utm_campaign={{campaign.name}}_{{adset.name}}_{{ad.name}}
+utm_content={{placement}}
+__sid=
+</code></pre>
+
+
+
+</div>
+
+<hr />
+<h4 id="tj_campaign_stats">tj_campaign_stats</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.tj_campaign_stats</code>
+<strong>Rows</strong>: 2,593
+<strong>Size</strong>: 309.53 KB
+<strong>Created</strong>: 2025-10-27 12:42:57.591000+00:00
+<strong>Modified</strong>: 2025-10-27 13:36:51.073000+00:00</p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date</td>
+<td>DATE</td>
+<td>NULLABLE</td>
+<td>Date of the campaign activity</td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the TrafficJunky campaign</td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the TrafficJunky campaign</td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of ad impressions</td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of clicks on the ad</td>
+</tr>
+<tr>
+<td>conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of conversions tracked</td>
+</tr>
+<tr>
+<td>revenue</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Revenue generated from conversions</td>
+</tr>
+<tr>
+<td>cost</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Total cost/spend for the campaign</td>
+</tr>
+<tr>
+<td>retrieved_at</td>
+<td>TIMESTAMP</td>
+<td>NULLABLE</td>
+<td>Timestamp when data was retrieved from TrafficJunky API</td>
+</tr>
+</tbody>
+</table>
+<div class="utm-box">
+
+**UTM Parameters:**
+
+<pre class="codehilite"><code>utm_source=adn
+utm_medium=tj-pop
+utm_campaign=de_pc_pop-tj_psp_mob_ios-pornhub-straight_excl-none
+utm_landing=welcome-page-registration-modal
+siteid=1650251
+tj_cid={ACLID}
+</code></pre>
+
+
+
+</div>
+
+<hr />
+<h4 id="ts_stats_siteid">ts_stats_siteid</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.ts_stats_siteid</code>
+<strong>Rows</strong>: 44
+<strong>Size</strong>: 11.72 KB
+<strong>Created</strong>: 2025-09-24 13:45:44.796000+00:00
+<strong>Modified</strong>: 2025-09-24 14:08:35.219000+00:00</p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date</td>
+<td>DATE</td>
+<td>REQUIRED</td>
+<td>Date of the campaign activity</td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the TrafficStars campaign</td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the TrafficStars campaign</td>
+</tr>
+<tr>
+<td>site_id</td>
+<td>STRING</td>
+<td>REQUIRED</td>
+<td>Unique identifier for the site where ads were displayed</td>
+</tr>
+<tr>
+<td>site_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the site</td>
+</tr>
+<tr>
+<td>creative_url</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>URL of the creative/banner</td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of ad impressions</td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of clicks on the ad</td>
+</tr>
+<tr>
+<td>conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of conversions tracked</td>
+</tr>
+<tr>
+<td>cost</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Total cost/spend for the campaign</td>
+</tr>
+<tr>
+<td>retrieved_at</td>
+<td>TIMESTAMP</td>
+<td>REQUIRED</td>
+<td>Timestamp when data was retrieved from TrafficStars API</td>
+</tr>
+<tr>
+<td>banner_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the banner/creative</td>
+</tr>
+</tbody>
+</table>
+<div class="note">
+
+**Note:** This table is maintained for historical completeness. TrafficStars campaigns are not currently active.
+
+</div>
+
+<hr />
+<h2 id="tradedesk">tradedesk</h2>
+<p><strong>Location</strong>: US
+<strong>Created</strong>: 2025-09-22 12:09:52.692000+00:00
+<strong>Modified</strong>: 2025-09-22 12:11:20.322000+00:00</p>
+<p><strong>Tables</strong>: 4 | <strong>Views</strong>: 2</p>
+<h3 id="views-in-tradedesk">Views in tradedesk</h3>
+<h4 id="id42">ID42</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.tradedesk.ID42</code>
+<strong>Created</strong>: 2025-10-09 12:31:46.919000+00:00
+<strong>Modified</strong>: 2025-10-09 12:31:47.144000+00:00</p>
+<p><strong>Dependencies</strong>: This view depends on 3 object(s):
+- <code>level-hope-462409-a8.level-hope-462409-a8.tradedesk</code>
+- <code>level-hope-462409-a8.tradedesk.ID42_backfill</code>
+- <code>level-hope-462409-a8.tradedesk.ID42_performance_daily</code></p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Date</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Date of the campaign activity (DD/MM/YYYY format)</td>
+</tr>
+<tr>
+<td>Ad_Group_ID</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the ad group</td>
+</tr>
+<tr>
+<td>Ad_Group</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the ad group</td>
+</tr>
+<tr>
+<td>Campaign_ID</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the Trade Desk campaign</td>
+</tr>
+<tr>
+<td>Campaign</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the Trade Desk campaign</td>
+</tr>
+<tr>
+<td>Creative</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Name of the creative/ad</td>
+</tr>
+<tr>
+<td>Creative_ID</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Unique identifier for the creative</td>
+</tr>
+<tr>
+<td>Advertiser_Cost_USD</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td>Total advertiser cost in USD</td>
+</tr>
+<tr>
+<td>Bids</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of bids placed</td>
+</tr>
+<tr>
+<td>Impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of ad impressions delivered</td>
+</tr>
+<tr>
+<td>Clicks</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of clicks on the ad</td>
+</tr>
+<tr>
+<td>Sampled_Tracked_Impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of sampled tracked impressions</td>
+</tr>
+<tr>
+<td>Sampled_Viewed_Impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Number of sampled viewed impressions</td>
+</tr>
+<tr>
+<td>Click_Conversion_01</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Click-attributed conversions for conversion window 01</td>
+</tr>
+<tr>
+<td>Click_Conversion_02</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Click-attributed conversions for conversion window 02</td>
+</tr>
+<tr>
+<td>Click_Conversion_03</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Click-attributed conversions for conversion window 03</td>
+</tr>
+<tr>
+<td>Total_Click_View_Conversions_01</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Total click + view conversions for window 01</td>
+</tr>
+<tr>
+<td>Total_Click_View_Conversions_02</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Total click + view conversions for window 02</td>
+</tr>
+<tr>
+<td>Total_Click_View_Conversions_03</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>Total click + view conversions for window 03</td>
+</tr>
+<tr>
+<td>View_Through_Conversion_01</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>View-through conversions for conversion window 01</td>
+</tr>
+<tr>
+<td>View_Through_Conversion_02</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>View-through conversions for conversion window 02</td>
+</tr>
+<tr>
+<td>View_Through_Conversion_03</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td>View-through conversions for conversion window 03</td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary><b>View SQL Query</b> (click to expand)</summary>
+
+
+<pre class="codehilite"><code class="language-sql">SELECT * FROM `level-hope-462409-a8.tradedesk.ID42_backfill` 
+
+UNION ALL
+
+SELECT * FROM `level-hope-462409-a8.tradedesk.ID42_performance_daily` 
+</code></pre>
+
+
+</details>
+
+<hr />
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑ Back to Top</a>
+    
+    <script>
+        // Initialize syntax highlighting
+        hljs.highlightAll();
+        
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            var backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('backToTop').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
