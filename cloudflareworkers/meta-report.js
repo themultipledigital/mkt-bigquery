@@ -376,11 +376,16 @@ export default {
   }
   
   async function handleRequest(req, env, ctx) {
-    const allowedIps = ["2a06:98c0:3600::103", "195.158.92.167"];
-    const cfHeader = req.headers.get("cf-connecting-ip");
-    if (!req.headers.get("cf-worker-cron") && !allowedIps.includes(cfHeader)) {
-      log("WARN", "ForbiddenAccess", { ip: cfHeader });
-      return new Response("Forbidden", { status: 403 });
+    // Skip IP check for local development (wrangler dev)
+    const isLocalDev = req.url.includes("localhost") || req.url.includes("127.0.0.1");
+    
+    if (!isLocalDev) {
+      const allowedIps = ["2a06:98c0:3600::103", "195.158.92.167"];
+      const cfHeader = req.headers.get("cf-connecting-ip");
+      if (!req.headers.get("cf-worker-cron") && !allowedIps.includes(cfHeader)) {
+        log("WARN", "ForbiddenAccess", { ip: cfHeader });
+        return new Response("Forbidden", { status: 403 });
+      }
     }
   
     const nowDate = new Date();
@@ -1028,7 +1033,9 @@ export default {
         const accessToken = await googleAccessToken(env, scopes);
         if (!accessToken) {
           log("ERROR", "BigQueryAuthFailed", {});
-          errorMessages.push("Google auth failed for BigQuery");
+          errorMessages.push("Google auth failed for BigQuery - check wrangler logs for details");
+          errorMessages.push(`Service Account: ${env.GS_CLIENT_EMAIL}`);
+          errorMessages.push(`Private Key present: ${!!env.GS_PRIVATE_KEY}, length: ${env.GS_PRIVATE_KEY?.length}`);
         } else {
           log("INFO", "BigQueryAuthSuccess", {});
           resultMessages.push("BigQuery authentication successful");
@@ -1239,7 +1246,8 @@ export default {
       })).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
       const toSign = `${jwtHeader}.${jwtClaim}`;
   
-      const pem = env.GS_PRIVATE_KEY.replace(/\\n/g, "\n").replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
+      // Replace literal \n with actual newlines, then remove header/footer and all whitespace
+const pem = env.GS_PRIVATE_KEY.replace(/\\n/g, "\n").replace(/-----BEGIN PRIVATE KEY-----/g, "").replace(/-----END PRIVATE KEY-----/g, "").replace(/\s+/g, "");
       const keyBuf = Uint8Array.from(atob(pem), c => c.charCodeAt(0)).buffer;
       const keyObj = await crypto.subtle.importKey("pkcs8", keyBuf, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
       const sigBuf = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", keyObj, new TextEncoder().encode(toSign));
@@ -1355,7 +1363,8 @@ export default {
       exp: iat + 3600
     }));
     const toSign = `${header}.${claim}`;
-    const pem = env.GS_PRIVATE_KEY.replace(/\\n/g, "\n").replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
+    // Replace literal \n with actual newlines, then remove header/footer and all whitespace
+const pem = env.GS_PRIVATE_KEY.replace(/\\n/g, "\n").replace(/-----BEGIN PRIVATE KEY-----/g, "").replace(/-----END PRIVATE KEY-----/g, "").replace(/\s+/g, "");
     const keyBuf = Uint8Array.from(atob(pem), (c) => c.charCodeAt(0)).buffer;
     const keyObj = await crypto.subtle.importKey("pkcs8", keyBuf, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
     const sigBuf = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", keyObj, new TextEncoder().encode(toSign));
@@ -1364,14 +1373,32 @@ export default {
   }
   
   async function googleAccessToken(env, scopes) {
-    const jwt = await googleJwt(env, scopes);
-    const resp = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-      body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
-    });
-    const json = await resp.json();
-    return json.access_token;
+    try {
+      const jwt = await googleJwt(env, scopes);
+      const resp = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
+      });
+      const json = await resp.json();
+      
+      if (!json.access_token) {
+        log("ERROR", "GoogleAuthFailed", { 
+          response: json,
+          has_client_email: !!env.GS_CLIENT_EMAIL,
+          has_private_key: !!env.GS_PRIVATE_KEY,
+          private_key_starts_with: env.GS_PRIVATE_KEY?.substring(0, 30)
+        });
+      }
+      
+      return json.access_token;
+    } catch (error) {
+      log("ERROR", "GoogleAuthException", { 
+        error: error.message,
+        stack: error.stack
+      });
+      return null;
+    }
   }
   
   function buildBQSchemaFields(headers) {

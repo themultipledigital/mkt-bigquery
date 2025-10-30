@@ -1,0 +1,20 @@
+# Wrangler configuration for meta-report worker
+name = "meta-report"
+main = "meta-report.js"
+compatibility_date = "2024-10-29"
+
+# Queue Producer Binding (optional for local dev, can be disabled if testing without queues)
+[[queues.producers]]
+binding = "META_REPORT_QUEUE"
+queue = "metaReportQueue"
+
+# Queue Consumer Configuration (optional for local dev)
+[[queues.consumers]]
+queue = "metaReportQueue"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+
+# For local development, environment variables are loaded from .dev.vars
+# This keeps sensitive data out of version control
+

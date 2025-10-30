@@ -22,3 +22,8 @@ ENV/
 .DS_Store
 Thumbs.db
 
+
+# Local development environment variables (Cloudflare Workers)
+cloudflareworkers/.dev.vars
+cloudflareworkers/.wrangler/
+
