@@ -1,0 +1,28 @@
+# Wrangler configuration for meta-reportV1 worker (NO QUEUES)
+name = "meta-report-v1"
+main = "meta-reportV1.js"
+compatibility_date = "2024-10-29"
+
+# Cron trigger for scheduled daily runs (processes all accounts automatically)
+[triggers]
+crons = ["0 6 * * *"]  # Runs daily at 6:00 AM UTC - adjust as needed
+
+# Environment variables are loaded from .dev.vars for local dev
+# For production, set secrets using: wrangler secret put VARIABLE_NAME
+
+# Required environment variables (set via wrangler secret or dashboard):
+# - FRM-XXXXXX-FB_ACCESS_TOKEN (Facebook access token for each account)
+# - FRM-XXXXXX-FB_ACCOUNT_ID (Facebook account ID for each account)
+# - GS_CLIENT_EMAIL (Google Service Account email)
+# - GS_PRIVATE_KEY (Google Service Account private key)
+# - SPREADSHEET_ID (Google Sheets ID)
+# - RANGE_NAME (Google Sheets range, e.g., "Sheet1!A:Z")
+# - S3_REGION (e.g., "eu-central-1")
+# - S3_BUCKET (S3 bucket name)
+# - S3_ACCESS_KEY (AWS access key)
+# - S3_SECRET_KEY (AWS secret key)
+# - BQ_PROJECT_ID (BigQuery project ID)
+# - BQ_DATASET (BigQuery dataset name)
+# - BQ_TABLE_NAME (BigQuery table name, default: "meta_stats")
+# - BQ_LOCATION (optional, e.g., "EU" or "US")
+
