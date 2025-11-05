@@ -1,34 +1,41 @@
 /**
- * Version: 1.0.0
+ * Version: 1.2.0
  * Meta Changelog Worker – Usage Summary
  * ------------------------------------------------------------
  * Query params
  *  - account: required FRM-xxxxx key or 'all' to run for all configured accounts
- *  - mode:    'activities' to fetch Meta ad account activities; 'targeting' to fetch adset targeting data; omit to run original structure flow
+ *  - mode:    'activities' to fetch Meta ad account activities; 
+ *             'targeting' to fetch adset targeting data; 
+ *             'health' to fetch reach & performance metrics (ad levels with breakdowns);
+ *             omit to run original structure flow
  *  - dest:    'bq' to write to BigQuery, 'sheets' to write to Google Sheets (default)
- *  - since:   optional YYYY-MM-DD (activities window start; default: now-7d)
- *  - until:   optional YYYY-MM-DD (activities window end; default: today)
+ *  - since:   optional YYYY-MM-DD (activities/health window start; default: now-7d)
+ *  - until:   optional YYYY-MM-DD (activities/health window end; default: today)
  *  - schema_migrate: 'true' to add new columns to existing BigQuery tables (default: false)
  *
  * Examples
  *  - Sheets (activities):  ?account=FRM-155237&mode=activities&dest=sheets
  *  - BigQuery (activities):?account=FRM-155237&mode=activities&dest=bq&since=2025-09-18&until=2025-09-24
  *  - BigQuery (targeting): ?account=FRM-155237&mode=targeting&dest=bq
+ *  - BigQuery (health):    ?account=FRM-155237&mode=health&dest=bq&since=2025-10-29&until=2025-11-05
  *  - Schema migration:     ?account=FRM-155237&mode=targeting&dest=bq&schema_migrate=true
  *  - Sheets (structure):   ?account=FRM-155237  (writes META_Acc_Info)
  *  - All accounts (activities): ?account=all&mode=activities&dest=bq
  *  - All accounts (targeting):  ?account=all&mode=targeting&dest=bq&schema_migrate=true
+ *  - All accounts (health):     ?account=all&mode=health&dest=bq
  *
  * Scheduled (Cron) Jobs
- *  - Automatically runs both activities and targeting modes for all accounts to BigQuery
+ *  - Automatically runs activities, targeting, and health modes for all accounts to BigQuery
  *  - Configure cron trigger in wrangler.toml or Cloudflare dashboard
  *
  * Outputs
  *  - Sheets tabs: META_Acc_Changes (activities), META_Acc_Info (structure)
  *  - BigQuery:    {BQ_PROJECT_ID}.{BQ_DATASET|mkt_channels}.meta_changelog (activities)
  *                 {BQ_PROJECT_ID}.{BQ_DATASET|mkt_channels}.meta_targeting (targeting)
+ *                 {BQ_PROJECT_ID}.{BQ_DATASET|mkt_channels}.meta_health (health)
  *                  Stage→Merge with last retrieved_at wins; null account_id backfilled post-merge
- *                  Includes campaign_configured_status, campaign_effective_status, adset_configured_status, adset_effective_status
+ *                  Health includes accurate reach at ad levels plus breakdowns by device/platform/position
+ *                  Reach deduplication: is_breakdown=FALSE for totals, TRUE for distribution
  *
  * Required env vars
  *  - GS_CLIENT_EMAIL, GS_PRIVATE_KEY, SPREADSHEET_ID
@@ -89,7 +96,7 @@ export default {
   async scheduled(event, env, ctx) {
     const results = [];
     
-    // Run both modes for all accounts
+    // Run all modes for all accounts
     for (const [acctKey, acctConfig] of Object.entries(API_CONFIGS)) {
       try {
         // Run activities mode
@@ -99,6 +106,10 @@ export default {
         // Run targeting mode
         const targetingResult = await processAccount(acctKey, acctConfig, "targeting", "bq", false, env, null);
         results.push(`${acctKey} [targeting]: ${targetingResult}`);
+        
+        // Run health mode
+        const healthResult = await processAccount(acctKey, acctConfig, "health", "bq", false, env, null);
+        results.push(`${acctKey} [health]: ${healthResult}`);
       } catch (err) {
         results.push(`${acctKey}: ERROR - ${err.message}`);
       }
@@ -447,6 +458,129 @@ async function processAccount(accountId, config, mode, dest, schemaMigrate, env,
       await bqDropTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, stageId).catch(()=>{});
 
       return `Loaded ${objects.length} adsets to BigQuery ${BQ_PROJECT_ID}.${BQ_DATASET}.meta_targeting`;
+    }
+
+    // === NEW: health mode ===
+    if (mode === "health") {
+      if (dest !== "bq") {
+        throw new Error("Health mode only supports dest=bq");
+      }
+
+      const { rows: insightsData, adAccountIds, referrerDomain, accountKey, sinceStr, untilStr } = await getInsightsData(config, accountId, url);
+
+      // Env
+      const BQ_PROJECT_ID   = env.BQ_PROJECT_ID;
+      const BQ_DATASET      = env.BQ_DATASET || 'mkt_channels';
+      const BQ_LOCATION     = env.BQ_LOCATION || 'US';
+      const BQ_STAGE_TTL_MIN= Number(env.BQ_STAGE_TTL_MIN || 120);
+
+      if (!BQ_PROJECT_ID) {
+        throw new Error("Missing BigQuery env var: BQ_PROJECT_ID");
+      }
+
+      const tableId = 'meta_health';
+      const stageId = `meta_health_stage_${randomId ? randomId() : Math.random().toString(16).slice(2,10)}`;
+
+      // Schema for health data
+      const META_HEALTH_SCHEMA = [
+        {name:"account_id", type:"STRING", mode:"NULLABLE"},
+        {name:"referrer_domain", type:"STRING", mode:"NULLABLE"},
+        {name:"ad_account_id", type:"STRING", mode:"NULLABLE"},
+        {name:"retrieved_at", type:"TIMESTAMP", mode:"REQUIRED"},
+        {name:"date", type:"DATE", mode:"NULLABLE"},
+        {name:"campaign_id", type:"STRING", mode:"NULLABLE"},
+        {name:"campaign_name", type:"STRING", mode:"NULLABLE"},
+        {name:"adset_id", type:"STRING", mode:"NULLABLE"},
+        {name:"adset_name", type:"STRING", mode:"NULLABLE"},
+        {name:"ad_id", type:"STRING", mode:"NULLABLE"},
+        {name:"ad_name", type:"STRING", mode:"NULLABLE"},
+        // Breakdown dimensions (NULL = total/aggregated)
+        {name:"publisher_platform", type:"STRING", mode:"NULLABLE"},
+        {name:"platform_position", type:"STRING", mode:"NULLABLE"},
+        {name:"impression_device", type:"STRING", mode:"NULLABLE"},
+        // Metrics
+        {name:"reach", type:"INTEGER", mode:"NULLABLE"},
+        {name:"impressions", type:"INTEGER", mode:"NULLABLE"},
+        {name:"frequency", type:"FLOAT", mode:"NULLABLE"},
+        {name:"spend", type:"FLOAT", mode:"NULLABLE"},
+        {name:"clicks", type:"INTEGER", mode:"NULLABLE"},
+        {name:"cpc", type:"FLOAT", mode:"NULLABLE"},
+        {name:"cpm", type:"FLOAT", mode:"NULLABLE"},
+        {name:"ctr", type:"FLOAT", mode:"NULLABLE"},
+        {name:"cpp", type:"FLOAT", mode:"NULLABLE"},
+        // Metadata
+        {name:"is_breakdown", type:"BOOLEAN", mode:"NULLABLE"},
+        {name:"level", type:"STRING", mode:"NULLABLE"}  // 'campaign', 'adset', 'ad'
+      ];
+
+      // Auth for BigQuery
+      const bqToken = await googleAccessToken(env, ["https://www.googleapis.com/auth/bigquery"]);
+
+      // Ensure target table exists (partition on date)
+      await ensureBQTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, META_HEALTH_SCHEMA, "date", ["ad_account_id","campaign_id","adset_id","ad_id"]);
+      
+      // Add missing columns to existing table (schema migration)
+      if (schemaMigrate) {
+        await bqAddMissingColumns(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, META_HEALTH_SCHEMA).catch(()=>{});
+      }
+      
+      // Remove any expiration on permanent table
+      await bqSetNoExpiry(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, /*logs*/null).catch(()=>{});
+
+      // Retrieved timestamp (stable for this run)
+      const retrievedAt = new Date().toISOString();
+
+      // Convert rows to objects for load
+      const objects = insightsData.map(r => ({
+        account_id: accountKey,
+        referrer_domain: referrerDomain,
+        ad_account_id: r.ad_account_id,
+        retrieved_at: retrievedAt,
+        date: r.date,
+        campaign_id: r.campaign_id || null,
+        campaign_name: r.campaign_name || null,
+        adset_id: r.adset_id || null,
+        adset_name: r.adset_name || null,
+        ad_id: r.ad_id || null,
+        ad_name: r.ad_name || null,
+        publisher_platform: r.publisher_platform || null,
+        platform_position: r.platform_position || null,
+        impression_device: r.impression_device || null,
+        reach: r.reach || null,
+        impressions: r.impressions || null,
+        frequency: r.frequency || null,
+        spend: r.spend || null,
+        clicks: r.clicks || null,
+        cpc: r.cpc || null,
+        cpm: r.cpm || null,
+        ctr: r.ctr || null,
+        cpp: r.cpp || null,
+        is_breakdown: r.is_breakdown,
+        level: r.level
+      }));
+
+      // Create stage table (TTL) and load NDJSON
+      await bqCreateStageTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET, BQ_LOCATION: BQ_LOCATION }, stageId, META_HEALTH_SCHEMA, "date", ["ad_account_id","campaign_id"], BQ_STAGE_TTL_MIN);
+      await bqLoadJson(bqToken, { ...env, BQ_DATASET: BQ_DATASET, BQ_LOCATION: BQ_LOCATION }, stageId, objects, META_HEALTH_SCHEMA, /*logs*/null);
+
+      // Merge stage → target; dedupe keys, last retrieved_at wins
+      const sql = mergeSQL({
+        project: BQ_PROJECT_ID,
+        dataset: BQ_DATASET,
+        table: tableId,
+        stage: stageId,
+        keyFields: ["account_id","ad_account_id","campaign_id","adset_id","ad_id","date","publisher_platform","platform_position","impression_device","is_breakdown"],
+        nonKeyFields: [
+          "referrer_domain","campaign_name","adset_name","ad_name",
+          "reach","impressions","frequency","spend","clicks","cpc","cpm","ctr","cpp","level","retrieved_at"
+        ],
+      });
+      await bqQuery(bqToken, { ...env, BQ_DATASET: BQ_DATASET, BQ_LOCATION: BQ_LOCATION }, sql, /*logs*/null);
+
+      // Cleanup stage (best-effort)
+      await bqDropTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, stageId).catch(()=>{});
+
+      return `Loaded ${objects.length} health rows to BigQuery ${BQ_PROJECT_ID}.${BQ_DATASET}.meta_health (${sinceStr} to ${untilStr})`;
     }
 
     // === ORIGINAL FLOW (structure → META_Acc_Info) ===
@@ -825,6 +959,192 @@ function parseTargetingSentenceLines(tslObj) {
   }
   
   return result;
+}
+
+// ---------- NEW: insights data flow ----------
+async function getInsightsData(config, accountKey, url) {
+  // Derive since/until from query string or default last 7 days
+  const qsSince = url?.searchParams?.get("since"); // YYYY-MM-DD
+  const qsUntil = url?.searchParams?.get("until"); // YYYY-MM-DD
+
+  const now = new Date();
+  const defaultUntil = now.toISOString().slice(0, 10);
+  const defaultSince = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  const sinceStr = (qsSince || defaultSince);
+  const untilStr = (qsUntil || defaultUntil);
+
+  // Step 1: enumerate ad accounts and get structure
+  const meUrl = `https://graph.facebook.com/v23.0/me?fields=adaccounts{id,name,campaigns{id,name,adsets{id,name,ads{id,name}}}}`;
+  const meRes = await fetch(meUrl, {
+    headers: { Authorization: `Bearer ${config.accessToken}`, Referer: config.eventSourceUrl }
+  });
+  const meJson = await meRes.json();
+  if (!meRes.ok || meJson.error) {
+    throw new Error(`FB API Error: ${meJson.error?.message || meRes.statusText}`);
+  }
+
+  const adaccounts = meJson.adaccounts?.data || [];
+  const rows = [];
+  const adAccountIds = [];
+
+  // Metrics to retrieve
+  const METRICS = "reach,impressions,frequency,spend,clicks,cpc,cpm,ctr,cpp";
+  const BREAKDOWNS = "publisher_platform,platform_position,impression_device";
+
+  for (const acct of adaccounts) {
+    const actId = acct.id; // already in act_XXXX form
+    if (actId) adAccountIds.push(actId);
+    
+    try {
+      const campaigns = acct.campaigns?.data || [];
+      
+      // OPTIMIZATION: Only fetch ad-level data (most granular)
+      // Campaign and adset totals can be calculated in BigQuery by aggregating ad data
+      // This reduces API calls significantly
+      
+      // Collect all ads with their context
+      const adsToFetch = [];
+      for (const campaign of campaigns) {
+        const campaignId = campaign.id;
+        const campaignName = campaign.name;
+        
+        const adsets = campaign.adsets?.data || [];
+        for (const adset of adsets) {
+          const adsetId = adset.id;
+          const adsetName = adset.name;
+          
+          const ads = adset.ads?.data || [];
+          for (const ad of ads) {
+            adsToFetch.push({
+              adId: ad.id,
+              adName: ad.name,
+              adsetId,
+              adsetName,
+              campaignId,
+              campaignName,
+              actId
+            });
+          }
+        }
+      }
+      
+      // Fetch ads in parallel batches (10 at a time to avoid rate limits)
+      const BATCH_SIZE = 10;
+      for (let i = 0; i < adsToFetch.length; i += BATCH_SIZE) {
+        const batch = adsToFetch.slice(i, i + BATCH_SIZE);
+        
+        // Process batch in parallel
+        const batchPromises = batch.map(async (adContext) => {
+          const { adId, adName, adsetId, adsetName, campaignId, campaignName, actId } = adContext;
+          
+          try {
+            // Fetch total and breakdown in parallel for this ad
+            const [totalRes, breakdownRes] = await Promise.all([
+              fetch(`https://graph.facebook.com/v23.0/${adId}/insights?fields=${METRICS}&time_range=${encodeURIComponent(JSON.stringify({since: sinceStr, until: untilStr}))}&time_increment=1`, {
+                headers: { Authorization: `Bearer ${config.accessToken}` }
+              }),
+              fetch(`https://graph.facebook.com/v23.0/${adId}/insights?fields=${METRICS}&breakdowns=${BREAKDOWNS}&time_range=${encodeURIComponent(JSON.stringify({since: sinceStr, until: untilStr}))}&time_increment=1`, {
+                headers: { Authorization: `Bearer ${config.accessToken}` }
+              })
+            ]);
+            
+            const adRows = [];
+            
+            // Process total insights
+            if (totalRes.ok) {
+              const totalJson = await totalRes.json();
+              if (!totalJson.error) {
+                const adData = totalJson.data || [];
+                for (const insight of adData) {
+                  adRows.push({
+                    ad_account_id: actId,
+                    campaign_id: campaignId,
+                    campaign_name: campaignName,
+                    adset_id: adsetId,
+                    adset_name: adsetName,
+                    ad_id: adId,
+                    ad_name: adName,
+                    date: insight.date_start,
+                    publisher_platform: null,
+                    platform_position: null,
+                    impression_device: null,
+                    reach: parseInt(insight.reach || 0),
+                    impressions: parseInt(insight.impressions || 0),
+                    frequency: parseFloat(insight.frequency || 0),
+                    spend: parseFloat(insight.spend || 0),
+                    clicks: parseInt(insight.clicks || 0),
+                    cpc: parseFloat(insight.cpc || 0),
+                    cpm: parseFloat(insight.cpm || 0),
+                    ctr: parseFloat(insight.ctr || 0),
+                    cpp: parseFloat(insight.cpp || 0),
+                    is_breakdown: false,
+                    level: 'ad'
+                  });
+                }
+              }
+            }
+            
+            // Process breakdown insights
+            if (breakdownRes.ok) {
+              const breakdownJson = await breakdownRes.json();
+              if (!breakdownJson.error) {
+                const breakdownData = breakdownJson.data || [];
+                for (const insight of breakdownData) {
+                  adRows.push({
+                    ad_account_id: actId,
+                    campaign_id: campaignId,
+                    campaign_name: campaignName,
+                    adset_id: adsetId,
+                    adset_name: adsetName,
+                    ad_id: adId,
+                    ad_name: adName,
+                    date: insight.date_start,
+                    publisher_platform: insight.publisher_platform || null,
+                    platform_position: insight.platform_position || null,
+                    impression_device: insight.impression_device || null,
+                    reach: parseInt(insight.reach || 0),
+                    impressions: parseInt(insight.impressions || 0),
+                    frequency: parseFloat(insight.frequency || 0),
+                    spend: parseFloat(insight.spend || 0),
+                    clicks: parseInt(insight.clicks || 0),
+                    cpc: parseFloat(insight.cpc || 0),
+                    cpm: parseFloat(insight.cpm || 0),
+                    ctr: parseFloat(insight.ctr || 0),
+                    cpp: parseFloat(insight.cpp || 0),
+                    is_breakdown: true,
+                    level: 'ad'
+                  });
+                }
+              }
+            }
+            
+            return adRows;
+          } catch (err) {
+            console.warn(`Failed to fetch insights for ad ${adId}:`, err.message);
+            return [];
+          }
+        });
+        
+        // Wait for batch to complete and collect rows
+        const batchResults = await Promise.all(batchPromises);
+        for (const adRows of batchResults) {
+          rows.push(...adRows);
+        }
+      }
+    } catch (e) {
+      console.warn("Insights loop error", actId, e.message);
+    }
+  }
+
+  return { 
+    rows, 
+    adAccountIds, 
+    referrerDomain: config.eventSourceUrl, 
+    accountKey,
+    sinceStr,
+    untilStr
+  };
 }
 
 // pull the FRM-xxxxx back out of the config scope
