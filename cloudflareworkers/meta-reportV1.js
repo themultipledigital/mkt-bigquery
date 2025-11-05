@@ -194,15 +194,20 @@ export default {
       return new Response("No matching accounts found in environment variables.", { status: 400 });
     }
   
-    let newRows = [];
-    let bqObjects = [];
-    resultMessages.push(`Found ${allAccountIds.length} accounts to process: ${allAccountIds.join(', ')}`);
-  
-    for (const accountId of allAccountIds) {
+  let newRows = [];
+  let bqObjects = [];
+  let accountStatuses = []; // Track success/failure per account
+  resultMessages.push(`Found ${allAccountIds.length} accounts to process: ${allAccountIds.join(', ')}`);
+
+  for (const accountId of allAccountIds) {
+    try {
       const fbToken = env[`${accountId}-FB_ACCESS_TOKEN`];
       const rawAcctId = env[`${accountId}-FB_ACCOUNT_ID`];
-      if (!fbToken || !rawAcctId) continue;
-  
+      if (!fbToken || !rawAcctId) {
+        accountStatuses.push({ accountId, status: 'FAILED', error: 'Missing credentials' });
+        continue;
+      }
+
       const acct = rawAcctId.startsWith("act_") ? rawAcctId : `act_${rawAcctId}`;
       const accountRows = [];
       resultMessages.push(`Processing account ${accountId} (${acct}) in ${mode} mode`);
@@ -254,17 +259,17 @@ export default {
                   `&action_attribution_windows=${encodeURIComponent(JSON.stringify(ACTION_WINDOWS))}` +
                   `&limit=9999&access_token=${encodeURIComponent(fbToken)}`;
                 
-                const weekRes = await fetch(weekURL);
-                const weekData = await weekRes.json();
-                
-                if (weekData.error) {
-                  const errDetails = JSON.stringify(weekData.error, null, 2);
-                  console.log(`FB error for ${accountId} (${iso(weekStart)} to ${iso(weekUntil)}): ${errDetails}`);
-                  resultMessages.push(`FB API Error for ${accountId}: ${weekData.error.message || 'Unknown error'}`);
-                  resultMessages.push(`Error details: ${errDetails}`);
-                  resultMessages.push(`Failed date range: ${iso(weekStart)} to ${iso(weekUntil)}`);
-                  return new Response(`FB error for ${accountId}: ${weekData.error.message}\n\nFull error:\n${errDetails}\n\nDate range: ${iso(weekStart)} to ${iso(weekUntil)}`, { status: 500 });
-                }
+            const weekRes = await fetch(weekURL);
+            const weekData = await weekRes.json();
+            
+            if (weekData.error) {
+              const errDetails = JSON.stringify(weekData.error, null, 2);
+              console.log(`FB error for ${accountId} (${iso(weekStart)} to ${iso(weekUntil)}): ${errDetails}`);
+              resultMessages.push(`FB API Error for ${accountId}: ${weekData.error.message || 'Unknown error'}`);
+              resultMessages.push(`Error details: ${errDetails}`);
+              resultMessages.push(`Failed date range: ${iso(weekStart)} to ${iso(weekUntil)}`);
+              throw new Error(`${weekData.error.message || 'Unknown error'} (${weekData.error.type || 'Error'})`);
+            }
                 
                 const weekRows = weekData.data ?? [];
                 accountRows.push(...weekRows);
@@ -272,15 +277,15 @@ export default {
                 
                 weekStart = weekEnd;
               }
-            } else if (fbData.error) {
-              // Other errors (not timeout)
-              const errDetails = JSON.stringify(fbData.error, null, 2);
-              console.log(`FB error for ${accountId} (${iso(cursor)} to ${iso(until)}): ${errDetails}`);
-              resultMessages.push(`FB API Error for ${accountId}: ${fbData.error.message || 'Unknown error'}`);
-              resultMessages.push(`Error details: ${errDetails}`);
-              resultMessages.push(`Failed date range: ${iso(cursor)} to ${iso(until)}`);
-              return new Response(`FB error for ${accountId}: ${fbData.error.message}\n\nFull error:\n${errDetails}\n\nDate range: ${iso(cursor)} to ${iso(until)}`, { status: 500 });
-            } else {
+          } else if (fbData.error) {
+            // Other errors (not timeout)
+            const errDetails = JSON.stringify(fbData.error, null, 2);
+            console.log(`FB error for ${accountId} (${iso(cursor)} to ${iso(until)}): ${errDetails}`);
+            resultMessages.push(`FB API Error for ${accountId}: ${fbData.error.message || 'Unknown error'}`);
+            resultMessages.push(`Error details: ${errDetails}`);
+            resultMessages.push(`Failed date range: ${iso(cursor)} to ${iso(until)}`);
+            throw new Error(`${fbData.error.message || 'Unknown error'} (${fbData.error.type || 'Error'})`);
+          } else {
               // Success
               const monthRows = fbData.data ?? [];
               accountRows.push(...monthRows);
@@ -339,7 +344,7 @@ export default {
                 resultMessages.push(`FB API Error for ${accountId}: ${weekData.error.message || 'Unknown error'}`);
                 resultMessages.push(`Error details: ${errDetails}`);
                 resultMessages.push(`Failed date range: ${iso(weekStart)} to ${iso(weekUntil)}`);
-                return new Response(`FB error for ${accountId}: ${weekData.error.message}\n\nFull error:\n${errDetails}\n\nDate range: ${iso(weekStart)} to ${iso(weekUntil)}`, { status: 500 });
+                throw new Error(`${weekData.error.message || 'Unknown error'} (${weekData.error.type || 'Error'})`);
               }
               
               const weekRows = weekData.data ?? [];
@@ -348,15 +353,15 @@ export default {
               
               weekStart = weekEnd;
             }
-          } else if (fbData.error) {
-            // Other errors (not timeout)
-            const errDetails = JSON.stringify(fbData.error, null, 2);
-            console.log(`FB error for ${accountId} (${iso(start)} to ${iso(end)}): ${errDetails}`);
-            resultMessages.push(`FB API Error for ${accountId}: ${fbData.error.message || 'Unknown error'}`);
-            resultMessages.push(`Error details: ${errDetails}`);
-            resultMessages.push(`Failed date range: ${iso(start)} to ${iso(end)}`);
-            return new Response(`FB error for ${accountId}: ${fbData.error.message}\n\nFull error:\n${errDetails}\n\nDate range: ${iso(start)} to ${iso(end)}`, { status: 500 });
-          } else {
+        } else if (fbData.error) {
+          // Other errors (not timeout)
+          const errDetails = JSON.stringify(fbData.error, null, 2);
+          console.log(`FB error for ${accountId} (${iso(start)} to ${iso(end)}): ${errDetails}`);
+          resultMessages.push(`FB API Error for ${accountId}: ${fbData.error.message || 'Unknown error'}`);
+          resultMessages.push(`Error details: ${errDetails}`);
+          resultMessages.push(`Failed date range: ${iso(start)} to ${iso(end)}`);
+          throw new Error(`${fbData.error.message || 'Unknown error'} (${fbData.error.type || 'Error'})`);
+        } else {
             // Success
             const monthRows = fbData.data ?? [];
             accountRows.push(...monthRows);
@@ -377,18 +382,18 @@ export default {
           `&action_attribution_windows=${encodeURIComponent(JSON.stringify(ACTION_WINDOWS))}` +
           `&limit=99999&access_token=${encodeURIComponent(fbToken)}`;
   
-        const fbRes = await fetch(fbURL);
-        const { data = [], error } = await fbRes.json();
-        if (error) {
-          const errDetails = JSON.stringify(error, null, 2);
-          console.log(`FB error for ${accountId} (daily mode, ${iso(since)} to ${iso(nowDate)}): ${errDetails}`);
-          resultMessages.push(`FB API Error for ${accountId}: ${error.message || 'Unknown error'}`);
-          resultMessages.push(`Error details: ${errDetails}`);
-          resultMessages.push(`Failed date range: ${iso(since)} to ${iso(nowDate)}`);
-          return new Response(`FB error for ${accountId}: ${error.message}\n\nFull error:\n${errDetails}\n\nDate range: ${iso(since)} to ${iso(nowDate)}`, { status: 500 });
-        }
-        accountRows.push(...data);
-        resultMessages.push(`Fetched ${data.length} rows for ${accountId} (daily mode)`);
+      const fbRes = await fetch(fbURL);
+      const { data = [], error } = await fbRes.json();
+      if (error) {
+        const errDetails = JSON.stringify(error, null, 2);
+        console.log(`FB error for ${accountId} (daily mode, ${iso(since)} to ${iso(nowDate)}): ${errDetails}`);
+        resultMessages.push(`FB API Error for ${accountId}: ${error.message || 'Unknown error'}`);
+        resultMessages.push(`Error details: ${errDetails}`);
+        resultMessages.push(`Failed date range: ${iso(since)} to ${iso(nowDate)}`);
+        throw new Error(`${error.message || 'Unknown error'} (${error.type || 'Error'})`);
+      }
+      accountRows.push(...data);
+      resultMessages.push(`Fetched ${data.length} rows for ${accountId} (daily mode)`);
       }
   
       const flattenedRows = accountRows.map(r => flat(accountId, r));
@@ -436,12 +441,31 @@ export default {
           goals_breakdown: breakdown
         };
       });
-      bqObjects.push(...monthBqObjects);
-  
-      resultMessages.push(`Account ${accountId} total: ${accountRows.length} raw rows → ${flattenedRows.length} flattened rows`);
-    }
+    bqObjects.push(...monthBqObjects);
+
+    resultMessages.push(`Account ${accountId} total: ${accountRows.length} raw rows → ${flattenedRows.length} flattened rows`);
     
-    resultMessages.push(`Total rows collected: ${newRows.length}`);
+    // Track success status
+    accountStatuses.push({ 
+      accountId, 
+      status: 'SUCCESS', 
+      rowCount: accountRows.length 
+    });
+    
+  } catch (err) {
+    // Log error and continue with next account
+    const errorMsg = err.message || 'Unknown error';
+    console.error(`Error processing account ${accountId}:`, errorMsg);
+    accountStatuses.push({ 
+      accountId, 
+      status: 'FAILED', 
+      error: errorMsg 
+    });
+    errorMessages.push(`${accountId}: ${errorMsg}`);
+  }
+}
+  
+  resultMessages.push(`Total rows collected: ${newRows.length}`);
   
     if (destination === "bq" || destination === "both") {
       try {
@@ -714,20 +738,39 @@ export default {
       }
     }
   
-    // Combine all messages for response
-    const allMessages = [...resultMessages];
-    if (errorMessages.length > 0) {
-      allMessages.push("\n--- ERRORS ---");
-      allMessages.push(...errorMessages);
+  // Build account status summary
+  const statusSummary = ["=== ACCOUNT STATUS SUMMARY ==="];
+  for (const acc of accountStatuses) {
+    if (acc.status === 'SUCCESS') {
+      statusSummary.push(`${acc.accountId}: SUCCESS (${acc.rowCount} rows processed)`);
+    } else {
+      statusSummary.push(`${acc.accountId}: FAILED - ${acc.error}`);
     }
+  }
+  statusSummary.push(""); // Blank line
+
+  // Combine all messages for response
+  const allMessages = [
+    ...statusSummary,
+    "--- Processing Details ---",
+    ...resultMessages
+  ];
   
-    const responseText = allMessages.join("\n");
-    const status = errorMessages.length > 0 ? 500 : 200;
+  if (errorMessages.length > 0) {
+    allMessages.push("\n--- ERRORS ---");
+    allMessages.push(...errorMessages);
+  }
+
+  const responseText = allMessages.join("\n");
   
-    return new Response(responseText, {
-      status: status,
-      headers: { "content-type": "text/plain" }
-    });
+  // Return 200 if at least one account succeeded, 500 only if all failed
+  const successCount = accountStatuses.filter(a => a.status === 'SUCCESS').length;
+  const status = successCount > 0 ? 200 : 500;
+
+  return new Response(responseText, {
+    status: status,
+    headers: { "content-type": "text/plain" }
+  });
   }
   
   // ---------- BigQuery helpers ----------
