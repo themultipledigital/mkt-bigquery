@@ -48,9 +48,9 @@ const API_CONFIGS = {
     accessToken: "EAAWZCxLUOUfoBPp7DgfFU2cDlE0HAe9GibRV8OZBGOGTLpSFx1V4wGIyPPfJmo6a58I7SZAILcElfrMMI1iVZCgdFqBeWmVfBb4OCznV1VnS6licZC2ZCoukWtnABfshSjLL6xQNquGDm9Sl9jZCG00UXe144qttn8tUKlaXLRxSEndoZAaZByQ45Ayv15AmTyyHjSVYLwzOxTWuH",
     eventSourceUrl: "https://montaukfishingcharter.net"
   },
-  "FRM-145669": {
-    accessToken: "EAASKiJwmDaIBPf1H8z1kwNsHVEqsd50n9ZCt4kJMpES8itTaZAMU0ra6HvTTL0noS8uBmjhG08smxRKAkwaZCl3Um85eYMpWx4E2TkvTgSHFu8LLQFULf3xbbgK12CPmyctam1WCnpbUOeK4ouorEAuasC2EQZA0cyFdKmZAM5X7tLIuZCdanFB9yHsytd",
-    eventSourceUrl: "https://suntechy.com"
+  "FRM-SPAIN": {
+    accessToken: "EAAKZB4qJZB2rABP1PIfN6PjhOjM7AWOQZCdpa04TCa5wzSbDDwhXJLlCAIjYUSyHswjmIpEnob3v4OtYFwUQtT9lNf7wn2VocZA0IYYohXT3ZAgb9MGiYB3uq832f9wZBqvUPjrFnZC3V8QsHIJnQsxnFJh1FBjU6xYI1PJApvetAijT6c39EUu7RvDPHZBnCuDe",
+    eventSourceUrl: "https://platincasino.com"
   },
   "FRM-155237": {
     accessToken: "EAAG8t9JTvzMBPhvXLXI6znTIZCFRvoIiNjfGaWbbdL2ZCgqmDzfMKUNB82pN8dyhZBNKeWePN1zb2MTMVTikW0TbBHdvIOcXSnzoNm0PQvzIRatSGMfqsZAVZCtM5SpEN83dFTbhhZAN4KOE2ronVcd9f3G0HRAgZAW5ZAvifqHtwN5hkXoQQzmRaZA0mxO5tQIZCbhPM7leyx6BSE",
@@ -312,6 +312,11 @@ async function processAccount(accountId, config, mode, dest, schemaMigrate, env,
         {name:"source_adset_id", type:"STRING", mode:"NULLABLE"},
         {name:"adset_configured_status", type:"STRING", mode:"NULLABLE"},
         {name:"adset_effective_status", type:"STRING", mode:"NULLABLE"},
+        // Ad fields
+        {name:"ad_id", type:"STRING", mode:"NULLABLE"},
+        {name:"ad_name", type:"STRING", mode:"NULLABLE"},
+        {name:"ad_configured_status", type:"STRING", mode:"NULLABLE"},
+        {name:"ad_effective_status", type:"STRING", mode:"NULLABLE"},
         // Targeting fields (flattened)
         {name:"age_min", type:"INTEGER", mode:"NULLABLE"},
         {name:"age_max", type:"INTEGER", mode:"NULLABLE"},
@@ -350,12 +355,11 @@ async function processAccount(accountId, config, mode, dest, schemaMigrate, env,
       const bqToken = await googleAccessToken(env, ["https://www.googleapis.com/auth/bigquery"]);
 
       // Ensure target table exists (partition on retrieved_at)
-      await ensureBQTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, META_TARGETING_SCHEMA, "retrieved_at", ["ad_account_id","adset_id"]);
+      await ensureBQTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, META_TARGETING_SCHEMA, "retrieved_at", ["ad_account_id","adset_id","ad_id"]);
       
       // Add missing columns to existing table (schema migration)
-      if (schemaMigrate) {
-        await bqAddMissingColumns(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, META_TARGETING_SCHEMA).catch(()=>{});
-      }
+      // Always run schema migration to ensure all columns exist before merge
+      await bqAddMissingColumns(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, META_TARGETING_SCHEMA);
       
       // Remove any expiration on permanent table
       await bqSetNoExpiry(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, tableId, /*logs*/null).catch(()=>{});
@@ -389,6 +393,11 @@ async function processAccount(accountId, config, mode, dest, schemaMigrate, env,
           source_adset_id: r.source_adset_id,
           adset_configured_status: r.adset_configured_status || r.adset_status || null,
           adset_effective_status: r.adset_effective_status || null,
+          // Ad fields
+          ad_id: r.ad_id || null,
+          ad_name: r.ad_name || null,
+          ad_configured_status: r.ad_configured_status || null,
+          ad_effective_status: r.ad_effective_status || null,
           // Flattened targeting fields
           age_min: targeting.age_min || null,
           age_max: targeting.age_max || null,
@@ -434,11 +443,12 @@ async function processAccount(accountId, config, mode, dest, schemaMigrate, env,
         dataset: BQ_DATASET,
         table: tableId,
         stage: stageId,
-        keyFields: ["account_id","ad_account_id","adset_id"],
+        keyFields: ["account_id","ad_account_id","adset_id","ad_id"],
         nonKeyFields: [
           "referrer_domain","campaign_id","campaign_name","campaign_objective","campaign_primary_attribution",
           "campaign_configured_status","campaign_effective_status",
           "adset_name","source_adset_id","adset_configured_status","adset_effective_status",
+          "ad_name","ad_configured_status","ad_effective_status",
           "age_min","age_max","geo_countries","geo_location_types",
           "custom_audiences","excluded_custom_audiences",
           "publisher_platforms","facebook_positions","instagram_positions",
@@ -457,7 +467,7 @@ async function processAccount(accountId, config, mode, dest, schemaMigrate, env,
       // Cleanup stage (best-effort)
       await bqDropTable(bqToken, { ...env, BQ_DATASET: BQ_DATASET }, stageId).catch(()=>{});
 
-      return `Loaded ${objects.length} adsets to BigQuery ${BQ_PROJECT_ID}.${BQ_DATASET}.meta_targeting`;
+      return `Loaded ${objects.length} ads to BigQuery ${BQ_PROJECT_ID}.${BQ_DATASET}.meta_targeting`;
     }
 
     // === NEW: health mode ===
@@ -859,25 +869,60 @@ async function getTargetingData(config, accountKey) {
             adsNextUrl = adsJson.paging?.next || null;
           }
 
-          rows.push({
-            ad_account_id: actId,
-            campaign_id: campaignId,
-            campaign_name: campaignName,
-            campaign_objective: campaignObjective,
-            campaign_primary_attribution: campaignPrimaryAttribution,
-            campaign_status: campaignStatus,
-            campaign_configured_status: campaignConfiguredStatus,
-            campaign_effective_status: campaignEffectiveStatus,
-            adset_id: adset.id || "",
-            adset_name: adset.name || "",
-            source_adset_id: adset.source_adset_id || "",
-            adset_status: adset.status || "",
-            adset_configured_status: adset.configured_status || "",
-            adset_effective_status: adset.effective_status || "",
-            targeting: adset.targeting || null,
-            targetingsentencelines: adset.targetingsentencelines || null,
-            ads_json: ads.length > 0 ? JSON.stringify(ads) : null
-          });
+          // Create one row per ad (instead of one row per adset)
+          for (const ad of ads) {
+            rows.push({
+              ad_account_id: actId,
+              campaign_id: campaignId,
+              campaign_name: campaignName,
+              campaign_objective: campaignObjective,
+              campaign_primary_attribution: campaignPrimaryAttribution,
+              campaign_status: campaignStatus,
+              campaign_configured_status: campaignConfiguredStatus,
+              campaign_effective_status: campaignEffectiveStatus,
+              adset_id: adset.id || "",
+              adset_name: adset.name || "",
+              source_adset_id: adset.source_adset_id || "",
+              adset_status: adset.status || "",
+              adset_configured_status: adset.configured_status || "",
+              adset_effective_status: adset.effective_status || "",
+              // Ad fields
+              ad_id: ad.id || "",
+              ad_name: ad.name || "",
+              ad_configured_status: ad.configured_status || "",
+              ad_effective_status: ad.effective_status || "",
+              targeting: adset.targeting || null,
+              targetingsentencelines: adset.targetingsentencelines || null,
+              ads_json: JSON.stringify([ad]) // Store single ad as JSON array
+            });
+          }
+          
+          // If no ads, still create one row for the adset (with NULL ad fields)
+          if (ads.length === 0) {
+            rows.push({
+              ad_account_id: actId,
+              campaign_id: campaignId,
+              campaign_name: campaignName,
+              campaign_objective: campaignObjective,
+              campaign_primary_attribution: campaignPrimaryAttribution,
+              campaign_status: campaignStatus,
+              campaign_configured_status: campaignConfiguredStatus,
+              campaign_effective_status: campaignEffectiveStatus,
+              adset_id: adset.id || "",
+              adset_name: adset.name || "",
+              source_adset_id: adset.source_adset_id || "",
+              adset_status: adset.status || "",
+              adset_configured_status: adset.configured_status || "",
+              adset_effective_status: adset.effective_status || "",
+              ad_id: null,
+              ad_name: null,
+              ad_configured_status: null,
+              ad_effective_status: null,
+              targeting: adset.targeting || null,
+              targetingsentencelines: adset.targetingsentencelines || null,
+              ads_json: null
+            });
+          }
         }
       }
     } catch (e) {
@@ -1305,11 +1350,7 @@ async function bqAddMissingColumns(token, env, tableId, desiredSchema) {
       ALTER TABLE \`${BQ_PROJECT_ID}.${BQ_DATASET}.${tableId}\`
       ADD COLUMN IF NOT EXISTS ${field.name} ${field.type} ${modeStr}
     `.trim();
-    try {
-      await bqQuery(token, env, alterSql, /*logs*/null);
-    } catch (e) {
-      console.warn(`Failed to add column ${field.name}:`, e.message);
-    }
+    await bqQuery(token, env, alterSql, /*logs*/null);
   }
 }
 async function bqSetNoExpiry(token, env, tableId, logs) {
