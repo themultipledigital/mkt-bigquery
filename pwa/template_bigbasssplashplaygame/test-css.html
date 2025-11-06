@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Test</title>
+    <link rel="stylesheet" href="./static/css/light.css">
+    <link rel="stylesheet" href="./static/css/dark.css" media="(prefers-color-scheme: dark)">
+    <style>
+        body { margin: 20px; font-family: Arial; }
+        .test-box { padding: 20px; border: 2px solid #000; margin: 10px 0; }
+        .success { background: #d4edda; border-color: #28a745; }
+        .error { background: #f8d7da; border-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>CSS Loading Test</h1>
+    <div class="test-box">
+        <h2>Check 1: CSS Files Loaded</h2>
+        <p id="css-status">Checking...</p>
+    </div>
+    <div class="test-box">
+        <h2>Check 2: CSS Variables</h2>
+        <p id="css-vars">Checking...</p>
+    </div>
+    <div class="test-box">
+        <h2>Check 3: Original Page Structure</h2>
+        <p><a href="./index.html">Go to main page</a></p>
+    </div>
+    
+    <script>
+        // Check if CSS is loaded
+        const lightCSS = document.querySelector('link[href*="light.css"]');
+        const darkCSS = document.querySelector('link[href*="dark.css"]');
+        
+        let cssLoaded = false;
+        if (lightCSS && darkCSS) {
+            lightCSS.onload = () => {
+                darkCSS.onload = () => {
+                    cssLoaded = true;
+                    document.getElementById('css-status').innerHTML = 
+                        '<span style="color: green;">✓ CSS files loaded</span>';
+                    checkCSSVars();
+                };
+            };
+        }
+        
+        setTimeout(() => {
+            if (!cssLoaded) {
+                document.getElementById('css-status').innerHTML = 
+                    '<span style="color: red;">✗ CSS files may not have loaded</span>';
+            }
+        }, 2000);
+        
+        function checkCSSVars() {
+            const root = getComputedStyle(document.documentElement);
+            const vars = [
+                '--background',
+                '--name',
+                '--subtitle',
+                '--text'
+            ];
+            
+            let found = 0;
+            vars.forEach(v => {
+                const value = root.getPropertyValue(v);
+                if (value) found++;
+            });
+            
+            if (found === vars.length) {
+                document.getElementById('css-vars').innerHTML = 
+                    '<span style="color: green;">✓ CSS variables loaded (' + found + '/' + vars.length + ')</span>';
+            } else {
+                document.getElementById('css-vars').innerHTML = 
+                    '<span style="color: orange;">⚠ Some CSS variables missing (' + found + '/' + vars.length + ')</span>';
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -14,7 +14,7 @@ import json
 
 
 # Configuration
-CREDENTIALS_PATH = r"C:\Users\SeanGatt\OneDrive - The Multiple Group\Documents\Cursor\bigquerytables\level-hope-462409-a8-ecd41c3d9d7e.json"
+CREDENTIALS_PATH = r"C:\Users\SeanGatt\OneDrive - The Multiple Group\Documents\Cursor\mkt-bigquery\bigquerytables\level-hope-462409-a8-ecd41c3d9d7e.json"
 PROJECT_ID = "level-hope-462409-a8"
 OUTPUT_FILE = "bigquery_documentation.md"
 

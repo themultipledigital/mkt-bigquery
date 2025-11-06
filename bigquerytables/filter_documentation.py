@@ -8,16 +8,14 @@ import re
 from typing import List, Dict, Set
 
 # Configuration
-INPUT_FILE = "bigquery_documentation.md"
-OUTPUT_FILE = "bigquery_documentation_filtered.md"
+INPUT_FILE = "bigquerytables/bigquery_documentation.md"
+OUTPUT_FILE = "bigquerytables/bigquery_documentation_3tables.md"
 
 # Target tables/views to keep (format: "dataset.table_name")
 TARGET_TABLES = {
-    "tradedesk.ID42",
-    "mkt_channels.exo_stats",
-    "mkt_channels.meta_stats",
-    "mkt_channels.ts_stats_siteid",
-    "mkt_channels.tj_campaign_stats",
+    "mkt_channels.tradedesk_stats_custom",
+    "mkt_channels.pops_stats_custom",
+    "mkt_channels.meta_stats_custom",
 }
 
 

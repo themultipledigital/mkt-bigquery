@@ -14,7 +14,7 @@ from typing import List, Dict
 # Configuration
 CREDENTIALS_PATH = r"C:\Users\SeanGatt\OneDrive - The Multiple Group\Documents\Cursor\mkt-bigquery\bigquerytables\level-hope-462409-a8-ecd41c3d9d7e.json"
 PROJECT_ID = "level-hope-462409-a8"
-TARGET_DATASETS = ["mkt_channels", "reports", "tradedesk"]
+TARGET_DATASETS = ["meta", "pops", "tradedesk_custom"]
 OUTPUT_DIR = "bigqueryviews"
 
 

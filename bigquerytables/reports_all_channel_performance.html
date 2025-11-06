@@ -1,22 +1,4 @@
-"""
-Convert BigQuery Documentation Markdown to HTML
-
-This script converts the filtered BigQuery documentation from Markdown to a 
-styled, professional HTML document with syntax highlighting and navigation.
-"""
-
-import re
-import markdown
-from markdown.extensions.tables import TableExtension
-from markdown.extensions.fenced_code import FencedCodeExtension
-from markdown.extensions.codehilite import CodeHiliteExtension
-
-# Configuration
-INPUT_FILE = "bigquerytables/reports_all_channel_performance.md"
-OUTPUT_FILE = "bigquerytables/reports_all_channel_performance.html"
-
-# HTML Template
-HTML_TEMPLATE = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,54 +8,54 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
     <style>
-        * {{
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }}
+        }
         
-        body {{
+        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f5f7fa;
             padding: 20px;
-        }}
+        }
         
-        .container {{
+        .container {
             max-width: 1200px;
             margin: 0 auto;
             background-color: white;
             padding: 40px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             border-radius: 8px;
-        }}
+        }
         
-        h1 {{
+        h1 {
             color: #1a73e8;
             border-bottom: 3px solid #1a73e8;
             padding-bottom: 10px;
             margin-bottom: 20px;
             font-size: 2.5em;
-        }}
+        }
         
-        h2 {{
+        h2 {
             color: #1967d2;
             margin-top: 40px;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #e8eaed;
             font-size: 2em;
-        }}
+        }
         
-        h3 {{
+        h3 {
             color: #174ea6;
             margin-top: 30px;
             margin-bottom: 15px;
             font-size: 1.5em;
-        }}
+        }
         
-        h4 {{
+        h4 {
             color: #185abc;
             margin-top: 25px;
             margin-bottom: 10px;
@@ -81,32 +63,32 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             padding: 10px;
             background-color: #f8f9fa;
             border-left: 4px solid #1a73e8;
-        }}
+        }
         
-        p {{
+        p {
             margin-bottom: 15px;
             line-height: 1.8;
-        }}
+        }
         
-        ul, ol {{
+        ul, ol {
             margin-left: 30px;
             margin-bottom: 15px;
-        }}
+        }
         
-        li {{
+        li {
             margin-bottom: 8px;
-        }}
+        }
         
-        code {{
+        code {
             background-color: #f1f3f4;
             padding: 2px 6px;
             border-radius: 3px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
             color: #d01884;
-        }}
+        }
         
-        pre {{
+        pre {
             background-color: #282c34;
             color: #abb2bf;
             padding: 20px;
@@ -114,158 +96,158 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             overflow-x: auto;
             margin-bottom: 20px;
             border-left: 4px solid #1a73e8;
-        }}
+        }
         
-        pre code {{
+        pre code {
             background-color: transparent;
             padding: 0;
             color: inherit;
             font-size: 0.95em;
-        }}
+        }
         
-        table {{
+        table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }}
+        }
         
-        th {{
+        th {
             background-color: #1a73e8;
             color: white;
             padding: 12px;
             text-align: left;
             font-weight: 600;
-        }}
+        }
         
-        td {{
+        td {
             padding: 12px;
             border-bottom: 1px solid #e8eaed;
-        }}
+        }
         
-        tr:hover {{
+        tr:hover {
             background-color: #f8f9fa;
-        }}
+        }
         
-        tr:nth-child(even) {{
+        tr:nth-child(even) {
             background-color: #fafafa;
-        }}
+        }
         
-        .toc {{
+        .toc {
             background-color: #f8f9fa;
             padding: 20px;
             border-radius: 6px;
             margin-bottom: 30px;
             border-left: 4px solid #1a73e8;
-        }}
+        }
         
-        .toc ul {{
+        .toc ul {
             list-style-type: none;
             margin-left: 0;
-        }}
+        }
         
-        .toc li {{
+        .toc li {
             margin-bottom: 8px;
-        }}
+        }
         
-        .toc a {{
+        .toc a {
             color: #1a73e8;
             text-decoration: none;
             transition: color 0.2s;
-        }}
+        }
         
-        .toc a:hover {{
+        .toc a:hover {
             color: #174ea6;
             text-decoration: underline;
-        }}
+        }
         
-        .summary-box {{
+        .summary-box {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             border-radius: 8px;
             margin-bottom: 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }}
+        }
         
-        .summary-box h2 {{
+        .summary-box h2 {
             color: white;
             border-bottom: 2px solid rgba(255,255,255,0.3);
             margin-top: 0;
-        }}
+        }
         
-        .summary-box ul {{
+        .summary-box ul {
             list-style-type: none;
             margin-left: 0;
-        }}
+        }
         
-        .summary-box li {{
+        .summary-box li {
             padding: 5px 0;
             font-size: 1.1em;
-        }}
+        }
         
-        .summary-box h3 {{
+        .summary-box h3 {
             color: white;
             margin-top: 20px;
-        }}
+        }
         
-        .summary-box code {{
+        .summary-box code {
             background-color: rgba(255,255,255,0.2);
             color: #fff;
-        }}
+        }
         
-        .join-guide {{
+        .join-guide {
             background-color: #e8f5e9;
             padding: 20px;
             border-radius: 6px;
             margin-bottom: 20px;
             border-left: 4px solid #4caf50;
-        }}
+        }
         
-        .utm-box {{
+        .utm-box {
             background-color: #fff3e0;
             padding: 15px;
             border-radius: 6px;
             margin-top: 15px;
             border-left: 4px solid #ff9800;
-        }}
+        }
         
-        .utm-box strong {{
+        .utm-box strong {
             color: #e65100;
-        }}
+        }
         
-        details {{
+        details {
             margin-bottom: 20px;
             border: 1px solid #e8eaed;
             border-radius: 6px;
             padding: 15px;
             background-color: #fafafa;
-        }}
+        }
         
-        summary {{
+        summary {
             cursor: pointer;
             font-weight: 600;
             color: #1a73e8;
             padding: 5px;
-        }}
+        }
         
-        summary:hover {{
+        summary:hover {
             color: #174ea6;
-        }}
+        }
         
-        .note {{
+        .note {
             background-color: #e3f2fd;
             padding: 15px;
             border-radius: 6px;
             border-left: 4px solid #2196f3;
             margin: 20px 0;
-        }}
+        }
         
-        .note strong {{
+        .note strong {
             color: #1565c0;
-        }}
+        }
         
-        .back-to-top {{
+        .back-to-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
@@ -277,52 +259,180 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: background-color 0.3s;
             display: none;
-        }}
+        }
         
-        .back-to-top:hover {{
+        .back-to-top:hover {
             background-color: #174ea6;
-        }}
+        }
         
-        @media (max-width: 768px) {{
-            .container {{
+        @media (max-width: 768px) {
+            .container {
                 padding: 20px;
-            }}
+            }
             
-            h1 {{
+            h1 {
                 font-size: 2em;
-            }}
+            }
             
-            h2 {{
+            h2 {
                 font-size: 1.5em;
-            }}
+            }
             
-            table {{
+            table {
                 font-size: 0.9em;
-            }}
-        }}
+            }
+        }
         
         /* Syntax highlighting adjustments */
-        .hljs {{
+        .hljs {
             background-color: #282c34;
             padding: 20px;
             border-radius: 6px;
-        }}
+        }
         
-        .metadata {{
+        .metadata {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 6px;
             margin-bottom: 20px;
-        }}
+        }
         
-        .metadata strong {{
+        .metadata strong {
             color: #1a73e8;
-        }}
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        {content}
+        <h1 id="bigquery-project-documentation">BigQuery Project Documentation</h1>
+<p><em>Generated for <code>reports.all_channel_performance</code> - Unified channel performance across Meta, POPS and Trade Desk</em></p>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.reports.all_channel_performance</code></p>
+<p><strong>Description</strong>: Normalized view unifying performance and conversion metrics from Meta (<code>meta_stats_custom</code>), POPS (<code>pops_stats_custom</code>), and Trade Desk (<code>tradedesk_stats_custom</code>). Keeps the most granular available level per channel and harmonizes conversion terminology.</p>
+<ul>
+<li>Meta brand-specific totals use attribution 7d_click + 1d_view</li>
+<li>POPS S2S metrics are aggregated (no attribution window splits)</li>
+<li>Trade Desk includes split windows (1d_view, 7d_click)</li>
+<li>Spend currency: EUR (advertiser spend)</li>
+</ul>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date</td>
+<td>DATE</td>
+<td>NULLABLE</td>
+<td>Date of the metric row</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Source channel. Meta rows: 'meta'. Trade Desk rows: 'tradedesk'. POPS rows: one of 'ExoClick', 'TrafficJunky', or 'TrafficStars' as reported by source</td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Campaign identifier (NULL for Meta)</td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Campaign name (custom for Meta)</td>
+</tr>
+<tr>
+<td>adset_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Ad set / ad group identifier (TD mapped; NULL for Meta/POPS)</td>
+</tr>
+<tr>
+<td>adset_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Ad set / ad group name (TD mapped; Meta from adset, POPS NULL)</td>
+</tr>
+<tr>
+<td>ad_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Ad / creative identifier (TD mapped; NULL for Meta/POPS)</td>
+</tr>
+<tr>
+<td>ad_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Ad / creative name (TD mapped; Meta from ad)</td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>INT64</td>
+<td>NULLABLE</td>
+<td>Impressions delivered</td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>INT64</td>
+<td>NULLABLE</td>
+<td>Clicks recorded</td>
+</tr>
+<tr>
+<td>spend</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Advertiser spend (EUR)</td>
+</tr>
+<tr>
+<td>reg_conversions</td>
+<td>INT64</td>
+<td>NULLABLE</td>
+<td>Registration conversions (NULL for Meta)</td>
+</tr>
+<tr>
+<td>dep_conversions</td>
+<td>INT64</td>
+<td>NULLABLE</td>
+<td>Deposit conversions. Attribution: Meta=7d click + 1d view (brand total), TD=7d click + 1d view (summed), POPS=unspecified S2S deposits</td>
+</tr>
+<tr>
+<td>dep_value</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>Deposit value. Available for Meta (brand total) and POPS S2S; NULL for TD</td>
+</tr>
+<tr>
+<td>ftd_conversions</td>
+<td>INT64</td>
+<td>NULLABLE</td>
+<td>First-time deposit conversions. Attribution: Meta=7d click + 1d view (brand total), TD=7d click + 1d view (summed), POPS=unspecified S2S FTD</td>
+</tr>
+<tr>
+<td>ftd_value</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td>First-time deposit value. Available for POPS and Meta (brand total); NULL for TD</td>
+</tr>
+<tr>
+<td>source_view</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td>Lineage label for source view: 'meta' (Meta), 'pops' (POPS aggregate), 'tradedesk' (Trade Desk)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dependencies</strong>:
+- <code>level-hope-462409-a8.mkt_channels.meta_stats_custom</code>
+- <code>level-hope-462409-a8.mkt_channels.pops_stats_custom</code>
+- <code>level-hope-462409-a8.mkt_channels.tradedesk_stats_custom</code></p>
     </div>
     
     <a href="#" class="back-to-top" id="backToTop">↑ Back to Top</a>
@@ -332,138 +442,30 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         hljs.highlightAll();
         
         // Back to top button
-        window.addEventListener('scroll', function() {{
+        window.addEventListener('scroll', function() {
             var backToTop = document.getElementById('backToTop');
-            if (window.pageYOffset > 300) {{
+            if (window.pageYOffset > 300) {
                 backToTop.style.display = 'block';
-            }} else {{
+            } else {
                 backToTop.style.display = 'none';
-            }}
-        }});
+            }
+        });
         
-        document.getElementById('backToTop').addEventListener('click', function(e) {{
+        document.getElementById('backToTop').addEventListener('click', function(e) {
             e.preventDefault();
-            window.scrollTo({{ top: 0, behavior: 'smooth' }});
-        }});
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
         
         // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {{
-            anchor.addEventListener('click', function (e) {{
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {{
-                    target.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
-                }}
-            }});
-        }});
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
     </script>
 </body>
 </html>
-"""
-
-
-def preprocess_markdown(content):
-    """Preprocess markdown content for better HTML conversion."""
-    
-    # Wrap summary section in special div
-    content = re.sub(
-        r'(## Summary\n\n.*?)(?=\n##)',
-        r'<div class="summary-box">\n\n\1\n</div>\n',
-        content,
-        flags=re.DOTALL
-    )
-    
-    # Wrap join guide section
-    content = re.sub(
-        r'(## Join Keys and Hierarchies\n\n.*?)(?=\n## Table of Contents)',
-        r'<div class="join-guide">\n\n\1\n</div>\n',
-        content,
-        flags=re.DOTALL
-    )
-    
-    # Wrap UTM Parameters sections
-    content = re.sub(
-        r'(\*\*UTM Parameters:\*\*.*?```.*?```)',
-        r'<div class="utm-box">\n\n\1\n\n</div>',
-        content,
-        flags=re.DOTALL
-    )
-    
-    # Wrap Note sections
-    content = re.sub(
-        r'(\*\*Note:\*\* .*?)(\n\n)',
-        r'<div class="note">\n\n\1\n\n</div>\n\n',
-        content
-    )
-    
-    # Wrap metadata sections (Full Name, Rows, Size, Created, Modified, Location)
-    content = re.sub(
-        r'(\*\*Full Name:\*\*.*?\n\*\*Rows:\*\*.*?\n\*\*Size:\*\*.*?\n\*\*Created:\*\*.*?\n\*\*Modified:\*\*.*?)\n',
-        r'<div class="metadata">\n\n\1\n\n</div>\n',
-        content,
-        flags=re.DOTALL
-    )
-    
-    # Handle dataset metadata
-    content = re.sub(
-        r'(\*\*Location:\*\*.*?\n\*\*Created:\*\*.*?\n\*\*Modified:\*\*.*?\n\*\*Tables:\*\*.*?\n)',
-        r'<div class="metadata">\n\n\1\n\n</div>\n',
-        content,
-        flags=re.DOTALL
-    )
-    
-    return content
-
-
-def convert_markdown_to_html(markdown_file):
-    """Convert markdown file to HTML with styling."""
-    
-    print(f"Reading {markdown_file}...")
-    with open(markdown_file, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    print("Preprocessing markdown...")
-    content = preprocess_markdown(content)
-    
-    print("Converting to HTML...")
-    # Initialize markdown with extensions
-    md = markdown.Markdown(extensions=[
-        'tables',
-        'fenced_code',
-        'codehilite',
-        'toc',
-        'extra'
-    ])
-    
-    # Convert to HTML
-    html_content = md.convert(content)
-    
-    # Wrap in template
-    final_html = HTML_TEMPLATE.format(content=html_content)
-    
-    return final_html
-
-
-def main():
-    """Main execution function."""
-    print(f"Converting {INPUT_FILE} to HTML...")
-    
-    try:
-        html_output = convert_markdown_to_html(INPUT_FILE)
-        
-        print(f"Writing HTML to {OUTPUT_FILE}...")
-        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-            f.write(html_output)
-        
-        print(f"\n[SUCCESS] HTML documentation created: {OUTPUT_FILE}")
-        print(f"  Open this file in your web browser to view the styled documentation.")
-        
-    except FileNotFoundError:
-        print(f"ERROR: {INPUT_FILE} not found!")
-    except Exception as e:
-        print(f"ERROR: {e}")
-
-
-if __name__ == "__main__":
-    main()
-

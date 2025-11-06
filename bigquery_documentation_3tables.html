@@ -1,0 +1,4068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Documentation - level-hope-462409-a8</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        h1 {
+            color: #1a73e8;
+            border-bottom: 3px solid #1a73e8;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #1967d2;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8eaed;
+            font-size: 2em;
+        }
+        
+        h3 {
+            color: #174ea6;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        h4 {
+            color: #185abc;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.25em;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d01884;
+        }
+        
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.95em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background-color: #1a73e8;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .toc {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            color: #1a73e8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: #174ea6;
+            text-decoration: underline;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .summary-box h2 {
+            color: white;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-top: 0;
+        }
+        
+        .summary-box ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        
+        .summary-box li {
+            padding: 5px 0;
+            font-size: 1.1em;
+        }
+        
+        .summary-box h3 {
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .summary-box code {
+            background-color: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        
+        .join-guide {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .utm-box {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .utm-box strong {
+            color: #e65100;
+        }
+        
+        details {
+            margin-bottom: 20px;
+            border: 1px solid #e8eaed;
+            border-radius: 6px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #1a73e8;
+            padding: 5px;
+        }
+        
+        summary:hover {
+            color: #174ea6;
+        }
+        
+        .note {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+        
+        .note strong {
+            color: #1565c0;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+            display: none;
+        }
+        
+        .back-to-top:hover {
+            background-color: #174ea6;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        /* Syntax highlighting adjustments */
+        .hljs {
+            background-color: #282c34;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        
+        .metadata {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .metadata strong {
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="bigquery-project-documentation-level-hope-462409-a8-filtered">BigQuery Project Documentation: level-hope-462409-a8 (Filtered)</h1>
+<p><em>Generated automatically from BigQuery metadata - Filtered for specific tables</em></p>
+<div class="summary-box">
+
+## Summary
+
+- **Total Datasets**: 1
+- **Total Tables**: 0
+- **Total Views**: 3
+- **Total Objects**: 3
+
+</div>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#relationships-overview">Relationships Overview</a></li>
+<li><a href="#mkt-channels">mkt_channels</a></li>
+</ul>
+<h2 id="relationships-overview">Relationships Overview</h2>
+<p>This diagram shows how views depend on tables and other views:</p>
+<pre class="codehilite"><code class="language-mermaid">graph LR
+    N41[mkt_channels.meta_stats_custom]:::table
+    N42[mkt_channels.meta_stats_custom2]:::table
+    N44[mkt_channels.pops_stats_custom]:::table
+    N46[mkt_channels.tradedesk_stats_custom]:::table
+    N5 --&gt; N41
+    N35 --&gt; N41
+    N40 --&gt; N41
+    N35 --&gt; N42
+    N40 --&gt; N42
+    N2 --&gt; N44
+    N39 --&gt; N44
+    N35 --&gt; N44
+    N0 --&gt; N44
+    N45 --&gt; N44
+    N4 --&gt; N44
+    N3 --&gt; N44
+    N1 --&gt; N44
+    N47 --&gt; N44
+    N57 --&gt; N46
+    N60 --&gt; N46
+    N37 --&gt; N46
+    N41 --&gt; N48
+    N44 --&gt; N49
+    N41 --&gt; N50
+    N46 --&gt; N51
+    N41 --&gt; N55
+    N44 --&gt; N56
+    classDef view fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef table fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+</code></pre>
+
+<h2 id="mkt_channels">mkt_channels</h2>
+<p><strong>Location</strong>: US
+<strong>Created</strong>: 2025-09-12 08:37:10.475000+00:00
+<strong>Modified</strong>: 2025-09-12 08:37:10.475000+00:00</p>
+<p><strong>Tables</strong>: 10 | <strong>Views</strong>: 4</p>
+<h3 id="views-in-mkt_channels">Views in mkt_channels</h3>
+<h4 id="meta_stats_custom">meta_stats_custom</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.meta_stats_custom</code>
+<strong>Created</strong>: 2025-09-15 14:17:21.034000+00:00
+<strong>Modified</strong>: 2025-10-29 13:04:51.930000+00:00</p>
+<p><strong>Dependencies</strong>: This view depends on 3 object(s):
+- <code>1.0.0</code>
+- <code>level-hope-462409-a8.level-hope-462409-a8.mkt_channels</code>
+- <code>level-hope-462409-a8.mkt_channels.meta_stats</code></p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date_start</td>
+<td>DATE</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>account_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>adname_custom</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>adset_name_custom</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>campaign_name_custom</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>spend</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>reach</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>frequency</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>publisher_platform</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>platform_position</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>device_platform</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>brand</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_view_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_view_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_view_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_view_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_view_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_view_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_view_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_view_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_click_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_click_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_click_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_click_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_click_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_click_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_view_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_view_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_view_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_view_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_s2s_bp_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_s2s_pc_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_7d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_7d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_7d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_7d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_1d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchase_val_1d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_1d_view_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_1d_view_first_conversion_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_1d_view_first_conversion_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_1d_view_first_conversion_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_1d_view_first_conversion_s2s_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_1d_view_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_7d_click_1d_view_first_conversion_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_7d_click_1d_view_first_conversion_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_1d_click_1d_view_first_conversion_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>purchaseplus_val_1d_click_1d_view_first_conversion_s2s_brand_total</td>
+<td>NUMERIC</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary><b>View SQL Query</b> (click to expand)</summary>
+
+
+<pre class="codehilite"><code class="language-sql">-- Version: 1.0.0
+
+-- BigQuery transformation query for Meta Stats with custom campaign/adset/ad names
+
+-- Processes goals_breakdown array and calculates conversion metrics across attribution windows
+
+
+
+WITH base_with_brand AS (
+
+  SELECT 
+
+    *,
+
+    -- Brand extracted from campaign_name_custom
+
+    UPPER(SPLIT(
+
+      REGEXP_REPLACE(
+
+        CASE 
+
+          WHEN REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl REG&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;kw-sv excl reg lal&quot;) = true THEN &quot;kw_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+          WHEN REGEXP_CONTAINS(adset_name, r&quot;QT-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;QT-SV excl REG&quot;) = true THEN &quot;qt_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+          WHEN REGEXP_CONTAINS(adset_name, r&quot;AE-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;AE-SV excl REG&quot;) = true THEN &quot;ae_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+          WHEN REGEXP_CONTAINS(adset_name, r&quot;SA-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;SA-SV excl REG&quot;) = true THEN &quot;sa_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+          WHEN REGEXP_CONTAINS(adset_name, r&quot;SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;SV excl REG&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;sv excl reg lal&quot;) = true THEN &quot;gcc_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+          WHEN REGEXP_CONTAINS(adset_name, r&quot;avdplus-lal-postpurchase&quot;) = true AND REGEXP_CONTAINS(campaign_name, r&quot;de_pc_meta_conv_highest-volume-purchase&quot;) = true THEN &quot;test - de_pc_meta_conv_highest-volume-purchase&quot;
+
+          ELSE LOWER(TRIM(campaign_name)) 
+
+        END,
+
+        r&quot; - copy$&quot;,
+
+        &quot;&quot;
+
+      ), '_')[SAFE_OFFSET(1)]
+
+    ) AS brand
+
+  FROM `level-hope-462409-a8.mkt_channels.meta_stats`
+
+)
+
+
+
+SELECT 
+
+  date_start,
+
+  account_id,
+
+
+
+  -- Adname (Custom) = LOWER(TRIM(ad_name))
+
+  LOWER(TRIM(ad_name)) AS adname_custom,
+
+
+
+  -- Adset Name (Custom) with conditional logic
+
+  CASE 
+
+    WHEN REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl REG LAL&quot;) = true THEN &quot;lal-10perc-sitevisit_excl-reg&quot;
+
+    WHEN REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl Lead LAL&quot;) = true THEN &quot;lal-10perc-sitevisit_excl-reg&quot;
+
+    WHEN REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl REG&quot;) = true THEN &quot;sitevisit_excl-reg&quot;
+
+    WHEN REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl Lead&quot;) = true THEN &quot;sitevisit_excl-reg&quot;
+
+    ELSE LOWER(TRIM(adset_name)) 
+
+  END AS adset_name_custom,
+
+
+
+  -- Campaign Name (Custom) with conditional logic
+
+  REGEXP_REPLACE(
+
+    CASE 
+
+      WHEN REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;KW-SV excl REG&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;kw-sv excl reg lal&quot;) = true THEN &quot;kw_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+      WHEN REGEXP_CONTAINS(adset_name, r&quot;QT-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;QT-SV excl REG&quot;) = true THEN &quot;qt_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+      WHEN REGEXP_CONTAINS(adset_name, r&quot;AE-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;AE-SV excl REG&quot;) = true THEN &quot;ae_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+      WHEN REGEXP_CONTAINS(adset_name, r&quot;SA-SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;SA-SV excl REG&quot;) = true THEN &quot;sa_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+      WHEN REGEXP_CONTAINS(adset_name, r&quot;SV excl REG LAL&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;SV excl REG&quot;) = true OR REGEXP_CONTAINS(adset_name, r&quot;sv excl reg lal&quot;) = true THEN &quot;gcc_bp_meta_conv_highest-volume-purchaseattempt&quot;
+
+      WHEN REGEXP_CONTAINS(adset_name, r&quot;avdplus-lal-postpurchase&quot;) = true AND REGEXP_CONTAINS(campaign_name, r&quot;de_pc_meta_conv_highest-volume-purchase&quot;) = true THEN &quot;test - de_pc_meta_conv_highest-volume-purchase&quot;
+
+      ELSE LOWER(TRIM(campaign_name)) 
+
+    END,
+
+    r&quot; - copy$&quot;,
+
+    &quot;&quot;
+
+  ) AS campaign_name_custom,
+
+
+
+  spend,
+
+  impressions,
+
+  clicks,
+
+  reach,
+
+  frequency,
+
+
+
+  -- Platform/Position/Device columns
+
+  publisher_platform,
+
+  platform_position,
+
+  device_platform,
+
+
+
+  -- Brand (from CTE)
+
+  brand,
+
+
+
+  -- PurchasePlus S2S Total = SUM(conv_PurchasePlus-S2S-BP_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = 'total'
+
+  ) AS purchaseplus_s2s_total,
+
+
+
+  -- PurchasePlus Val. S2S Total = sum(convval_PurchasePlus-S2S-BP_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = 'total'
+
+  ) AS purchaseplus_val_s2s_total,
+
+
+
+  -- PurchasePlus 1d View S2S Total = sum(conv_PurchasePlus-S2S-BP_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '1d_view'
+
+  ) AS purchaseplus_1d_view_s2s_total,
+
+
+
+  -- PurchasePlus Val. 1d View S2S Total = sum(convval_PurchasePlus-S2S-BP_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '1d_view'
+
+  ) AS purchaseplus_val_1d_view_s2s_total,
+
+
+
+  -- PurchasePlus 1d Click S2S Total = sum(conv_PurchasePlus-S2S-BP_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '1d_click'
+
+  ) AS purchaseplus_1d_click_s2s_total,
+
+
+
+  -- PurchasePlus Val. 1d Click S2S Total = sum(convval_PurchasePlus-S2S-BP_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '1d_click'
+
+  ) AS purchaseplus_val_1d_click_s2s_total,
+
+
+
+  -- PurchasePlus 1d Click S2S BP = sum(conv_PurchasePlus-S2S-BP_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '1d_click'
+
+  ) AS purchaseplus_1d_click_s2s_bp_total,
+
+
+
+  -- PurchasePlus Val. 1d Click S2S BP = sum(convval_PurchasePlus-S2S-BP_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '1d_click'
+
+  ) AS purchaseplus_val_1d_click_s2s_bp_total,
+
+
+
+  -- PurchasePlus 1d Click S2S PC = sum(conv_PurchasePlus-S2S-PC_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '1d_click'
+
+  ) AS purchaseplus_1d_click_s2s_pc_total,
+
+
+
+  -- PurchasePlus Val. 1d Click S2S PC = sum(convval_PurchasePlus-S2S-PC_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '1d_click'
+
+  ) AS purchaseplus_val_1d_click_s2s_pc_total,
+
+
+
+  -- PurchasePlus 1d View S2S BP = sum(conv_PurchasePlus-S2S-BP_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '1d_view'
+
+  ) AS purchaseplus_1d_view_s2s_bp_total,
+
+
+
+  -- PurchasePlus Val. 1d View S2S BP = sum(convval_PurchasePlus-S2S-BP_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '1d_view'
+
+  ) AS purchaseplus_val_1d_view_s2s_bp_total,
+
+
+
+  -- PurchasePlus 1d View S2S PC = sum(conv_PurchasePlus-S2S-PC_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '1d_view'
+
+  ) AS purchaseplus_1d_view_s2s_pc_total,
+
+
+
+  -- PurchasePlus Val. 1d View S2S PC = sum(convval_PurchasePlus-S2S-PC_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '1d_view'
+
+  ) AS purchaseplus_val_1d_view_s2s_pc_total,
+
+
+
+  -- PurchasePlus 7d Click S2S Total = sum(conv_PurchasePlus-S2S-BP_7d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '7d_click'
+
+  ) AS purchaseplus_7d_click_s2s_total,
+
+
+
+  -- PurchasePlus Val. 7d Click S2S Total = sum(convval_PurchasePlus-S2S-BP_7d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '7d_click'
+
+  ) AS purchaseplus_val_7d_click_s2s_total,
+
+
+
+  -- PurchasePlus 7d Click S2S BP = sum(conv_PurchasePlus-S2S-BP_7d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '7d_click'
+
+  ) AS purchaseplus_7d_click_s2s_bp_total,
+
+
+
+  -- PurchasePlus Val. 7d Click S2S BP = sum(convval_PurchasePlus-S2S-BP_7d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '7d_click'
+
+  ) AS purchaseplus_val_7d_click_s2s_bp_total,
+
+
+
+  -- PurchasePlus 7d Click S2S PC = sum(conv_PurchasePlus-S2S-PC_7d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '7d_click'
+
+  ) AS purchaseplus_7d_click_s2s_pc_total,
+
+
+
+  -- PurchasePlus Val. 7d Click S2S PC = sum(convval_PurchasePlus-S2S-PC_7d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '7d_click'
+
+  ) AS purchaseplus_val_7d_click_s2s_pc_total,
+
+
+
+  -- PurchasePlus 7d View S2S Total = sum(conv_PurchasePlus-S2S-BP_7d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '7d_view'
+
+  ) AS purchaseplus_7d_view_s2s_total,
+
+
+
+  -- PurchasePlus Val. 7d View S2S Total = sum(convval_PurchasePlus-S2S-BP_7d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window = '7d_view'
+
+  ) AS purchaseplus_val_7d_view_s2s_total,
+
+
+
+  -- PurchasePlus 7d View S2S BP = sum(conv_PurchasePlus-S2S-BP_7d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '7d_view'
+
+  ) AS purchaseplus_7d_view_s2s_bp_total,
+
+
+
+  -- PurchasePlus Val. 7d View S2S BP = sum(convval_PurchasePlus-S2S-BP_7d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = '7d_view'
+
+  ) AS purchaseplus_val_7d_view_s2s_bp_total,
+
+
+
+  -- PurchasePlus 7d View S2S PC = sum(conv_PurchasePlus-S2S-PC_7d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '7d_view'
+
+  ) AS purchaseplus_7d_view_s2s_pc_total,
+
+
+
+  -- PurchasePlus Val. 7d View S2S PC = sum(convval_PurchasePlus-S2S-PC_7d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = '7d_view'
+
+  ) AS purchaseplus_val_7d_view_s2s_pc_total,
+
+
+
+  -- Purchase 1d Click S2S Total = sum(conv_Purchase-S2S-_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window = '1d_click'
+
+  ) AS purchase_1d_click_s2s_total,
+
+
+
+  -- Purchase Val. 1d Click S2S Total = sum(convval_Purchase-S2S-_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window = '1d_click'
+
+  ) AS purchase_val_1d_click_s2s_total,
+
+
+
+  -- Purchase 1d Click S2S BP = sum(conv_Purchase-S2S-BP_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window = '1d_click'
+
+  ) AS purchase_1d_click_s2s_bp_total,
+
+
+
+  -- Purchase Val. 1d Click S2S BP = sum(convval_Purchase-S2S-BP_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window = '1d_click'
+
+  ) AS purchase_val_1d_click_s2s_bp_total,
+
+
+
+  -- Purchase 1d Click S2S PC = sum(conv_Purchase-S2S-PC_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window = '1d_click'
+
+  ) AS purchase_1d_click_s2s_pc_total,
+
+
+
+  -- Purchase Val. 1d Click S2S PC = sum(convval_Purchase-S2S-PC_1d_click)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window = '1d_click'
+
+  ) AS purchase_val_1d_click_s2s_pc_total,
+
+
+
+  -- Purchase 1d View S2S Total = sum(conv_Purchase-S2S-_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window = '1d_view'
+
+  ) AS purchase_1d_view_s2s_total,
+
+
+
+  -- Purchase Val. 1d View S2S Total = sum(convval_Purchase-S2S-_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window = '1d_view'
+
+  ) AS purchase_val_1d_view_s2s_total,
+
+
+
+  -- Purchase 1d View S2S BP = sum(conv_Purchase-S2S-BP_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window = '1d_view'
+
+  ) AS purchase_1d_view_s2s_bp_total,
+
+
+
+  -- Purchase Val. 1d View S2S BP = sum(convval_Purchase-S2S-BP_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window = '1d_view'
+
+  ) AS purchase_val_1d_view_s2s_bp_total,
+
+
+
+  -- Purchase 1d View S2S PC = sum(conv_Purchase-S2S-PC_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window = '1d_view'
+
+  ) AS purchase_1d_view_s2s_pc_total,
+
+
+
+  -- Purchase Val. 1d View S2S PC = sum(convval_Purchase-S2S-PC_1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window = '1d_view'
+
+  ) AS purchase_val_1d_view_s2s_pc_total,
+
+
+
+  -- Purchase S2S PC Total = sum(conv_Purchase-S2S-PC_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window = 'total'
+
+  ) AS purchase_s2s_pc_total,
+
+
+
+  -- Purchase Val. S2S PC Total = sum(convval_Purchase-S2S-PC_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window = 'total'
+
+  ) AS purchase_val_s2s_pc_total,
+
+
+
+  -- Purchase S2S BP Total = sum(conv_Purchase-S2S-BP_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window = 'total'
+
+  ) AS purchase_s2s_bp_total,
+
+
+
+  -- Purchase Val. S2S BP Total = sum(convval_Purchase-S2S-BP_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window = 'total'
+
+  ) AS purchase_val_s2s_bp_total,
+
+
+
+  -- PurchasePlus S2S BP Total = sum(conv_PurchasePlus-S2S-BP_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = 'total'
+
+  ) AS purchaseplus_s2s_bp_total,
+
+
+
+  -- PurchasePlus Val. S2S BP Total = sum(convval_PurchasePlus-S2S-BP_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window = 'total'
+
+  ) AS purchaseplus_val_s2s_bp_total,
+
+
+
+  -- PurchasePlus S2S PC Total = sum(conv_PurchasePlus-S2S-PC_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = 'total'
+
+  ) AS purchaseplus_s2s_pc_total,
+
+
+
+  -- PurchasePlus Val. S2S PC Total = sum(convval_PurchasePlus-S2S-PC_total)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window = 'total'
+
+  ) AS purchaseplus_val_s2s_pc_total,
+
+
+
+  -- ==================== SUMMED ATTRIBUTION WINDOWS ====================
+
+
+
+  -- Purchase 7d Click + 1d View S2S Total = sum(conv_Purchase-S2S-_7d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window IN ('7d_click', '1d_view')
+
+  ) AS purchase_7d_click_1d_view_s2s_total,
+
+
+
+  -- Purchase Val. 7d Click + 1d View S2S Total = sum(convval_Purchase-S2S-_7d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window IN ('7d_click', '1d_view')
+
+  ) AS purchase_val_7d_click_1d_view_s2s_total,
+
+
+
+  -- Purchase 1d Click + 1d View S2S Total = sum(conv_Purchase-S2S-_1d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window IN ('1d_click', '1d_view')
+
+  ) AS purchase_1d_click_1d_view_s2s_total,
+
+
+
+  -- Purchase Val. 1d Click + 1d View S2S Total = sum(convval_Purchase-S2S-_1d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-') AND g.window IN ('1d_click', '1d_view')
+
+  ) AS purchase_val_1d_click_1d_view_s2s_total,
+
+
+
+  -- Purchase 7d Click + 1d View S2S Brand-Specific = sum(conv_Purchase-S2S-{BRAND}_7d_click + 1d_view)
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-LC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PS') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-RL') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-FF') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-SF') AND g.window IN ('7d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchase_7d_click_1d_view_s2s_brand_total,
+
+
+
+  -- Purchase Val. 7d Click + 1d View S2S Brand-Specific = sum(convval_Purchase-S2S-{BRAND}_7d_click + 1d_view)
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-LC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PS') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-RL') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-FF') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-SF') AND g.window IN ('7d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchase_val_7d_click_1d_view_s2s_brand_total,
+
+
+
+  -- Purchase 1d Click + 1d View S2S Brand-Specific = sum(conv_Purchase-S2S-{BRAND}_1d_click + 1d_view)
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-LC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PS') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-RL') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-FF') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-SF') AND g.window IN ('1d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchase_1d_click_1d_view_s2s_brand_total,
+
+
+
+  -- Purchase Val. 1d Click + 1d View S2S Brand-Specific = sum(convval_Purchase-S2S-{BRAND}_1d_click + 1d_view)
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-BP') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-LC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-PS') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-RL') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-FF') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'Purchase-S2S-SF') AND g.window IN ('1d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchase_val_1d_click_1d_view_s2s_brand_total,
+
+
+
+  -- PurchasePlus 7d Click + 1d View S2S Total = sum(conv_PurchasePlus-S2S-_7d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('7d_click', '1d_view')
+
+  ) AS purchaseplus_7d_click_1d_view_s2s_total,
+
+
+
+  -- PurchasePlus Val. 7d Click + 1d View S2S Total = sum(convval_PurchasePlus-S2S-_7d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('7d_click', '1d_view')
+
+  ) AS purchaseplus_val_7d_click_1d_view_s2s_total,
+
+
+
+  -- PurchasePlus 1d Click + 1d View S2S Total = sum(conv_PurchasePlus-S2S-_1d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('1d_click', '1d_view')
+
+  ) AS purchaseplus_1d_click_1d_view_s2s_total,
+
+
+
+  -- PurchasePlus Val. 1d Click + 1d View S2S Total = sum(convval_PurchasePlus-S2S-_1d_click + 1d_view)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('1d_click', '1d_view')
+
+  ) AS purchaseplus_val_1d_click_1d_view_s2s_total,
+
+
+
+  -- PurchasePlus 7d Click + 1d View First Conversion S2S Total = sum(conv_PurchasePlus-S2S-_7d_click_first_conversion + 1d_view_first_conversion)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion')
+
+  ) AS purchaseplus_7d_click_1d_view_first_conversion_s2s_total,
+
+
+
+  -- PurchasePlus Val. 7d Click + 1d View First Conversion S2S Total = sum(convval_PurchasePlus-S2S-_7d_click_first_conversion + 1d_view_first_conversion)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion')
+
+  ) AS purchaseplus_val_7d_click_1d_view_first_conversion_s2s_total,
+
+
+
+  -- PurchasePlus 1d Click + 1d View First Conversion S2S Total = sum(conv_PurchasePlus-S2S-_1d_click_first_conversion + 1d_view_first_conversion)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion')
+
+  ) AS purchaseplus_1d_click_1d_view_first_conversion_s2s_total,
+
+
+
+  -- PurchasePlus Val. 1d Click + 1d View First Conversion S2S Total = sum(convval_PurchasePlus-S2S-_1d_click_first_conversion + 1d_view_first_conversion)
+
+  (
+
+    SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC)
+
+    FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+    WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion')
+
+  ) AS purchaseplus_val_1d_click_1d_view_first_conversion_s2s_total,
+
+
+
+  -- purchaseplus_7d_click_1d_view_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('7d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchaseplus_7d_click_1d_view_s2s_brand_total,
+
+
+
+  -- purchaseplus_val_7d_click_1d_view_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('7d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('7d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchaseplus_val_7d_click_1d_view_s2s_brand_total,
+
+
+
+  -- purchaseplus_1d_click_1d_view_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('1d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchaseplus_1d_click_1d_view_s2s_brand_total,
+
+
+
+  -- purchaseplus_val_1d_click_1d_view_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('1d_click', '1d_view'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('1d_click', '1d_view'))
+
+    ELSE 0
+
+  END AS purchaseplus_val_1d_click_1d_view_s2s_brand_total,
+
+
+
+  -- purchaseplus_7d_click_1d_view_first_conversion_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    ELSE 0
+
+  END AS purchaseplus_7d_click_1d_view_first_conversion_s2s_brand_total,
+
+
+
+  -- purchaseplus_val_7d_click_1d_view_first_conversion_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('7d_click_first_conversion', '1d_view_first_conversion'))
+
+    ELSE 0
+
+  END AS purchaseplus_val_7d_click_1d_view_first_conversion_s2s_brand_total,
+
+
+
+  -- purchaseplus_1d_click_1d_view_first_conversion_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversions), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    ELSE 0
+
+  END AS purchaseplus_1d_click_1d_view_first_conversion_s2s_brand_total,
+
+
+
+  -- purchaseplus_val_1d_click_1d_view_first_conversion_s2s_brand_total
+
+  CASE 
+
+    WHEN brand = 'BP' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-BP') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PC') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'LC' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-LC') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'PS' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-PS') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'RL' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-RL') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'FF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-FF') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    WHEN brand = 'SF' THEN (SELECT CAST(COALESCE(SUM(g.conversion_value), 0) AS NUMERIC) FROM UNNEST(IFNULL(goals_breakdown, [])) AS g WHERE STARTS_WITH(g.goal_name, 'PurchasePlus-S2S-SF') AND g.window IN ('1d_click_first_conversion', '1d_view_first_conversion'))
+
+    ELSE 0
+
+  END AS purchaseplus_val_1d_click_1d_view_first_conversion_s2s_brand_total
+
+
+
+FROM base_with_brand
+</code></pre>
+
+
+</details>
+
+<hr />
+<h4 id="pops_stats_custom">pops_stats_custom</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.pops_stats_custom</code>
+<strong>Created</strong>: 2025-09-16 12:13:09.646000+00:00
+<strong>Modified</strong>: 2025-09-30 12:39:57.250000+00:00</p>
+<p><strong>Dependencies</strong>: This view depends on 9 object(s):
+- `,</p>
+<p>(SELECT COALESCE(SUM(g.conversion_value), 0)</p>
+<pre class="codehilite"><code> FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+ WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+</code></pre>
+
+<p>) AS <code>-</code>,</p>
+<p>(SELECT COALESCE(SUM(g.conversion_value), 0)</p>
+<pre class="codehilite"><code> FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+ WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
+</code></pre>
+
+<p>) AS <code>-</code>,</p>
+<p>(SELECT COALESCE(SUM(g.conversion_value), 0)</p>
+<pre class="codehilite"><code> FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+ WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+</code></pre>
+
+<p>) AS <code>-</code>,</p>
+<p>(SELECT COALESCE(SUM(g.conversions), 0)</p>
+<pre class="codehilite"><code> FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+ WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+</code></pre>
+
+<p>) AS <code>-</code>,</p>
+<p>(SELECT COALESCE(SUM(g.conversions), 0)</p>
+<pre class="codehilite"><code> FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+ WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+</code></pre>
+
+<p>) AS <code>-</code>level-hope-462409-a8.level-hope-462409-a8.mkt_channels<code>-</code>level-hope-462409-a8.mkt_channels.exo_stats<code>-</code>level-hope-462409-a8.mkt_channels.tj_campaign_stats<code>-</code>level-hope-462409-a8.mkt_channels.ts_stats_siteid`</p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date</td>
+<td>DATE</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>channel</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>conversion_value</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>spend</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>retrieved_at</td>
+<td>TIMESTAMP</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>ftd-s2s</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit-s2s</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>reg-s2s</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>ftd-s2s_val</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit-s2s_val</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>reg-s2s_val</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary><b>View SQL Query</b> (click to expand)</summary>
+
+
+<pre class="codehilite"><code class="language-sql">-- BigQuery View: POPS Stats Custom Fields
+
+-- Creates custom fields from exo_stats and tj_stats tables for Looker Studio compatibility
+
+SELECT 
+
+  date,
+
+  'ExoClick' AS channel,
+
+  campaign_id,
+
+  campaign_name,
+
+  impressions,
+
+  clicks,
+
+  goals AS conversions,
+
+  conversion_value,
+
+  cost AS spend,
+
+  retrieved_at,
+
+  -- S2S metrics derived from goals_breakdown
+
+  (SELECT COALESCE(SUM(g.conversions), 0)
+
+     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
+
+  ) AS `ftd-s2s`,
+
+  (SELECT COALESCE(SUM(g.conversions), 0)
+
+     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+
+  ) AS `deposit-s2s`,
+
+  (SELECT COALESCE(SUM(g.conversions), 0)
+
+     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+
+  ) AS `reg-s2s`,
+
+  (SELECT COALESCE(SUM(g.conversion_value), 0)
+
+     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
+
+  ) AS `ftd-s2s_val`,
+
+  (SELECT COALESCE(SUM(g.conversion_value), 0)
+
+     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+
+  ) AS `deposit-s2s_val`,
+
+  (SELECT COALESCE(SUM(g.conversion_value), 0)
+
+     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+
+  ) AS `reg-s2s_val`
+
+
+
+FROM `level-hope-462409-a8.mkt_channels.exo_stats`
+
+
+
+UNION ALL
+
+
+
+SELECT 
+
+  date,
+
+  'TrafficJunky' AS channel,
+
+  campaign_id,
+
+  campaign_name,
+
+  impressions,
+
+  clicks,
+
+  conversions,
+
+  0 AS conversion_value,  -- TJ doesn't have conversion_value, set to 0
+
+  cost AS spend,
+
+  retrieved_at,
+
+  0 AS `ftd-s2s`,
+
+  0 AS `deposit-s2s`,
+
+  0 AS `reg-s2s`,
+
+  0.0 AS `ftd-s2s_val`,
+
+  0.0 AS `deposit-s2s_val`,
+
+  0.0 AS `reg-s2s_val`
+
+
+
+FROM `level-hope-462409-a8.mkt_channels.tj_campaign_stats`
+
+
+
+UNION ALL
+
+
+
+SELECT 
+
+  date,
+
+  'TrafficStars' AS channel,
+
+  campaign_id,
+
+  campaign_name,
+
+  impressions,
+
+  clicks,
+
+  conversions,
+
+  0 AS conversion_value,  -- TS doesn't have conversion_value, set to 0
+
+  cost AS spend,
+
+  retrieved_at,
+
+  0 AS `ftd-s2s`,
+
+  0 AS `deposit-s2s`,
+
+  0 AS `reg-s2s`,
+
+  0.0 AS `ftd-s2s_val`,
+
+  0.0 AS `deposit-s2s_val`,
+
+  0.0 AS `reg-s2s_val`
+
+
+
+FROM `level-hope-462409-a8.mkt_channels.ts_stats_siteid`
+</code></pre>
+
+
+</details>
+
+<hr />
+<h4 id="tradedesk_stats_custom">tradedesk_stats_custom</h4>
+<p><strong>Full Name</strong>: <code>level-hope-462409-a8.mkt_channels.tradedesk_stats_custom</code>
+<strong>Created</strong>: 2025-09-29 09:30:46.738000+00:00
+<strong>Modified</strong>: 2025-10-09 12:33:13.556000+00:00</p>
+<p><strong>Dependencies</strong>: This view depends on 3 object(s):
+- <code>level-hope-462409-a8.level-hope-462409-a8.tradedesk</code>
+- <code>level-hope-462409-a8.tradedesk.ID41</code>
+- <code>level-hope-462409-a8.tradedesk.ID42</code></p>
+<p><strong>Schema</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Type</th>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date_start</td>
+<td>DATE</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>campaign_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>ad_group_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>ad_group_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>creative_id</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>creative_name</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>geo</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>brand</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>media_type</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>strategy</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>campaign_name_custom</td>
+<td>STRING</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>spend</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>bids</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>clicks</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>sampled_tracked_impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>sampled_viewed_impressions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>click_conversion_01</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>click_conversion_02</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>click_conversion_03</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_click_view_conversions_01</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_click_view_conversions_02</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_click_view_conversions_03</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>view_through_conversion_01</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>view_through_conversion_02</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>view_through_conversion_03</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>ctr</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>cpc</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>cpm</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_impression_count</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_display_click_count</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_non_display_click_count</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_form_submitted_conversions_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_form_submitted_conversions_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions_1d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions_1d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions_1d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions_1d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions_7d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions_7d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions_7d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions_7d_click</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions_1d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions_1d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions_1d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions_1d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions_7d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions_7d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions_7d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions_7d_view</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>default_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>registration_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>first_deposit_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>deposit_form_submitted_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>click_attributed_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>view_through_conversions</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>click_attributed_conversions_1d</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>view_through_conversions_1d</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_conversions_1d</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>click_attributed_conversions_7d</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>view_through_conversions_7d</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>total_conversions_7d</td>
+<td>INTEGER</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+<tr>
+<td>avg_click_to_conversion_hours</td>
+<td>FLOAT</td>
+<td>NULLABLE</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary><b>View SQL Query</b> (click to expand)</summary>
+
+
+<pre class="codehilite"><code class="language-sql">-- ============================================================================
+
+-- BigQuery View: Trade Desk Stats Custom Fields
+
+-- ============================================================================
+
+-- 
+
+-- PURPOSE:
+
+-- Unified view combining Trade Desk performance metrics with detailed conversion
+
+-- attribution data. Provides comprehensive campaign analytics with custom field
+
+-- extractions and multi-attribution model support.
+
+--
+
+-- SOURCE TABLES:
+
+-- 1. ID42: Performance metrics (spend, impressions, clicks)
+
+--                            + aggregated conversion counts from Trade Desk
+
+-- 2. ID41: Detailed conversion events with attribution paths
+
+--                     (td1 = user ID, conversion_time = event timestamp)
+
+--
+
+-- DATA GRAIN:
+
+-- Daily by Campaign ID / Ad Group ID / Creative ID
+
+--
+
+-- KEY FEATURES:
+
+-- 1. Separate CTEs for different attribution models to prevent duplication:
+
+--    - Click conversions: Groups by last_display_click_campaign/ad_group/creative
+
+--    - View conversions: Groups by last_impression_campaign/ad_group/creative
+
+--    - Uses FULL OUTER JOIN to capture all performance and conversion data
+
+--
+
+-- 2. Counts conversion EVENTS (td1 + conversion_time), not just unique users:
+
+--    - Since td1 is a user ID and users can have multiple conversions,
+
+--      we use CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) as unique conversion identifier
+
+--
+
+-- 3. Provides conversion breakdowns by:
+
+--    - Type: default, registration, deposit, first_deposit (from tracking_tag_name)
+
+--    - Attribution: separate columns for click vs view attribution
+
+--    - Totals: combined click + view totals for each conversion type
+
+--
+
+-- OUTPUT COLUMNS:
+
+-- - Dimensions: date, campaign, ad_group, creative, geo, brand, strategy, etc.
+
+-- - Performance: spend, impressions, clicks, CTR, CPC, CPM, bids
+
+-- - ID42 Conversions (Trade Desk windows 01/02/03):
+
+--   * click_conversion_01-03
+
+--   * total_click_view_conversions_01-03
+
+--   * view_through_conversion_01-03
+
+-- - ID41 Click Attribution (all conversions regardless of window):
+
+--   * default_conversions_click, registration_conversions_click, etc.
+
+-- - ID41 View Attribution (all conversions regardless of window):
+
+--   * default_conversions_view, registration_conversions_view, etc.
+
+-- - ID41 1-Day Click Window (conversions ≤1 day after last_display_click):
+
+--   * default_conversions_1d_click, registration_conversions_1d_click, etc.
+
+-- - ID41 7-Day Click Window (conversions ≤7 days after last_display_click):
+
+--   * default_conversions_7d_click, registration_conversions_7d_click, etc.
+
+-- - ID41 1-Day View Window (conversions ≤1 day after last_impression):
+
+--   * default_conversions_1d_view, registration_conversions_1d_view, etc.
+
+-- - ID41 7-Day View Window (conversions ≤7 days after last_impression):
+
+--   * default_conversions_7d_view, registration_conversions_7d_view, etc.
+
+-- - ID41 Totals (sum of click + view):
+
+--   * default_conversions, registration_conversions, deposit_conversions, first_deposit_conversions
+
+-- - Attribution Summary:
+
+--   * total_conversions (all conversion events)
+
+--   * click_attributed_conversions, view_through_conversions
+
+--   * click_attributed_conversions_1d, view_through_conversions_1d, total_conversions_1d
+
+--   * click_attributed_conversions_7d, view_through_conversions_7d, total_conversions_7d
+
+--
+
+-- USE CASES:
+
+-- - Campaign performance analysis with accurate spend/impression/click data
+
+-- - Conversion attribution analysis (click vs view-through)
+
+-- - Attribution window analysis (1-day vs 7-day lookback periods)
+
+-- - Conversion funnel analysis (registration -&gt; deposit -&gt; first deposit)
+
+-- - Multi-touch attribution reporting with time decay analysis
+
+-- - Custom field segmentation (geo, brand, media type, strategy)
+
+--
+
+-- ============================================================================
+
+WITH performance_aggregated AS (
+
+  SELECT 
+
+    SAFE.PARSE_DATE('%d/%m/%Y', Date) AS date_start,
+
+    Campaign_ID,
+
+    Campaign,
+
+    Ad_Group_ID,
+
+    Ad_Group,
+
+    Creative_ID,
+
+    Creative,
+
+
+
+    -- Custom field extractions from campaign names
+
+    LOWER(TRIM(REGEXP_EXTRACT(Campaign, r'^([A-Z]{2})_'))) AS geo,
+
+    LOWER(TRIM(REGEXP_EXTRACT(Campaign, r'^[A-Z]{2}_([A-Z]{2})_'))) AS brand,
+
+    LOWER(TRIM(REGEXP_EXTRACT(Campaign, r'^[A-Z]{2}_[A-Z]{2}_(.+)$'))) AS media_type,
+
+    LOWER(TRIM(REGEXP_EXTRACT(Campaign, r'_(Aware|Retarget|Prosp|Reten|RND|React)_'))) AS strategy,
+
+    Campaign AS campaign_name_custom,
+
+
+
+    -- Performance metrics
+
+    SUM(Advertiser_Cost_USD) AS spend,
+
+    SUM(Bids) AS bids,
+
+    SUM(Impressions) AS impressions,
+
+    SUM(Clicks) AS clicks,
+
+    SUM(Sampled_Tracked_Impressions) AS sampled_tracked_impressions,
+
+    SUM(Sampled_Viewed_Impressions) AS sampled_viewed_impressions,
+
+
+
+    -- ID42 Click conversions (3 conversion windows from Trade Desk)
+
+    SUM(Click_Conversion_01) AS click_conversion_01,
+
+    SUM(Click_Conversion_02) AS click_conversion_02,
+
+    SUM(Click_Conversion_03) AS click_conversion_03,
+
+
+
+    -- ID42 Total click + view conversions (3 conversion windows from Trade Desk)
+
+    SUM(Total_Click_View_Conversions_01) AS total_click_view_conversions_01,
+
+    SUM(Total_Click_View_Conversions_02) AS total_click_view_conversions_02,
+
+    SUM(Total_Click_View_Conversions_03) AS total_click_view_conversions_03,
+
+
+
+    -- ID42 View through conversions (3 conversion windows from Trade Desk)
+
+    SUM(View_Through_Conversion_01) AS view_through_conversion_01,
+
+    SUM(View_Through_Conversion_02) AS view_through_conversion_02,
+
+    SUM(View_Through_Conversion_03) AS view_through_conversion_03,
+
+
+
+    -- Calculated metrics
+
+    CASE 
+
+      WHEN SUM(Impressions) &gt; 0 THEN SUM(Clicks) / SUM(Impressions) 
+
+      ELSE 0 
+
+    END AS ctr,
+
+    CASE 
+
+      WHEN SUM(Clicks) &gt; 0 THEN SUM(Advertiser_Cost_USD) / SUM(Clicks) 
+
+      ELSE 0 
+
+    END AS cpc,
+
+    CASE 
+
+      WHEN SUM(Impressions) &gt; 0 THEN SUM(Advertiser_Cost_USD) / SUM(Impressions) * 1000 
+
+      ELSE 0 
+
+    END AS cpm
+
+
+
+  FROM `level-hope-462409-a8.tradedesk.ID42`
+
+  GROUP BY 
+
+    Date, Campaign_ID, Campaign, Ad_Group_ID, Ad_Group, Creative_ID, Creative
+
+),
+
+click_conversions_aggregated AS (
+
+  -- Click-attributed conversions using last_display_click attribution
+
+  -- Count conversion EVENTS (td1 + conversion_time), not just unique users
+
+  -- Includes attribution window analysis (1-day and 7-day lookback)
+
+  SELECT 
+
+    SAFE.PARSE_DATE('%d/%m/%Y', SPLIT(conversion_time, ' ')[0]) AS conversion_date,
+
+    last_display_click_campaign_id AS campaign_id,
+
+    last_display_click_campaign_name AS campaign_name,
+
+    last_display_click_ad_group_id AS ad_group_id,
+
+    last_display_click_ad_group_name AS ad_group_name,
+
+    last_display_click_creative_id AS creative_id,
+
+    last_display_click_creative_name AS creative_name,
+
+
+
+    SUM(impression_count) AS total_impression_count,
+
+    SUM(display_click_count) AS total_display_click_count,
+
+    SUM(non_display_click_count) AS total_non_display_click_count,
+
+
+
+    -- Count conversion EVENTS by type using CONCAT(td1, conversion_time) - ALL CLICK CONVERSIONS
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'default') THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS default_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(registration|signup_success)') THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS registration_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(?:^|[^a-z])deposit(?:$|[^a-z])')
+
+                           AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+                           AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted')
+
+                        THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS deposit_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+                           AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit[ _-]*form[ _-]*submitted')
+
+                        THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS first_deposit_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted') THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS deposit_form_submitted_conversions,
+
+
+
+    -- 1-DAY CLICK WINDOW: Conversions within 1 day of last click
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'default')
+
+        AND DATETIME_DIFF(SAFE.PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         SAFE.PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS default_conversions_1d_click,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(registration|signup_success)')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS registration_conversions_1d_click,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(?:^|[^a-z])deposit(?:$|[^a-z])')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS deposit_conversions_1d_click,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS first_deposit_conversions_1d_click,
+
+
+
+    -- 7-DAY CLICK WINDOW: Conversions within 7 days of last click (includes 1-day)
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'default')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS default_conversions_7d_click,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(registration|signup_success)')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS registration_conversions_7d_click,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(?:^|[^a-z])deposit(?:$|[^a-z])')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS deposit_conversions_7d_click,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS first_deposit_conversions_7d_click,
+
+
+
+    -- Count total conversion EVENTS
+
+    COUNT(DISTINCT CONCAT(COALESCE(td1, '_na_'), '|', conversion_time)) AS click_attributed_conversions,
+
+
+
+    -- 1-DAY and 7-DAY CLICK TOTALS
+
+    COUNT(DISTINCT CASE 
+
+      WHEN DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                        PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS click_attributed_conversions_1d,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                        PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS click_attributed_conversions_7d,
+
+
+
+    AVG(CASE 
+
+      WHEN last_display_click_time IS NOT NULL AND conversion_time IS NOT NULL 
+
+      THEN DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                        PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_display_click_time), HOUR)
+
+      ELSE NULL 
+
+    END) AS avg_click_to_conversion_hours
+
+
+
+  FROM `level-hope-462409-a8.tradedesk.ID41`
+
+  WHERE conversion_time IS NOT NULL
+
+    AND NULLIF(last_display_click_time, '') IS NOT NULL
+
+    -- Filter out invalid datetime values to prevent parsing errors
+
+    AND REGEXP_CONTAINS(conversion_time, r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$')
+
+    AND REGEXP_CONTAINS(last_display_click_time, r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$')
+
+  GROUP BY 
+
+    conversion_date, 
+
+    last_display_click_campaign_id, last_display_click_campaign_name,
+
+    last_display_click_ad_group_id, last_display_click_ad_group_name,
+
+    last_display_click_creative_id, last_display_click_creative_name
+
+),
+
+view_conversions_aggregated AS (
+
+  -- View-through conversions using last_impression attribution
+
+  -- Count conversion EVENTS (td1 + conversion_time), not just unique users
+
+  -- Includes attribution window analysis (1-day and 7-day lookback)
+
+  SELECT 
+
+    SAFE.PARSE_DATE('%d/%m/%Y', SPLIT(conversion_time, ' ')[0]) AS conversion_date,
+
+    last_impression_campaign_id AS campaign_id,
+
+    last_impression_campaign_name AS campaign_name,
+
+    last_impression_ad_group_id AS ad_group_id,
+
+    last_impression_ad_group_name AS ad_group_name,
+
+    last_impression_creative_id AS creative_id,
+
+    last_impression_creative_name AS creative_name,
+
+
+
+    -- Count conversion EVENTS by type using CONCAT(td1, conversion_time) - ALL VIEW CONVERSIONS
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'default') THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS default_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(registration|signup_success)') THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS registration_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(?:^|[^a-z])deposit(?:$|[^a-z])')
+
+                           AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+                           AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted')
+
+                        THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS deposit_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+                           AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit[ _-]*form[ _-]*submitted')
+
+                        THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS first_deposit_conversions,
+
+    COUNT(DISTINCT CASE WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted') THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) END) AS deposit_form_submitted_conversions,
+
+
+
+    -- 1-DAY VIEW WINDOW: Conversions within 1 day of last impression
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'default')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS default_conversions_1d_view,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(registration|signup_success)')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS registration_conversions_1d_view,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(?:^|[^a-z])deposit(?:$|[^a-z])')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS deposit_conversions_1d_view,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS first_deposit_conversions_1d_view,
+
+
+
+    -- 7-DAY VIEW WINDOW: Conversions within 7 days of last impression (includes 1-day)
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'default') 
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS default_conversions_7d_view,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(registration|signup_success)') 
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS registration_conversions_7d_view,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'(?:^|[^a-z])deposit(?:$|[^a-z])')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit')
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'deposit[ _-]*form[ _-]*submitted') 
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS deposit_conversions_7d_view,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit') 
+
+        AND NOT REGEXP_CONTAINS(LOWER(tracking_tag_name), r'first[ _-]*deposit[ _-]*form[ _-]*submitted')
+
+        AND DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                         PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS first_deposit_conversions_7d_view,
+
+
+
+    -- Count total conversion EVENTS
+
+    COUNT(DISTINCT CONCAT(COALESCE(td1, '_na_'), '|', conversion_time)) AS view_through_conversions,
+
+
+
+    -- 1-DAY and 7-DAY VIEW TOTALS
+
+    COUNT(DISTINCT CASE 
+
+      WHEN DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                        PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 1
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS view_through_conversions_1d,
+
+    COUNT(DISTINCT CASE 
+
+      WHEN DATETIME_DIFF(PARSE_DATETIME('%d/%m/%Y %H:%M:%S', conversion_time), 
+
+                        PARSE_DATETIME('%d/%m/%Y %H:%M:%S', last_impression_time), DAY) &lt;= 7
+
+      THEN CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) 
+
+    END) AS view_through_conversions_7d
+
+
+
+  FROM `level-hope-462409-a8.tradedesk.ID41`
+
+  WHERE conversion_time IS NOT NULL
+
+    AND NULLIF(last_impression_time, '') IS NOT NULL
+
+    AND (last_display_click_time IS NULL OR last_display_click_time = '')
+
+    -- Filter out invalid datetime values to prevent parsing errors
+
+    AND REGEXP_CONTAINS(conversion_time, r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$')
+
+    AND REGEXP_CONTAINS(last_impression_time, r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$')
+
+  GROUP BY 
+
+    conversion_date,
+
+    last_impression_campaign_id, last_impression_campaign_name,
+
+    last_impression_ad_group_id, last_impression_ad_group_name,
+
+    last_impression_creative_id, last_impression_creative_name
+
+)
+
+SELECT 
+
+  -- Date and campaign identification (using COALESCE pattern)
+
+  COALESCE(perf.date_start, click_conv.conversion_date, view_conv.conversion_date) AS date_start,
+
+  COALESCE(perf.Campaign_ID, click_conv.campaign_id, view_conv.campaign_id) AS campaign_id,
+
+  COALESCE(perf.Campaign, click_conv.campaign_name, view_conv.campaign_name) AS campaign_name,
+
+  COALESCE(perf.Ad_Group_ID, click_conv.ad_group_id, view_conv.ad_group_id) AS ad_group_id,
+
+  COALESCE(perf.Ad_Group, click_conv.ad_group_name, view_conv.ad_group_name) AS ad_group_name,
+
+  COALESCE(perf.Creative_ID, click_conv.creative_id, view_conv.creative_id) AS creative_id,
+
+  COALESCE(perf.Creative, click_conv.creative_name, view_conv.creative_name) AS creative_name,
+
+
+
+  -- Custom extracted fields (from performance data)
+
+  LOWER(TRIM(REGEXP_EXTRACT(COALESCE(perf.Campaign, click_conv.campaign_name, view_conv.campaign_name), r'^([A-Z]{2})_'))) AS geo,
+
+  LOWER(TRIM(REGEXP_EXTRACT(COALESCE(perf.Campaign, click_conv.campaign_name, view_conv.campaign_name), r'^[A-Z]{2}_([A-Z]{2})_'))) AS brand,
+
+  LOWER(TRIM(REGEXP_EXTRACT(COALESCE(perf.Campaign, click_conv.campaign_name, view_conv.campaign_name), r'^[A-Z]{2}_[A-Z]{2}_(.+)$'))) AS media_type,
+
+  LOWER(TRIM(REGEXP_EXTRACT(COALESCE(perf.Campaign, click_conv.campaign_name, view_conv.campaign_name), r'_(Aware|Retarget|Prosp|Reten|RND|React)_'))) AS strategy,
+
+  COALESCE(perf.Campaign, click_conv.campaign_name, view_conv.campaign_name) AS campaign_name_custom,
+
+
+
+  -- Performance metrics (from ID42) - fill with zeros if no match
+
+  COALESCE(perf.spend, 0) AS spend,
+
+  COALESCE(perf.bids, 0) AS bids,
+
+  COALESCE(perf.impressions, 0) AS impressions,
+
+  COALESCE(perf.clicks, 0) AS clicks,
+
+  COALESCE(perf.sampled_tracked_impressions, 0) AS sampled_tracked_impressions,
+
+  COALESCE(perf.sampled_viewed_impressions, 0) AS sampled_viewed_impressions,
+
+
+
+  -- ID42 Click conversions (all 3 conversion windows: 01, 02, 03)
+
+  COALESCE(perf.click_conversion_01, 0) AS click_conversion_01,
+
+  COALESCE(perf.click_conversion_02, 0) AS click_conversion_02,
+
+  COALESCE(perf.click_conversion_03, 0) AS click_conversion_03,
+
+
+
+  -- ID42 Total click + view conversions (all 3 conversion windows: 01, 02, 03)
+
+  COALESCE(perf.total_click_view_conversions_01, 0) AS total_click_view_conversions_01,
+
+  COALESCE(perf.total_click_view_conversions_02, 0) AS total_click_view_conversions_02,
+
+  COALESCE(perf.total_click_view_conversions_03, 0) AS total_click_view_conversions_03,
+
+
+
+  -- ID42 View through conversions (all 3 conversion windows: 01, 02, 03)
+
+  COALESCE(perf.view_through_conversion_01, 0) AS view_through_conversion_01,
+
+  COALESCE(perf.view_through_conversion_02, 0) AS view_through_conversion_02,
+
+  COALESCE(perf.view_through_conversion_03, 0) AS view_through_conversion_03,
+
+
+
+  -- Calculated performance metrics
+
+  COALESCE(perf.ctr, 0) AS ctr,
+
+  COALESCE(perf.cpc, 0) AS cpc,
+
+  COALESCE(perf.cpm, 0) AS cpm,
+
+
+
+  -- Touchpoint counts (from click conversions) - fill with zeros if no match
+
+  COALESCE(click_conv.total_impression_count, 0) AS total_impression_count,
+
+  COALESCE(click_conv.total_display_click_count, 0) AS total_display_click_count,
+
+  COALESCE(click_conv.total_non_display_click_count, 0) AS total_non_display_click_count,
+
+
+
+  -- Conversion counts by type - CLICK ATTRIBUTION (all click conversions)
+
+  COALESCE(click_conv.default_conversions, 0) AS default_conversions_click,
+
+  COALESCE(click_conv.registration_conversions, 0) AS registration_conversions_click,
+
+  COALESCE(click_conv.deposit_conversions, 0) AS deposit_conversions_click,
+
+  COALESCE(click_conv.first_deposit_conversions, 0) AS first_deposit_conversions_click,
+
+  COALESCE(click_conv.deposit_form_submitted_conversions, 0) AS deposit_form_submitted_conversions_click,
+
+
+
+  -- Conversion counts by type - VIEW ATTRIBUTION (all view conversions)
+
+  COALESCE(view_conv.default_conversions, 0) AS default_conversions_view,
+
+  COALESCE(view_conv.registration_conversions, 0) AS registration_conversions_view,
+
+  COALESCE(view_conv.deposit_conversions, 0) AS deposit_conversions_view,
+
+  COALESCE(view_conv.first_deposit_conversions, 0) AS first_deposit_conversions_view,
+
+  COALESCE(view_conv.deposit_form_submitted_conversions, 0) AS deposit_form_submitted_conversions_view,
+
+
+
+  -- Conversion counts by type - 1-DAY CLICK WINDOW
+
+  COALESCE(click_conv.default_conversions_1d_click, 0) AS default_conversions_1d_click,
+
+  COALESCE(click_conv.registration_conversions_1d_click, 0) AS registration_conversions_1d_click,
+
+  COALESCE(click_conv.deposit_conversions_1d_click, 0) AS deposit_conversions_1d_click,
+
+  COALESCE(click_conv.first_deposit_conversions_1d_click, 0) AS first_deposit_conversions_1d_click,
+
+
+
+  -- Conversion counts by type - 7-DAY CLICK WINDOW
+
+  COALESCE(click_conv.default_conversions_7d_click, 0) AS default_conversions_7d_click,
+
+  COALESCE(click_conv.registration_conversions_7d_click, 0) AS registration_conversions_7d_click,
+
+  COALESCE(click_conv.deposit_conversions_7d_click, 0) AS deposit_conversions_7d_click,
+
+  COALESCE(click_conv.first_deposit_conversions_7d_click, 0) AS first_deposit_conversions_7d_click,
+
+
+
+  -- Conversion counts by type - 1-DAY VIEW WINDOW
+
+  COALESCE(view_conv.default_conversions_1d_view, 0) AS default_conversions_1d_view,
+
+  COALESCE(view_conv.registration_conversions_1d_view, 0) AS registration_conversions_1d_view,
+
+  COALESCE(view_conv.deposit_conversions_1d_view, 0) AS deposit_conversions_1d_view,
+
+  COALESCE(view_conv.first_deposit_conversions_1d_view, 0) AS first_deposit_conversions_1d_view,
+
+
+
+  -- Conversion counts by type - 7-DAY VIEW WINDOW
+
+  COALESCE(view_conv.default_conversions_7d_view, 0) AS default_conversions_7d_view,
+
+  COALESCE(view_conv.registration_conversions_7d_view, 0) AS registration_conversions_7d_view,
+
+  COALESCE(view_conv.deposit_conversions_7d_view, 0) AS deposit_conversions_7d_view,
+
+  COALESCE(view_conv.first_deposit_conversions_7d_view, 0) AS first_deposit_conversions_7d_view,
+
+
+
+  -- Conversion counts by type - TOTAL (click + view, all windows)
+
+  COALESCE(click_conv.default_conversions, 0) + COALESCE(view_conv.default_conversions, 0) AS default_conversions,
+
+  COALESCE(click_conv.registration_conversions, 0) + COALESCE(view_conv.registration_conversions, 0) AS registration_conversions,
+
+  COALESCE(click_conv.deposit_conversions, 0) + COALESCE(view_conv.deposit_conversions, 0) AS deposit_conversions,
+
+  COALESCE(click_conv.first_deposit_conversions, 0) + COALESCE(view_conv.first_deposit_conversions, 0) AS first_deposit_conversions,
+
+  COALESCE(click_conv.deposit_form_submitted_conversions, 0) + COALESCE(view_conv.deposit_form_submitted_conversions, 0) AS deposit_form_submitted_conversions,
+
+
+
+  -- Attribution totals (all windows)
+
+  COALESCE(click_conv.click_attributed_conversions, 0) + COALESCE(view_conv.view_through_conversions, 0) AS total_conversions,
+
+  COALESCE(click_conv.click_attributed_conversions, 0) AS click_attributed_conversions,
+
+  COALESCE(view_conv.view_through_conversions, 0) AS view_through_conversions,
+
+
+
+  -- Attribution window totals - 1-DAY
+
+  COALESCE(click_conv.click_attributed_conversions_1d, 0) AS click_attributed_conversions_1d,
+
+  COALESCE(view_conv.view_through_conversions_1d, 0) AS view_through_conversions_1d,
+
+  COALESCE(click_conv.click_attributed_conversions_1d, 0) + COALESCE(view_conv.view_through_conversions_1d, 0) AS total_conversions_1d,
+
+
+
+  -- Attribution window totals - 7-DAY
+
+  COALESCE(click_conv.click_attributed_conversions_7d, 0) AS click_attributed_conversions_7d,
+
+  COALESCE(view_conv.view_through_conversions_7d, 0) AS view_through_conversions_7d,
+
+  COALESCE(click_conv.click_attributed_conversions_7d, 0) + COALESCE(view_conv.view_through_conversions_7d, 0) AS total_conversions_7d,
+
+
+
+  -- Time-based attribution (from click conversions only) - fill with zeros if no match
+
+  COALESCE(click_conv.avg_click_to_conversion_hours, 0) AS avg_click_to_conversion_hours
+
+
+
+FROM performance_aggregated perf
+
+FULL OUTER JOIN click_conversions_aggregated click_conv
+
+  ON perf.date_start = click_conv.conversion_date
+
+  AND perf.Campaign_ID = click_conv.campaign_id
+
+  AND COALESCE(perf.Ad_Group_ID, '') = COALESCE(click_conv.ad_group_id, '')
+
+  AND COALESCE(perf.Creative_ID, '') = COALESCE(click_conv.creative_id, '')
+
+FULL OUTER JOIN view_conversions_aggregated view_conv
+
+  ON perf.date_start = view_conv.conversion_date
+
+  AND perf.Campaign_ID = view_conv.campaign_id
+
+  AND COALESCE(perf.Ad_Group_ID, '') = COALESCE(view_conv.ad_group_id, '')
+
+  AND COALESCE(perf.Creative_ID, '') = COALESCE(view_conv.creative_id, '');
+
+
+
+/*
+
+================================================================================
+
+IMPORTANT NOTES &amp; LESSONS LEARNED
+
+================================================================================
+
+
+
+DATE FILTERING BEST PRACTICE:
+
+- CRITICAL: When filtering DD/MM/YYYY formatted dates, always use PARSE_DATE() 
+
+  for comparison, never string comparison
+
+- String comparison on '01/09/2025' to '30/09/2025' incorrectly includes dates like
+
+  '01/10/2025' to '07/10/2025' (October) because '01/10' &gt; '01/09' and '07/10' &lt; '30/09'
+
+- Always use: WHERE PARSE_DATE('%d/%m/%Y', Date) &gt;= '2025-09-01'
+
+- This prevents data quality issues and incorrect date range filtering
+
+
+
+DEDUPLICATION STRATEGY:
+
+- Initial approach using COUNT(DISTINCT td1) undercounted conversions because
+
+  td1 is a user ID, not a conversion ID
+
+- Users can have multiple conversion events (e.g., user 285290 had 42 deposits)
+
+- Solution: Use CONCAT(COALESCE(td1, '_na_'), '|', conversion_time) to create unique conversion identifiers
+
+- This ensures each conversion EVENT is counted, not just unique users
+
+
+
+ATTRIBUTION MODEL SEPARATION:
+
+- Separate CTEs for click vs view attribution prevent double-counting
+
+- Click CTE: Filters WHERE last_display_click_time IS NOT NULL
+
+- View CTE: Filters WHERE last_impression_time IS NOT NULL AND last_display_click_time IS NULL
+
+- Both group by their respective attribution dimensions (last_display_click_* vs last_impression_*)
+
+- FULL OUTER JOIN ensures all performance data and all conversion data is captured
+
+
+
+ATTRIBUTION WINDOW CALCULATION:
+
+- Uses DATETIME_DIFF to calculate days between touchpoint and conversion
+
+- Click windows: DATETIME_DIFF(conversion_time, last_display_click_time, DAY)
+
+- View windows: DATETIME_DIFF(conversion_time, last_impression_time, DAY)
+
+- 1-DAY WINDOW: Conversions where days &lt;= 1 (within 24 hours of touchpoint)
+
+- 7-DAY WINDOW: Conversions where days &lt;= 7 (includes 1-day conversions)
+
+- Example: User clicks ad on Sept 23 at 00:25:55, converts on Sept 23 at 00:26:15
+
+  -&gt; DATETIME_DIFF = 0 days -&gt; counted in 1d and 7d windows
+
+- Example: User sees ad on Sept 3, converts on Sept 23
+
+  -&gt; DATETIME_DIFF = 20 days -&gt; NOT counted in 1d or 7d windows, but in &quot;all windows&quot; total
+
+- Windows calculated separately for each attribution model (click vs view)
+
+
+
+WHY FULL OUTER JOIN:
+
+- Performance data exists even when there are no conversions (many campaign days have no conversions)
+
+- Conversions exist even when there's no matching performance for that specific date/campaign/adgroup/creative
+
+- CRITICAL for attribution windows: A user clicks ad on Sept 25, converts on Oct 2
+
+  * Performance data exists on Sept 25 (click date)
+
+  * Conversion recorded on Oct 2 (conversion date)
+
+  * If campaign stopped Sept 30, there's no performance data on Oct 2
+
+  * FULL OUTER JOIN ensures this conversion is still counted (as &quot;orphan&quot; row with conversions but spend=0)
+
+- This may cause slight discrepancies (+0.3% in conversions) vs source queries, which is acceptable
+
+- Ensures complete data coverage for both operational reporting and attribution analysis
+
+
+
+CUSTOM FIELD EXTRACTIONS:
+
+- Campaign naming convention: GEO_BRAND_MediaType_Strategy_...
+
+- Example: DE_BP_Reten_Display extracts to geo=de, brand=bp, strategy=reten
+
+- Uses REGEXP_EXTRACT with specific patterns for each field
+
+- Applied using COALESCE to handle cases where only conversion or performance data exists
+
+
+
+================================================================================
+
+*/
+</code></pre>
+
+
+</details>
+
+<hr />
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑ Back to Top</a>
+    
+    <script>
+        // Initialize syntax highlighting
+        hljs.highlightAll();
+        
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            var backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('backToTop').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+name = "meta-report-v2"
+main = "cloudflareworkers/meta-report.js"
+compatibility_date = "2024-11-01"
+workers_dev = true
+
+# Enable scheduled events (cron) for the worker
+[triggers]
+crons = [
+  # Every day at 03:00 UTC (adjust as needed)
+  "0 3 * * *"
+]
+
+# Cloudflare Queues configuration
+# Replace "meta-report-queue" with your actual queue name in your account
+[[queues.producers]]
+queue = "meta-report-queue"
+binding = "META_REPORT_QUEUE"
+
+[[queues.consumers]]
+queue = "meta-report-queue"
+
+[observability]
+enabled = true
+
+# Optionally set the default route/zone if you want to route a hostname
+# route = { pattern = "meta-reportV2.example.com/*", zone_name = "example.com" }
+
+# Environment variables are set via `wrangler secrets put` and not committed here.
+# Required secrets (examples):
+# - BQ_PROJECT_ID
+# - BQ_DATASET
+# - BQ_TABLE_NAME
+# - GS_CLIENT_EMAIL
+# - GS_PRIVATE_KEY
+# - SPREADSHEET_ID
+# - RANGE_NAME
+# - S3_REGION
+# - S3_BUCKET
+# - S3_ACCESS_KEY
+# - S3_SECRET_KEY
+# - <ACCOUNT>-FB_ACCESS_TOKEN (e.g., FRM-145669-FB_ACCESS_TOKEN)
+# - <ACCOUNT>-FB_ACCOUNT_ID  (e.g., FRM-145669-FB_ACCOUNT_ID)
+

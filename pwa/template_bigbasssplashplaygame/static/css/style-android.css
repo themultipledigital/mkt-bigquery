@@ -1,0 +1,805 @@
+/* CSS files add styling rules to your content */
+
+html,
+body {
+    opacity: 1;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui;
+    background: var(--android-background);
+    /*   opacity: 0; */
+    transition: opacity .25s 1.25s;
+}
+
+.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.swiper-slide picture,
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    /*   -gap: 1em; */
+    padding: 1.5em;
+}
+
+.ratings-and-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    padding: 1.5em;
+}
+
+.blockheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /*   padding: 1em 1.5em; */
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--headers);
+}
+
+.short-description {
+    /*   padding */
+}
+
+.full-description .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.full-description .more {
+    /*   text-align: left; */
+    color: var(--more);
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.empty-block {
+    width: 100%;
+    height: 2em;
+}
+
+p {
+    margin-block-start: 0.1em;
+    margin-block-end: 0.1em;
+}
+
+body {
+    color: var(--texts);
+    touch-action: none;
+}
+
+:root {
+    --column-gap: 1.5em;
+    --row-gap: 1em;
+    --icon-size: 4.5em;
+    --icon-radius: 1em;
+}
+
+.header {
+    padding: 1.5em;
+    padding-bottom: 2em;
+    display: grid;
+    grid-template-columns: var(--icon-size) auto;
+    grid-template-rows: auto auto 2.5em;
+    grid-template-areas:
+        "icon title"
+        "shortinfos shortinfos"
+        "install install";
+    column-gap: var(--column-gap);
+    row-gap: var(--row-gap);
+    position: relative;
+}
+
+.header:after {
+    content: '';
+    width: 100dvw;
+    height: 1px;
+    background: var(--separator);
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 1em;
+}
+
+.icon {
+    grid-area: icon;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: var(--icon-radius);
+    z-index: 2;
+    transition: width .4s, height .4s, border-radius .4s;
+    margin: auto;
+    box-shadow: 0px 1px 1px var(--imageshadow);
+}
+
+.icon img {
+    grid-area: icon;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: var(--icon-radius);
+    z-index: 2;
+    transition: width .4s, height .4s, border-radius .4s;
+    margin: auto;
+    box-shadow: 0px 1px 1px var(--imageshadow);
+}
+
+.icon.loading {
+    width: calc(var(--icon-size) / 2);
+    height: calc(var(--icon-size) / 2);
+    border-radius: calc(var(--icon-radius) / 2);
+}
+
+.icon.loading img {
+    width: calc(var(--icon-size) / 2);
+    height: calc(var(--icon-size) / 2);
+    border-radius: calc(var(--icon-radius) / 2);
+}
+
+.loader-android {
+    grid-area: icon;
+    display: block;
+    margin: auto;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    z-index: 1;
+}
+
+.loader-android .circular {
+    -webkit-animation: rotate 2s linear infinite;
+    animation: rotate 2s linear infinite;
+    height: var(--icon-size);
+    width: var(--icon-size);
+    position: relative;
+    transition: transform .4s;
+}
+
+.loader-android.download .circular {
+    animation: none;
+    transform: rotate(-90deg);
+}
+
+.loader-android .path {
+    stroke-width: 0;
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 2s ease-in-out infinite;
+    stroke: var(--android--install-back);
+    stroke-linecap: square;
+    transition: stroke-width .4s, stroke-dasharray .4s;
+}
+
+.loader-android.loading .path {
+    stroke-width: 2;
+}
+
+.loader-android.download .path {
+    stroke-width: 2;
+    animation: download 20s ease-in-out forwards;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 90, 200;
+        stroke-dashoffset: -35px;
+    }
+
+    100% {
+        stroke-dashoffset: -125px;
+    }
+}
+
+@keyframes download {
+    0% {
+        stroke-dasharray: 1, 200;
+    }
+
+    10% {
+        stroke-dasharray: 1, 200;
+    }
+
+    12% {
+        stroke-dasharray: 5, 200;
+    }
+
+    16% {
+        stroke-dasharray: 12, 200;
+    }
+
+    19% {
+        stroke-dasharray: 19, 200;
+    }
+
+    25% {
+        stroke-dasharray: 25, 200;
+    }
+
+    32% {
+        stroke-dasharray: 33, 200;
+    }
+
+    35% {
+        stroke-dasharray: 45, 200;
+    }
+
+    47% {
+        stroke-dasharray: 54, 200;
+    }
+
+    50% {
+        stroke-dasharray: 60, 200;
+    }
+
+    53% {
+        stroke-dasharray: 67, 200;
+    }
+
+    59% {
+        stroke-dasharray: 73, 200;
+    }
+
+    67% {
+        stroke-dasharray: 78, 200;
+    }
+
+    78% {
+        stroke-dasharray: 83, 200;
+    }
+
+    89% {
+        stroke-dasharray: 90, 200;
+    }
+
+    94% {
+        stroke-dasharray: 94, 200;
+    }
+
+    100% {
+        stroke-dasharray: 100, 200;
+    }
+}
+
+.smallicon {
+    height: calc(100% - 1.5em);
+    margin-right: 1.25em;
+    border-radius: 0.5em;
+    aspect-ratio: 1/1;
+}
+
+.smallicon img {
+    height: calc(100%);
+    margin-right: 1.25em;
+    border-radius: 0.5em;
+    aspect-ratio: 1/1;
+}
+
+.smallname {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--headers);
+}
+
+div.info.text>div.column>div>span:nth-child(2) {
+    color: var(--headers);
+}
+
+.detailstext {
+    font-weight: 400;
+    font-size: 0.8em;
+    color: var(--details-text);
+}
+
+.title {
+    grid-area: title;
+    /*   max-height: calc(var(--icon-size) - 2.5em); */
+    overflow: auto;
+}
+
+.name {
+    font-size: 1.5em;
+    font-weight: 400;
+    color: var(--headers);
+}
+
+.subtitle {
+    display: none;
+}
+
+.developer {
+    font-size: 1em;
+    font-weight: 400;
+    color: var(--developer);
+}
+
+.shortinfos {
+    grid-area: shortinfos;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 4em;
+    color: var(--headers);
+}
+
+.shortinfos>div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.shortinfos>.divider {
+    width: 1px;
+    height: 30%;
+    background: var(--separator);
+}
+
+.shortinfos .label {
+    font-weight: 400;
+    font-size: 0.8em;
+    color: var(--details-text);
+}
+
+.shortinfo {
+    display: flex;
+    gap: .25em;
+    flex: 1;
+}
+
+.sizeicon {
+    width: 1.25em;
+    height: 1.25em;
+    background-image: var(--size-icon);
+}
+
+.shortinfostar {
+    width: 1em;
+    height: 1em;
+    background-image: var(--shortinfo-star);
+}
+
+.shortinfo18 {
+    /*width: 1.25em;*/
+    height: 1.25em;
+    /*background-image: var(--shortinfo-18);*/
+}
+
+.shortinfo18 img {
+    height: 100%;
+}
+
+.install {
+    grid-area: install;
+    width: 100%;
+    background: var(--android--install-back);
+    border: none;
+    border-radius: 2em;
+    color: var(--android--install-color);
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: background .4s, color .4s;
+}
+
+.install[disabled] {
+    background: var(--android--install-disabled-back);
+    color: var(--android--install-disabled-color);
+}
+
+.install.installing>.installspan {
+    display: none;
+}
+
+.install.installing>.openspan {
+    display: block;
+}
+
+.install:not(.installing)>.installspan {
+    display: block;
+}
+
+.install:not(.installing)>.openspan {
+    display: none;
+}
+
+.screenshotslist {
+    height: 12em;
+    display: flex;
+    flex-direction: row;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    padding-bottom: 2px;
+    gap: .5em;
+    width: calc(100% - 3em);
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.screenshotslist::-webkit-scrollbar {
+    display: none;
+}
+
+.screenshotslist img,
+.screenshotslist iframe {
+    border-radius: 0.5em;
+    height: 100%;
+    box-shadow: 0px 2px 2px var(--imageshadow);
+}
+
+#screenshots-fullscreen {
+    background: #000000;
+    z-index: -1;
+    filter: opacity(0);
+    transform: scale(0.95);
+    /*transform: translateX(25%);*/
+    transition: filter 0.25s, transform 0.25s, z-index 0.25s;
+}
+
+#screenshots-fullscreen.active {
+    z-index: 2;
+    filter: opacity(1);
+    transform: scale(1);
+    /*transform: translateX(0);*/
+}
+
+#description-fullscreen {
+    background: var(--android-background);
+    z-index: -1;
+    filter: opacity(0);
+    /*transform: scale(0.95);*/
+    transform: translateX(15%);
+    transition: filter 0.15s, transform 0.15s, z-index 0.15s;
+}
+
+#description-fullscreen.active {
+    z-index: 2;
+    filter: opacity(1);
+    /*transform: scale(1);*/
+    transform: translateX(0);
+}
+
+#description-fullscreen .text {
+    margin: 1em;
+}
+
+
+#description-fullscreen .headertext {
+    font-size: 1.1rem;
+    color: var(--headers);
+}
+
+#reviews-fullscreen {
+    background: var(--android-background);
+    z-index: -1;
+    filter: opacity(0);
+    /*transform: scale(0.95);*/
+    transform: translateX(15%);
+    transition: filter 0.15s, transform 0.15s, z-index 0.15s;
+}
+
+#reviews-fullscreen.active {
+    z-index: 2;
+    filter: opacity(1);
+    /*transform: scale(1);*/
+    transform: translateX(0);
+}
+
+#reviews-fullscreen .text {
+    margin: 1em;
+}
+
+
+#reviews-fullscreen .headertext {
+    font-size: 1.1rem;
+    color: var(--headers);
+}
+
+.backbutton {
+    padding: 16px;
+    position: relative;
+    z-index: 10;
+}
+
+#content {
+    background: var(--android-background);
+    transition: transform 0.15s;
+    transform: scale(1);
+    min-height: 100%;
+    min-width: 100%;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+#content::-webkit-scrollbar {
+    display: none;
+}
+
+body:has(#description-fullscreen.active)>#content,
+body:has(#reviews-fullscreen.active)>#content {
+    /*transform: scale(calc(1 / 0.95));*/
+    transform: translateX(-15%);
+}
+
+.navbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 3.5em;
+}
+
+.navbar::after {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: var(--separator);
+    position: absolute;
+    bottom: 0;
+}
+
+.scrollable {
+    overflow: scroll;
+    height: calc(100% - 3.5em);
+}
+
+#description-fullscreen .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--separator);
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    padding: 2em 0;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info {
+    font-size: .9rem;
+}
+
+.whatsnew {
+    position: relative;
+}
+
+.whatsnew::after {
+    content: '';
+    background: var(--whatsnew-point);
+    width: 0.5em;
+    height: 0.5em;
+    position: absolute;
+    top: calc(50% - 0.25em);
+    margin-left: 0.75em;
+    border-radius: 100%;
+}
+
+.ratingsblock {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "rating-big rating-right"
+        "rating-stars rating-right"
+        "rating-count rating-right";
+    grid-column-gap: 2em;
+}
+
+.rating-big {
+    grid-area: rating-big;
+    font-size: 3em;
+    color: var(--headers);
+}
+
+.rating-stars {
+    grid-area: rating-stars;
+    display: flex;
+}
+
+.rating-count {
+    grid-area: rating-count;
+    font-weight: 400;
+    font-size: 0.8em;
+}
+
+.review-star {
+    width: .75em;
+    height: .75em;
+    background-image: var(--review-star);
+}
+
+.halfstar {
+    width: .75em;
+    height: .75em;
+    background-image: var(--half-star);
+}
+
+.emptystar {
+    width: .75em;
+    height: .75em;
+    background-image: var(--empty-star);
+}
+
+.ratings {
+    grid-area: rating-right;
+    display: flex;
+    flex-direction: column;
+    gap: .25em;
+}
+
+.rating {
+    display: flex;
+    gap: .75em;
+    justify-content: center;
+    align-items: center;
+}
+
+.stars {
+    font-weight: 400;
+    font-size: 0.8em;
+    width: .5em;
+}
+
+.rating-chart {
+    height: .5em;
+    width: 100%;
+    background: var(--android-rating-chart-back);
+    border-radius: .5em;
+    position: relative;
+}
+
+.rating-chart-bar {
+    content: '';
+    position: absolute;
+    height: .5em;
+    min-width: .5em;
+    background: var(--android-rating-chart);
+    border-radius: .5em;
+}
+
+.reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+.review-inner {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    width: 100%;
+}
+
+.userdata,
+.reviewdata {
+    display: flex;
+    flex-direction: row;
+    gap: .5em;
+    align-items: center;
+}
+
+.userrating {
+    display: flex;
+    flex-direction: row;
+}
+
+.reviewdate {
+    font-weight: 400;
+    font-size: 0.8em;
+}
+
+.username {
+    color: var(--headers);
+}
+
+.userphoto {
+    width: 2rem;
+    height: 2rem;
+    font-weight: 500;
+    font-size: 1.2em;
+    background: #8BC34A;
+    color: #ffffff;
+    border-radius: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.reviewtext {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.reviewtext.collapsed {
+    display: block;
+}
+
+.vat {
+    padding: 1.5em;
+    color: var(--headers);
+}
+
+.arrow {
+    fill: var(--headers);
+}
+
+.arrow.light {
+    fill: var(--headers-light);
+}
+
+.circles {
+    display: none;
+}
+
+.category {
+    width: fit-content;
+    padding: 0.33em 0.75em;
+    border: 1px solid var(--texts);
+    border-radius: 0.5em;
+}
+
+/* ~~~~~~~~~~~~ */
+
+.ios,
+.hide {
+    display: none !important;
+}

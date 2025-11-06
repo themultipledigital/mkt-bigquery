@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title class="name">Big Bass Splash</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#1f1f1f">
+    
+    <link rel="manifest" id="manifest" href="./manifestdirect.php">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="./swiper-bundle.min.css" />
+    <link rel="stylesheet" href="./dark.css" media="(prefers-color-scheme: dark)" />
+    <link rel="stylesheet" href="./light.css" media="(prefers-color-scheme: light)" />
+    <style>
+      body {
+        opacity: 0;
+      }
+      * {
+        scrollbar-width: none;
+      }
+    </style>
+    
+    <script src="./swiper-bundle.min.js"></script><script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script type="module">
+      if ("serviceWorker" in navigator) {
+        if (navigator.serviceWorker.controller) {
+        } else {
+          navigator.serviceWorker
+            .register("pwabuilder-sw.js", { scope: "./" })
+            .then(function (reg) {});
+        }
+      }
+    </script>
+    <script src="./ua-parser.js"></script><script>
+      if (!document.cookie.includes("googtrans")) {
+                document.cookie = `googtrans=/auto/${(navigator.language || navigator.userLanguage).slice(0,2)}`;
+            }
+            function TranslateInit() {
+                new google.translate.TranslateElement({
+                    pageLanguage: "en"
+                });
+            }
+        </script>
+        <style>
+            .VIpgJd-ZVi9od-ORHb-OEVmcd,
+            .VIpgJd-ZVi9od-aZ2wEe-wOHMyf {
+                display: none !important
+            }
+            body {
+                top: 0px !important
+            }
+            font {
+                pointer-events: none;
+            }
+        </style>
+        <script src="//translate.google.com/translate_a/element.js?cb=TranslateInit"></script></head>
+  <body>
+    <div id="content">
+      <div id="iosnavbar" class="navbar ios">
+        <div id="iosnavbarcontent">
+          <button class="install invisible">INSTALL</button><picture class="smallicon iconsrc"><img src="./icon.png"></picture><button class="install toggleInstallGuide">
+            INSTALL
+          </button>
+        </div>
+      </div>
+      <div class="header"><picture class="icon hidable iconsrc" id="android-icon"><img src="./icon.png"></picture><div id="android-loader" class="loader-android android">
+          <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" fill="none" stroke-miterlimit="10" cx="50" cy="50" r="20"></circle>
+          </svg>
+        </div>
+        <div class="title hidable">
+          <p class="name skiptranslate">Big Bass Splash</p>
+          <p class="subtitle">All best games and gambling</p>
+          <p class="developer devname skiptranslate">IGAMING AGENCY</p>
+          <p class="hide" id="pending">Pending...</p>
+          <p class="hide" id="download0">1% of 12.25MB</p>
+          <p class="hide" id="download1">4% of 12.25MB</p>
+          <p class="hide" id="download2">9% of 12.25MB</p>
+          <p class="hide" id="download3">15% of 12.25MB</p>
+          <p class="hide" id="download4">20% of 12.25MB</p>
+          <p class="hide" id="download5">26% of 12.25MB</p>
+          <p class="hide" id="download6">36% of 12.25MB</p>
+          <p class="hide" id="download7">43% of 12.25MB</p>
+          <p class="hide" id="download8">48% of 12.25MB</p>
+          <p class="hide" id="download9">54% of 12.25MB</p>
+          <p class="hide" id="download10">58% of 12.25MB</p>
+          <p class="hide" id="download11">62% of 12.25MB</p>
+          <p class="hide" id="download12">66% of 12.25MB</p>
+          <p class="hide" id="download13">72% of 12.25MB</p>
+          <p class="hide" id="download14">75% of 12.25MB</p>
+          <p class="hide" id="download15">80% of 12.25MB</p>
+          <p class="hide" id="download16">Installing...</p>
+        </div>
+        <button class="install hidable ios toggleInstallGuide">Install</button>
+        <button class="install hidable android" id="android-install" disabled><span class="installspan">Install</span><span class="openspan">Open</span></button>
+        <div class="shortinfos">
+          <div class="shortinfo">
+            <div class="android row">
+              <div class="ratingvalue">4.8</div>
+              <div class="shortinfostar"></div>
+            </div>
+            <div class="android label"><span class="ratingscountshort">132K</span><span> reviews</span></div>
+            <div class="ios label"><span class="ratingscountshort">132K</span><span> RATINGS</span></div>
+            <div class="ios shortinfo ratingvalue">4.8</div>
+            <div class="ios label shortinfostar"></div>
+          </div>
+          <div class="divider ios"></div>
+          <div class="shortinfo ios">
+            <div class="android sizeicon"></div>
+            <div class="android label size">12 MB</div>
+            <div class="ios label">SIZE</div>
+            <div class="ios shortinfo sizeNmbr">12</div>
+            <div class="ios label sizeLttr">MB</div>
+          </div><div class="divider ios"></div>
+          <div class="shortinfo ios">
+            <div class="ios label">AGE</div>
+            <div class="ios shortinfo">18+</div>
+            <div class="ios label">Years Old</div>
+          </div>
+          <div class="android divider"></div>
+          <div class="android shortinfo">
+            <div class="installs">700K+</div>
+            <div class="label">Downloads</div>
+          </div>
+          <div class="android divider"></div>
+          <div class="android shortinfo">
+            <div class="android shortinfo18"><img src="https://dnacont.com/rating/df/18.png"></div>
+            <div class="android label">18+</div>
+          </div>
+        </div>
+      </div>
+      <div class="screenshotslist"><picture class="openScreenshot"><img src="./screenshot0.jpg"></picture><picture class="openScreenshot"><img src="./screenshot1.jpg"></picture><picture class="openScreenshot"><img src="./screenshot2.jpg"></picture><picture class="openScreenshot"><img src="./screenshot3.jpg"></picture></div>
+      <div class="description">
+        <div class="blockheader android toggleDescription">
+          <span>About this app</span>
+          <svg
+            class="arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewbox="0 0 24 24"
+            width="24px"
+            fill="#000000"
+          >
+            <path
+              d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"
+            />
+          </svg>
+        </div>
+        <div class="short-description android">💎Welcome Bonus: 450 EUR + 250 Free Spins on 1st Deposit!💎
+⚡WIN €100,000,000⚡️</div>
+        <div class="full-description ios collapse">
+          <span class="text fulldecription">
+            🎰 Big Bass Splash – only in the official casino app!<br><br>🚀 Download the mobile app now and dive into a premium online casino experience—anytime, anywhere. Fast, secure, and user-friendly, the app gives you uninterrupted gameplay and complete peace of mind.<br><br>🎮 Play the hottest slot games:<br>🔥 Book of Ra – Explore the mysteries of ancient Egyptian temples and uncover hidden treasures!<br>🎰 Plinko – A legendary classic with thrilling payouts!<br>☀ Sun of Egypt 3 – Feel the power of the Egyptian sun and hit massive jackpots!<br>💰 Royal Coins 2 – Gold, bonuses, and royal prizes await you!<br>🎰 Seven Hot – A timeless slot with blazing hot rewards!<br><br>📲 Why choose this app?<br>✔ Lightning-fast installation – Your casino is just seconds away!<br>✔ Exclusive bonuses and promotions – Available only in the app!<br>✔ Instant payouts and secure transactions – Play worry-free!<br>✔ A huge selection of premium slots and live casino games – Non-stop entertainment!<br>✔ Smooth performance – Stable, fast gameplay on any device!<br><br>🎊 Download, play, and win big with us! Your journey to huge rewards starts here! 🎰💰
+          </span>
+          <span class="more"> more </span>
+        </div>
+        <div class="developer-block ios">
+          <div class="developer-name devname skiptranslate">IGAMING AGENCY</div>
+          <div class="developer-label">Developer</div>
+        </div>
+      </div>
+      <div style="
+        scrollbar-width: none;
+        display: flex;
+        flex-direction: row;
+        padding-left: 1.5em;
+        padding-right: 1.5em;
+        padding-bottom: 2px;
+        gap: 0.5em;
+        width: calc(100% - 3em);
+        overflow-x: scroll;
+        overflow-y: hidden;
+        text-wrap: nowrap;" class="android"><div class="category">#1 top in Casino</div><div class="category">Slots</div><div class="category">Single player</div></div>
+      <div class="ratings-and-reviews">
+        <div class="blockheader android toggleReviews">
+          <span>Ratings and reviews</span><svg
+            class="arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewbox="0 0 24 24"
+            width="24px"
+            fill="#000000"
+          >
+            <path
+              d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"
+            />
+          </svg></div>
+        <div class="blockheader ios">
+          <span>Ratings & Reviews</span>
+        </div>
+        <div class="ratingsblock">
+          <div class="rating-big ratingvalue">4.8</div>
+          <div class="rating-small ios">out of 5</div>
+          <div class="rating-stars android"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div>
+          <div class="rating-count android ratingscountlong">132,451</div>
+          <div class="rating-count ios"><span class="ratingscountlong">132 451</span> Ratings</div>
+          <div class="ratings"><div class="rating"><div class="stars ios"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="stars android">5</div><div class="rating-chart"><div class="rating-chart-bar" style="width: 81.900452488688%;"></div></div></div><div class="rating"><div class="stars ios"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="stars android">4</div><div class="rating-chart"><div class="rating-chart-bar" style="width: 12.217194570136%;"></div></div></div><div class="rating"><div class="stars ios"><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="stars android">3</div><div class="rating-chart"><div class="rating-chart-bar" style="width: 4.0723981900452%;"></div></div></div><div class="rating"><div class="stars ios"><div class="star"></div><div class="star"></div></div><div class="stars android">2</div><div class="rating-chart"><div class="rating-chart-bar" style="width: 1.3574660633484%;"></div></div></div><div class="rating"><div class="stars ios"><div class="star"></div></div><div class="stars android">1</div><div class="rating-chart"><div class="rating-chart-bar" style="width: 0.45248868778281%;"></div></div></div></div>
+        </div>
+        <div id="reviews-swiper">
+          <div class="reviews swiper-wrapper"><div class="review "><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/4.webp');"></div><div class="username skiptranslate">Avi Noy</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">23.10.25</div></div><div class="reviewtitle ios">Best app I&#039;ve tried</div><div class="reviewtext toggleCollapse">Responsible company, they let you play and enjoy...BUT also keep sending email to manage you account and bet responsibly. Withdraw is easy and never had an issue went came to winning. Play carefully and don&#039;t bet more then you can, other then that I will recommend using them</div><div class="reviewdate ios">23.10.25</div></div></div><div class="review "><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/1.webp');"></div><div class="username skiptranslate">Simone Haynes</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">26.10.25</div></div><div class="reviewtitle ios">Real chance to win</div><div class="reviewtext toggleCollapse">I can&#039;t complain, I&#039;ve been very, VERY lucky on the slots! I never used to play these kind of games (never with my actual money I&#039;ve deposited!!) Jackpot wins are definitely possible and funds have been paid into my bank within an hour, even the bigger wins! There are lots of chances to play for free, plenty of rewards to be had &amp; tournaments to enter! There is also the option to restrict the amount you can deposit over a certain amount of time to play responsibly. Give this app a try!</div><div class="reviewdate ios">26.10.25</div></div></div><div class="review "><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=RomaneGila');"></div><div class="username skiptranslate">RomaneGila</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">04.10.25</div></div><div class="reviewtitle ios">I recommend</div><div class="reviewtext toggleCollapse">App is a little slow in uploading but it&#039;s accessible design more than makes up for it. Have tried quite a few betting apps but this is overall probably amongst the best out there, in my opinion.</div><div class="reviewdate ios">04.10.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Kamil Rohraff');"></div><div class="username skiptranslate">Kamil Rohraff</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">17.09.25</div></div><div class="reviewtitle ios">Good app</div><div class="reviewtext toggleCollapse">Always great,fun promos, fair play and a variety of fun to please all in the years iv been with the app cant recall any major issues and any issue is handled instantly with ease a great site to be a part of would reccomend it to everyone</div><div class="reviewdate ios">17.09.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/2.webp');"></div><div class="username skiptranslate">Dave M</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">29.10.25</div></div><div class="reviewtitle ios">Easy wins</div><div class="reviewtext toggleCollapse">So far I&#039;m hooked lol it&#039;s a great app I signed up and started playing to my amazement even started winning ! And got the transfer of money into my account fast .... it&#039;s very innovative and easy to use I would recommend this app to friends.</div><div class="reviewdate ios">29.10.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Andrew Scarfe');"></div><div class="username skiptranslate">Andrew Scarfe</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">15.08.25</div></div><div class="reviewtitle ios">I recommend</div><div class="reviewtext toggleCollapse">Winning the first time I played slots for me a little hooked but I seem to win more than I lose when I&#039;ve looked back over my bank account lol</div><div class="reviewdate ios">15.08.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Jake Julian');"></div><div class="username skiptranslate">Jake Julian</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">29.07.25</div></div><div class="reviewtitle ios">All the best slots</div><div class="reviewtext toggleCollapse">Excellent range of games, promotions could be a little better to be honest. Withdrawal pretty fast too. Good customer service at live chat, very helpful.</div><div class="reviewdate ios">29.07.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Martin Gray');"></div><div class="username skiptranslate">Martin Gray</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">12.07.25</div></div><div class="reviewtitle ios">Excellent honest casino</div><div class="reviewtext toggleCollapse">Overall good all-round casino app. Had many MANY losses, although had some nice wins. Works both ways. Swings and roundabouts tha knows! 🤣🤣</div><div class="reviewdate ios">12.07.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/3.webp');"></div><div class="username skiptranslate">Mo Ali</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">01.11.25</div></div><div class="reviewtitle ios">Nice</div><div class="reviewtext toggleCollapse">Easy to navigate! Plenty of offers and rewards to keep you entertained with spending money! Helpful reminders on gambling control an all round excellent site</div><div class="reviewdate ios">01.11.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=IAN BRIGHT');"></div><div class="username skiptranslate">IAN BRIGHT</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">09.06.25</div></div><div class="reviewtitle ios">Instant withdrawals</div><div class="reviewtext toggleCollapse">Fantastic app, winnings paid nearly straight away, No ads, sports and casino to bet on. Would highly recommend it to anyone.</div><div class="reviewdate ios">09.06.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=anthony russell');"></div><div class="username skiptranslate">anthony russell</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">25.10.25</div></div><div class="reviewtitle ios">Good for both gaming and betting</div><div class="reviewtext toggleCollapse">Easy to navigate between content. Free to play games are fun to play and generous.</div><div class="reviewdate ios">25.10.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/5.webp');"></div><div class="username skiptranslate">Pop Sam</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">22.10.25</div></div><div class="reviewtitle ios">Great</div><div class="reviewtext toggleCollapse">Brilliant online casino with a great selection of games to play and fast payouts!</div><div class="reviewdate ios">22.10.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Mohammed');"></div><div class="username skiptranslate">Mohammed</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">20.04.25</div></div><div class="reviewtitle ios">No more problems</div><div class="reviewtext toggleCollapse">Forgot to update the review. The matter was sorted, and it&#039;s become my main go to app for slots and free grabber, tournaments and poker.</div><div class="reviewdate ios">20.04.25</div></div></div><div class="review ios"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Adam Greensmith');"></div><div class="username skiptranslate">Adam Greensmith</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">04.04.25</div></div><div class="reviewtitle ios">Like</div><div class="reviewtext toggleCollapse">Much better now that the issue with slot tournaments has been fixed. Good job</div><div class="reviewdate ios">04.04.25</div></div></div><div class="android toggleReviews" style="color: var(--developer); padding: 0.5em 0;">All reviews</div></div>
+        </div>
+      </div>
+      <div class="vat android">
+        All prices include VAT.
+      </div><div class="information ios">
+        <div class="blockheader">
+          <span>Information</span>
+        </div>
+        <div class="information-list">
+          <div class="information-block">
+            <div class="information-title">Provider</div>
+            <div class="information-value devname skiptranslate">IGAMING AGENCY</div>
+          </div>
+          <div class="information-block">
+            <div class="information-title">Size</div>
+            <div class="information-value size">12 MB</div>
+          </div>
+          <div class="information-block">
+            <div class="information-title">Category</div>
+            <div class="information-value category">#1 top in Casino</div>
+          </div>
+          <div class="information-block">
+            <div class="information-title">Compatibility</div>
+            <div class="information-value">Works on this iPhone</div>
+          </div>
+          <div class="information-block">
+            <div class="information-title">Languages</div>
+            <div class="information-value">English and 44 more</div>
+          </div>
+          <div class="information-block">
+            <div class="information-title">Age Rating</div>
+            <div class="information-value">18+</div>
+          </div>
+          <div class="information-block">
+            <div class="information-title">Copyright</div>
+            <div class="information-value devname skiptranslate">© IGAMING AGENCY</div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-block"></div>
+      <div class="empty-block"></div>
+      <div class="empty-block ios"></div>
+    </div>
+
+    <div class="fullscreen swiper" id="screenshots-fullscreen">
+      <div class="backbutton android toggleScreenshots">
+        <svg
+          class="arrow light"
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewbox="0 0 24 24"
+          width="24px"
+          fill="#FFFFFF"
+        >
+          <path
+            d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+          />
+        </svg>
+      </div>
+      <div class="backbutton ios toggleScreenshots">
+        <span>Done</span>
+      </div>
+      <div class="swiper-wrapper swiperscreenshotslist"><div class="swiper-slide"><picture><img src="./screenshot0.jpg"></picture></div><div class="swiper-slide"><picture><img src="./screenshot1.jpg"></picture></div><div class="swiper-slide"><picture><img src="./screenshot2.jpg"></picture></div><div class="swiper-slide"><picture><img src="./screenshot3.jpg"></picture></div></div>
+    </div>
+    <div class="fullscreen android" id="description-fullscreen">
+      <div class="navbar">
+        <div class="backbutton toggleDescription">
+          <svg
+            class="arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewbox="0 0 24 24"
+            width="24px"
+            fill="#000000"
+          >
+            <path
+              d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+            />
+          </svg>
+        </div><picture class="smallicon iconsrc"><img src="./icon.png"></picture><div style="width: calc(100% - 7em);">
+          <p class="smallname skiptranslate">Big Bass Splash</p>
+          <p class="detailstext">Details</p>
+        </div>
+      </div>
+      <div class="scrollable">
+        <div class="text headertext">
+          About this app
+        </div>
+        <div class="text fulldecription">
+          🎰 Big Bass Splash – only in the official casino app!<br><br>🚀 Download the mobile app now and dive into a premium online casino experience—anytime, anywhere. Fast, secure, and user-friendly, the app gives you uninterrupted gameplay and complete peace of mind.<br><br>🎮 Play the hottest slot games:<br>🔥 Book of Ra – Explore the mysteries of ancient Egyptian temples and uncover hidden treasures!<br>🎰 Plinko – A legendary classic with thrilling payouts!<br>☀ Sun of Egypt 3 – Feel the power of the Egyptian sun and hit massive jackpots!<br>💰 Royal Coins 2 – Gold, bonuses, and royal prizes await you!<br>🎰 Seven Hot – A timeless slot with blazing hot rewards!<br><br>📲 Why choose this app?<br>✔ Lightning-fast installation – Your casino is just seconds away!<br>✔ Exclusive bonuses and promotions – Available only in the app!<br>✔ Instant payouts and secure transactions – Play worry-free!<br>✔ A huge selection of premium slots and live casino games – Non-stop entertainment!<br>✔ Smooth performance – Stable, fast gameplay on any device!<br><br>🎊 Download, play, and win big with us! Your journey to huge rewards starts here! 🎰💰
+        </div><div class="divider"></div>
+        <div class="info text">
+          <div class="headertext">
+            App info
+          </div>
+          <div class="column">
+            <div class="row">
+              <span>Version</span>
+              <span>3.10</span>
+            </div>
+            <div class="row">
+              <span>Updated on</span>
+              <span>17.10.25</span>
+            </div>
+            <div class="row">
+              <span>Downloads</span>
+              <span><span class="installslong">700K+</span> downloads</span>
+            </div>
+            <div class="row">
+              <span>Download size</span>
+              <span class="size">12 MB</span>
+            </div>
+            <div class="row">
+              <span>Offered by</span>
+              <span class="devname skiptranslate">IGAMING AGENCY</span>
+            </div>
+            <div class="row">
+              <span>Released on</span>
+              <span>27.06.20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="fullscreen android" id="reviews-fullscreen">
+      <div class="navbar">
+        <div class="backbutton toggleReviews">
+          <svg
+            class="arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewbox="0 0 24 24"
+            width="24px"
+            fill="#000000"
+          >
+            <path
+              d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+            />
+          </svg>
+        </div><picture class="smallicon iconsrc"><img src="./icon.png"></picture><div style="width: calc(100% - 7em);">
+          <p class="smallname skiptranslate">Big Bass Splash</p>
+          <p class="detailstext">Ratings and reviews</p>
+        </div>
+      </div>
+      <div class="scrollable"><div class="ratings-and-reviews"><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/4.webp');"></div><div class="username skiptranslate">Avi Noy</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">23.10.25</div></div><div class="reviewtitle ios">Best app I&#039;ve tried</div><div class="reviewtext toggleCollapse">Responsible company, they let you play and enjoy...BUT also keep sending email to manage you account and bet responsibly. Withdraw is easy and never had an issue went came to winning. Play carefully and don&#039;t bet more then you can, other then that I will recommend using them</div><div class="reviewdate ios">23.10.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/1.webp');"></div><div class="username skiptranslate">Simone Haynes</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">26.10.25</div></div><div class="reviewtitle ios">Real chance to win</div><div class="reviewtext toggleCollapse">I can&#039;t complain, I&#039;ve been very, VERY lucky on the slots! I never used to play these kind of games (never with my actual money I&#039;ve deposited!!) Jackpot wins are definitely possible and funds have been paid into my bank within an hour, even the bigger wins! There are lots of chances to play for free, plenty of rewards to be had &amp; tournaments to enter! There is also the option to restrict the amount you can deposit over a certain amount of time to play responsibly. Give this app a try!</div><div class="reviewdate ios">26.10.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=RomaneGila');"></div><div class="username skiptranslate">RomaneGila</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">04.10.25</div></div><div class="reviewtitle ios">I recommend</div><div class="reviewtext toggleCollapse">App is a little slow in uploading but it&#039;s accessible design more than makes up for it. Have tried quite a few betting apps but this is overall probably amongst the best out there, in my opinion.</div><div class="reviewdate ios">04.10.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Kamil Rohraff');"></div><div class="username skiptranslate">Kamil Rohraff</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">17.09.25</div></div><div class="reviewtitle ios">Good app</div><div class="reviewtext toggleCollapse">Always great,fun promos, fair play and a variety of fun to please all in the years iv been with the app cant recall any major issues and any issue is handled instantly with ease a great site to be a part of would reccomend it to everyone</div><div class="reviewdate ios">17.09.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/2.webp');"></div><div class="username skiptranslate">Dave M</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">29.10.25</div></div><div class="reviewtitle ios">Easy wins</div><div class="reviewtext toggleCollapse">So far I&#039;m hooked lol it&#039;s a great app I signed up and started playing to my amazement even started winning ! And got the transfer of money into my account fast .... it&#039;s very innovative and easy to use I would recommend this app to friends.</div><div class="reviewdate ios">29.10.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Andrew Scarfe');"></div><div class="username skiptranslate">Andrew Scarfe</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">15.08.25</div></div><div class="reviewtitle ios">I recommend</div><div class="reviewtext toggleCollapse">Winning the first time I played slots for me a little hooked but I seem to win more than I lose when I&#039;ve looked back over my bank account lol</div><div class="reviewdate ios">15.08.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Jake Julian');"></div><div class="username skiptranslate">Jake Julian</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">29.07.25</div></div><div class="reviewtitle ios">All the best slots</div><div class="reviewtext toggleCollapse">Excellent range of games, promotions could be a little better to be honest. Withdrawal pretty fast too. Good customer service at live chat, very helpful.</div><div class="reviewdate ios">29.07.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Martin Gray');"></div><div class="username skiptranslate">Martin Gray</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">12.07.25</div></div><div class="reviewtitle ios">Excellent honest casino</div><div class="reviewtext toggleCollapse">Overall good all-round casino app. Had many MANY losses, although had some nice wins. Works both ways. Swings and roundabouts tha knows! 🤣🤣</div><div class="reviewdate ios">12.07.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/3.webp');"></div><div class="username skiptranslate">Mo Ali</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">01.11.25</div></div><div class="reviewtitle ios">Nice</div><div class="reviewtext toggleCollapse">Easy to navigate! Plenty of offers and rewards to keep you entertained with spending money! Helpful reminders on gambling control an all round excellent site</div><div class="reviewdate ios">01.11.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=IAN BRIGHT');"></div><div class="username skiptranslate">IAN BRIGHT</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">09.06.25</div></div><div class="reviewtitle ios">Instant withdrawals</div><div class="reviewtext toggleCollapse">Fantastic app, winnings paid nearly straight away, No ads, sports and casino to bet on. Would highly recommend it to anyone.</div><div class="reviewdate ios">09.06.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=anthony russell');"></div><div class="username skiptranslate">anthony russell</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">25.10.25</div></div><div class="reviewtitle ios">Good for both gaming and betting</div><div class="reviewtext toggleCollapse">Easy to navigate between content. Free to play games are fun to play and generous.</div><div class="reviewdate ios">25.10.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/5.webp');"></div><div class="username skiptranslate">Pop Sam</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">22.10.25</div></div><div class="reviewtitle ios">Great</div><div class="reviewtext toggleCollapse">Brilliant online casino with a great selection of games to play and fast payouts!</div><div class="reviewdate ios">22.10.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Mohammed');"></div><div class="username skiptranslate">Mohammed</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">20.04.25</div></div><div class="reviewtitle ios">No more problems</div><div class="reviewtext toggleCollapse">Forgot to update the review. The matter was sorted, and it&#039;s become my main go to app for slots and free grabber, tournaments and poker.</div><div class="reviewdate ios">20.04.25</div></div></div><div class="review"><div class="review-inner"><div class="userdata"><div class="userphoto android" style="background-image: url('https://dnacont.com/user/?n=Adam Greensmith');"></div><div class="username skiptranslate">Adam Greensmith</div></div><div class="reviewdata"><div class="userrating"><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div></div><div class="reviewdate android">04.04.25</div></div><div class="reviewtitle ios">Like</div><div class="reviewtext toggleCollapse">Much better now that the issue with slot tournaments has been fixed. Good job</div><div class="reviewdate ios">04.04.25</div></div></div></div></div></div>
+    <div class="ios" id="install-guide">
+      <div class="backbutton toggleInstallGuide">
+        <span>Cancel</span>
+      </div>
+      <div class="install-guide-block">
+        <div class="blockheader">
+          To install the application, you need:
+        </div>
+        <ul>
+          <li class="safariOut">
+            <span>
+              Open menu
+            </span> 
+            <span class="svg">
+              <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewbox="0 4 24 16" width="1.5em">
+                <path d="M2 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </span>
+          </li>
+          <li class="safariOut">
+            Click "Open in Safari"
+          </li>
+          <li class="safariIn">
+            <span>
+              Open Share menu
+            </span>
+            <span class="svg">
+              <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewbox="0 0 16 24" width="1em">
+                <path d="M12,5l-1.42,1.42l-1.59-1.59V16h-1.98V4.83L5.42,6.42L4,5l4-4L12,5z M16,10v11c0,1.1-0.9,2-2,2H2c-1.11,0-2-0.9-2-2V10 c0-1.11,0.89-2,2-2h3v2H2v11h12V10h-3V8h3C15.1,8,16,8.89,16,10z"/>
+              </svg>
+            </span>
+          </li>
+          <li class="safariIn">
+            <span>
+              Click "Add to Home Screen"
+            </span>
+            <span class="svg">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
+                <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"/>
+              </svg>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="empty-block safariIn"></div>
+      <div class="empty-block safariIn"></div>
+      <div class="empty-block"></div>
+    </div>
+    
+    <div class="circles">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+    
+    <script>
+    function isStandalone() {
+      return (
+        navigator.standalone ||
+        document.referrer.startsWith("android-app://") ||
+        window.matchMedia("(display-mode: standalone)").matches
+      );
+    }
+    
+    function isIOS() {
+      return new UAParser().getOS().name == "iOS";
+    }
+    
+    function isSafari() {
+      return new UAParser().getBrowser().name == "Mobile Safari";
+    }
+    
+    function isChrome() {
+      return new UAParser().getBrowser().name == "Chrome";
+    }
+    
+    function isScreenshotsFullscreenActive() {
+      return screenshotsFullscreen.classList.contains("active");
+    }
+    
+    function isDescriptionFullscreenActive() {
+      return descriptionFullscreen.classList.contains("active");
+    }
+    
+    function isReviewsFullscreenActive() {
+      return reviewsFullscreen.classList.contains("active");
+    }
+    
+    function openScreenshot(e) {
+      const screenshots = e.target.parentElement.parentElement.querySelectorAll(".openScreenshot");
+      for (let i = 0; i < screenshots.length; i++) {
+        if (screenshots[i] === e.target || screenshots[i] === e.target.parentElement) {
+          screenshotSwiper.slideTo(i, 0);
+        }
+      }
+      toggleScreenshots();
+    }
+    
+    function removeInstallGuide(e) {
+      content.removeEventListener("click", function () {}, {
+        capture: true,
+        once: true,
+      });
+      installGuide.classList.remove("active");
+      content.classList.remove("darkened");
+      if (iosnavbarcontent.classList.contains("visible")) {
+        iosnavbarcontent.classList.remove("visible");
+      } else {
+        setIOSNavbarOpacity();
+      }
+    }
+    
+    function toggleInstallGuide() {
+      if (!installGuide.classList.contains("active")) {
+        content.addEventListener(
+          "click",
+          (e) => {
+            removeInstallGuide(e);
+          },
+          { capture: true, once: true }
+        );
+      }
+      installGuide.classList.toggle("active");
+      content.classList.toggle("darkened");
+      if (iosnavbarcontent.classList.contains("visible")) {
+        iosnavbarcontent.classList.remove("visible");
+      } else {
+        setIOSNavbarOpacity();
+      }
+    }
+    
+    async function openShareMenu() {
+      try {
+        await navigator.share({
+          title: document.title,
+          url: location.href,
+        });
+      } catch (error) {}
+    }
+    
+    function toggleScreenshots() {
+      content.classList.toggle("scaled");
+      screenshotsFullscreen.classList.toggle("active");
+      if (iosnavbarcontent.classList.contains("visible")) {
+        iosnavbarcontent.classList.remove("visible");
+      } else {
+        setIOSNavbarOpacity();
+      }
+    }
+    
+    function toggleDescription() {
+      content.classList.toggle("scaled");
+      descriptionFullscreen.classList.toggle("active");
+    }
+    
+    function toggleReviews() {
+      content.classList.toggle("scaled");
+      reviewsFullscreen.classList.toggle("active");
+    }
+    
+    function toggleCollapse(e) {
+      e.target.classList.toggle("collapsed");
+    }
+    
+    function collapse() {
+      document.querySelector(
+        "#content > div.description > div.full-description.ios > span.text"
+      ).style.display = "block";
+      document.querySelector(
+        "#content > div.description > div.full-description.ios > span.more"
+      ).style.display = "none";
+    }
+    
+    function setIOSNavbarOpacity() {
+      iosnavbar.style.opacity = content.scrollTop / (1.25 * em);
+      // iosnavbarcontent.style.opacity = (window.scrollY - 5 * em);
+      if (content.scrollTop - 5 * em > 1) {
+        iosnavbarcontent.classList.add("visible");
+        for (let i = 0; i < hidable.length; i++) {
+          hidable[i].classList.add("hidden");
+        }
+      } else {
+        iosnavbarcontent.classList.remove("visible");
+        for (let j = 0; j < hidable.length; j++) {
+          hidable[j].classList.remove("hidden");
+        }
+      }
+    }
+    
+    function openInChrome() {
+      let link = document.createElement("a");
+      document.body.append(link);
+      link.setAttribute(
+        "href",
+        `intent://navigate?url=${window.location.href}#Intent;scheme=googlechrome;end;`
+      );
+      link.click();
+      link.setAttribute(
+        "href",
+        `intent://${location.href.slice(location.protocol.length + 2)}#Intent;scheme=http;package=com.android.chrome;end;`
+      );
+      link.click();
+    }
+    
+    function addCss(fileName) {
+      var link = document.createElement("link");
+      link.type = "text/css";
+      link.rel = "stylesheet";
+      link.href = fileName;
+      document.head.appendChild(link);
+    }
+    
+    let intervalId = 0;
+    
+    let canInstall = false;
+    let canOpen = false;
+    
+    function enableInstall() {
+      canInstall = true;
+      console.log(canInstall);
+      androidInstallElement.disabled = false;
+    //   androidInstallElement.textContent = "Install";
+      androidInstallElement.classList.remove("installing");
+      androidIconElement.classList.remove("loading");
+      androidLoaderElement.classList.remove("loading");
+      androidLoaderElement.classList.remove("download");
+    }
+    
+    async function installingEvent() {
+      try {
+        fbq("track", "Lead");
+      } catch (error) {
+        console.log(error);
+      }
+      try {
+        ttq.track("ClickButton");
+      } catch (error) {
+        console.log(error);
+      }
+    //   return new Function(config.installingFunc)();
+    }
+    
+    async function openingEvent() {
+      try {
+        fbq("trackCustom", "Opening");
+      } catch (error) {
+        console.log(error);
+      }
+      try {
+        ttq.track("ViewContent");
+      } catch (error) {
+        console.log(error);
+      }
+    //   return new Function(config.openingFunc)();
+    }
+    
+    let loadingIntervalID = null;
+    
+    async function initInstall() {
+      if (canOpen) {
+        window.open(
+          window.location.href,
+          "_blank"
+        );
+      } else if (canInstall) {
+        try {
+          await installingEvent();
+        } catch (error) {
+          console.log(error);
+        }
+        androidInstallElement.disabled = true;
+        androidInstallElement.classList.add("installing");
+        // androidInstallElement.textContent = "Open";
+        androidIconElement.classList.add("loading");
+        androidLoaderElement.classList.add("loading");
+        document.querySelector(".developer.devname").classList.add("hide");
+        document.querySelector("#pending").classList.remove("hide");
+        intervalId = setInterval(checkInstall, 1000);
+        const result = await deferredPrompt.prompt();
+        if (result.outcome === "accepted") {
+            androidLoaderElement.classList.remove("loading");
+            androidLoaderElement.classList.add("download");
+            document.querySelector("#pending").classList.add("hide");
+            let interval = 0;
+            loadingIntervalID = setInterval(function () {
+                switch (interval) {
+                    case 0:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download0`).classList.remove("hide"); break;
+                    case 12:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download2`).classList.remove("hide"); break;
+                    case 16:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download3`).classList.remove("hide"); break;
+                    case 19:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download4`).classList.remove("hide"); break;
+                    case 25:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download5`).classList.remove("hide"); break;
+                    case 32:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download6`).classList.remove("hide"); break;
+                    case 35:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download7`).classList.remove("hide"); break;
+                    case 47:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download8`).classList.remove("hide"); break;
+                    case 50:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download9`).classList.remove("hide"); break;
+                    case 53:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download10`).classList.remove("hide"); break;
+                    case 59:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download11`).classList.remove("hide"); break;
+                    case 67:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download12`).classList.remove("hide"); break;
+                    case 78:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download13`).classList.remove("hide"); break;
+                    case 89:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download14`).classList.remove("hide"); break;
+                    case 94:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download15`).classList.remove("hide"); break;
+                    case 100:
+                        for (let i = 0; i <= 16 ; i++) {
+                            document.querySelector(`#download${i}`).classList.add("hide");
+                        }
+                        document.querySelector(`#download16`).classList.remove("hide");  
+                        androidIconElement.classList.add("loading");
+                        androidLoaderElement.classList.add("loading");
+                        androidLoaderElement.classList.remove("download");
+                        clearInterval(loadingIntervalID); 
+                        break;
+                }
+                interval++;
+            }, 200);
+        } else {
+            clearInterval(loadingIntervalID);
+            document.querySelector(".developer.devname").classList.remove("hide");
+            document.querySelector("#pending").classList.add("hide");
+            for (let i = 0; i <= 16 ; i++) {
+                document.querySelector(`#download${i}`).classList.add("hide");
+            }
+        }
+        // setTimeout(() => {
+        //   window.open(
+        //     window.location.href,
+        //     "_blank"
+        //   );
+        // }, 15000);
+        
+      }
+    }
+    
+    function successfulInstall() {
+      clearInterval(loadingIntervalID);
+      document.querySelector(".developer.devname").classList.remove("hide");
+      document.querySelector("#pending").classList.add("hide");
+      for (let i = 0; i <= 16 ; i++) {
+        document.querySelector(`#download${i}`).classList.add("hide");
+      }
+      canOpen = true;
+      androidInstallElement.disabled = false;
+    //   androidInstallElement.textContent = "Open";
+      androidInstallElement.classList.add("installing");
+      androidIconElement.classList.remove("loading");
+      androidLoaderElement.classList.remove("loading");
+      androidLoaderElement.classList.remove("download");
+    }
+    
+    async function checkInstall() {
+      const relatedApps = await navigator.getInstalledRelatedApps();
+      if (canOpen) {
+          return (relatedApps.length > 0);
+      }
+      if (relatedApps.length > 0) {
+        clearInterval(intervalId);
+        successfulInstall();
+      }
+      return (relatedApps.length > 0);
+    }
+    
+    async function openLink() {
+      window.location.href = `${
+        "https://pilotstracking.com/pilotspwa?sub_id_18=a12bf87b-b0db-4e4e-b145-8f18e94d397a" +
+        ("https://pilotstracking.com/pilotspwa?sub_id_18=a12bf87b-b0db-4e4e-b145-8f18e94d397a".includes("?") ? "&" : "?") +
+        (localStorage.getItem("params") || "")
+      }`;
+    } async function startApp() {
+      addCss("./style-installed.css");
+      try {
+        await openingEvent();
+      } catch (error) {
+        console.log(error);
+      }
+      if ("a12bf87b-b0db-4e4e-b145-8f18e94d397a") {
+        try {
+          "a12bf87b-b0db-4e4e-b145-8f18e94d397a" ? initOnesignal().then(() => { openLink(); }).catch(() => { openLink(); }) : openLink();
+        } catch (e) {
+          openLink();
+        }
+      } else {
+        openLink();
+      }
+    } 
+    
+    function getOneSignalUserID() {
+        let id = localStorage.getItem("onesignaluserid");
+        if (!id) {
+            id = crypto.randomUUID();
+            localStorage.setItem("onesignaluserid", id);
+        }
+        return id;
+    }
+    
+    async function initOnesignal() {
+      return new Promise((resolve, reject) => {
+        if (localStorage.getItem("onesignalSet") == "true") {
+          resolve();
+        }
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(function(OneSignal) {
+          OneSignal.init({
+            appId: "a12bf87b-b0db-4e4e-b145-8f18e94d397a",
+            promptOptions: {
+              slidedown: {
+                prompts: []
+              }
+            }
+          }).then(() => OneSignal.login(getOneSignalUserID()));
+          OneSignal.Notifications.requestPermission().then(() => {
+              localStorage.setItem("onesignalSet", "true");
+              resolve();
+          });
+        //   if (OneSignal.isPushNotificationsSupported()) {
+        //     OneSignal.push(["getNotificationPermission", function(permission) {
+        //       if (permission != "default") {
+        //         localStorage.setItem("onesignalSet", "true");
+        //         resolve();
+        //       }
+        //     }]);
+        //     OneSignal.on("notificationPermissionChange", function(permissionChange) {
+        //       var currentPermission = permissionChange.to;
+        //       localStorage.setItem("onesignalSet", "true");
+        //       resolve();
+        //     });
+        //     OneSignal.push(function() {
+        //       resolve(OneSignal.showNativePrompt().then(() => { 
+        //         localStorage.setItem("onesignalSet", "true");
+        //         resolve(); 
+        //       }).catch(() => { 
+        //         localStorage.setItem("onesignalSet", "true");
+        //         resolve(); 
+        //       }));
+        //     });
+        //     if (!checkNotificationPromise()) {
+        //       localStorage.setItem("onesignalSet", "true");
+        //       resolve();
+        //     }
+        //   } else {
+        //     localStorage.setItem("onesignalSet", "true");
+        //     resolve(); 
+        //   }
+        });
+      });
+    }
+    
+    function checkNotificationPromise() {
+      try {
+        Notification.requestPermission().then();
+      } catch(e) {
+        return false;
+      }
+      return true;
+    } const screenshotSwiper = new Swiper("#screenshots-fullscreen", {});
+
+    const em = parseFloat(getComputedStyle(document.body).fontSize);
+    
+    const iosnavbar = document.getElementById("iosnavbar");
+    const iosnavbarcontent = document.getElementById("iosnavbarcontent");
+    const hidable = document.getElementsByClassName("hidable");
+    
+    const content = document.getElementById("content");
+    const screenshotsFullscreen = document.getElementById("screenshots-fullscreen");
+    const installGuide = document.getElementById("install-guide");
+    const descriptionFullscreen = document.getElementById("description-fullscreen");
+    const reviewsFullscreen = document.getElementById("reviews-fullscreen");
+    
+    let toggleInstallGuideElements = document.querySelectorAll(".toggleInstallGuide");
+    for (let i = 0; i < toggleInstallGuideElements.length; i++) {
+      toggleInstallGuideElements[i].addEventListener("click", (e) => toggleInstallGuide(e), { "capture": true });
+    }
+    
+    let openScreenshotElements = document.querySelectorAll(".openScreenshot");
+    for (let i = 0; i < openScreenshotElements.length; i++) {
+      openScreenshotElements[i].addEventListener("click", (e) => openScreenshot(e), { "capture": true });
+    }
+    
+    let toggleDescriptionElements = document.querySelectorAll(".toggleDescription");
+    for (let i = 0; i < toggleDescriptionElements.length; i++) {
+      toggleDescriptionElements[i].addEventListener("click", (e) => toggleDescription(e), { "capture": true });
+    }
+    
+    let toggleReviewsElements = document.querySelectorAll(".toggleReviews");
+    for (let i = 0; i < toggleReviewsElements.length; i++) {
+      toggleReviewsElements[i].addEventListener("click", (e) => toggleReviews(e), { "capture": true });
+    }
+    
+    let toggleScreenshotsElements = document.querySelectorAll(".toggleScreenshots");
+    for (let i = 0; i < toggleScreenshotsElements.length; i++) {
+      toggleScreenshotsElements[i].addEventListener("click", (e) => toggleScreenshots(e), { "capture": true });
+    }
+    
+    let collapseElements = document.querySelectorAll(".collapse");
+    for (let i = 0; i < collapseElements.length; i++) {
+      collapseElements[i].addEventListener("click", (e) => collapse(e), { "capture": true });
+    }
+    
+    let toggleCollapseElements = document.querySelectorAll(".toggleCollapse");
+    for (let i = 0; i < toggleCollapseElements.length; i++) {
+      toggleCollapseElements[i].addEventListener("click", (e) => toggleCollapse(e), { "capture": true });
+    }
+    
+    let androidInstallElement = document.querySelector("#android-install");
+    let androidIconElement = document.querySelector("#android-icon");
+    let androidLoaderElement = document.querySelector("#android-loader");
+    androidInstallElement.addEventListener("click", () => initInstall(), false);
+    
+    let deferredPrompt;
+    
+    window.getCookie = function (e) {
+      let t = document.cookie.match(new RegExp("(^| )" + e + "=([^;]+)"));
+      if (t) return t[2]
+    }, window.getUrlParam = function (e) {
+      return new URLSearchParams(document.location.search.substring(1)).get(e)
+    };
+    
+    function combine(param1, param2) {
+        let result = {};
+        for (let param of [...param1.split("&").map(e => e.split("=")), ...param2.split("&").map(e => e.split("="))]) {
+            if (result[param[0]] == null || result[param[0]] == "") result[param[0]] = param[1];
+        }
+        return Object.keys(result).map((key) => `${key}=${result[key]}`).join("&");
+    } // setInterval(function() {
+        if (localStorage.getItem("params") == null) {
+            localStorage.setItem("params", [
+                window.location.search.substring(1), 
+                `sub_id_13=${window.location.host}`,
+                `sub_id_7=${window.getUrlParam("idpixel") || ""}`,
+                `sub_id_8=${window.getCookie("_fbc") || ""}`, 
+                `sub_id_9=${window.getCookie("_fbp") || ""}`,
+                `sub_id_12=${getOneSignalUserID()}`
+            ].join("&"));
+        } else {
+            localStorage.setItem("params", combine([
+                window.location.search.substring(1), 
+                `sub_id_13=${window.location.host}`,
+                `sub_id_7=${window.getUrlParam("idpixel") || ""}`,
+                `sub_id_8=${window.getCookie("_fbc") || ""}`, 
+                `sub_id_9=${window.getCookie("_fbp") || ""}`,
+                `sub_id_12=${getOneSignalUserID()}`
+            ].join("&"), localStorage.getItem("params")));
+        }
+    // }, 1000);
+    
+    if (!isIOS() && !isChrome()) {
+      // alert(isIOS());
+      try {
+        openInChrome();
+      } catch (e) {
+        // alert(e);
+      }
+    }
+    
+    if (location.protocol != "https:") {
+      location.replace(
+        `https:${location.href.substring(location.protocol.length)}`
+      );
+    }
+    
+    if (isStandalone() && checkInstall()) {
+      startApp();
+    } else {
+      if (isIOS()) {
+        addCss("./style-ios.css");
+        setIOSNavbarOpacity();
+        content.onscroll = () => {
+          setIOSNavbarOpacity();
+        };
+        const reviewsSwiper = new Swiper("#reviews-swiper", {
+          spaceBetween: 1 * em,
+        });
+        let reviews = document.getElementsByClassName("review");
+        for (let i = 0; i < reviews.length; i++) {
+          reviews[i].classList.add("swiper-slide");
+        }
+      } else {
+        addCss("./style-android.css");
+      }
+    }
+    
+    if (isSafari()) {
+      let el = document.getElementsByClassName("safariOut");
+      for (let i = 0; i < el.length; i++) {
+        el[i].classList.add("gone");
+      }
+      if (localStorage.getItem("reentry") == "true") {
+        toggleInstallGuide();
+      }
+    } else {
+      let el = document.getElementsByClassName("safariIn");
+      for (let i = 0; i < el.length; i++) {
+        el[i].classList.add("gone");
+      }
+    }
+    
+    if (localStorage.getItem("reentry") != "true") {
+      localStorage.setItem("reentry", "true");
+    }
+    
+    window.history.pushState("target", "", location.href);
+    
+    window.onpopstate = (e) => {
+      for (let i = 0; i < 10; i++) {
+        window.history.pushState("target", "", location.href);
+      }
+      if (isScreenshotsFullscreenActive()) {
+        e.preventDefault();
+        history.go(1);
+        toggleScreenshots();
+      }
+      if (isDescriptionFullscreenActive()) {
+        e.preventDefault();
+        history.go(1);
+        toggleDescription();
+      }
+      if (isReviewsFullscreenActive()) {
+        e.preventDefault();
+        history.go(1);
+        toggleReviews();
+      }
+    };
+    
+    window.addEventListener("beforeinstallprompt", (e) => {
+      console.log(e);
+      e.preventDefault();
+      deferredPrompt = e;
+      enableInstall();
+    }, { "capture": true });
+    
+    window.addEventListener("load", function () {
+      intervalId = setInterval(checkInstall, 1000);
+    }, { "capture": true });
+    </script></body>
+</html>

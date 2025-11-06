@@ -89,14 +89,66 @@ export default {
     }
   };
 
-  // Structured logging helper
+  // Structured logging helper + bracketed tag logs (aligned with pops-reporting style)
   function log(level, event, details = {}) {
-    console.log(JSON.stringify({
+    const payload = {
       timestamp: new Date().toISOString(),
       level,
       event,
       ...details
-    }));
+    };
+    // JSON structured log (existing behavior)
+    console.log(JSON.stringify(payload));
+    // Bracketed tag log for quick scanning in logs (e.g., [BQ_CLEANUP] Cleanup completed)
+    try {
+      const message = buildBracketedMessage(event, details);
+      if (message) console.log(message);
+    } catch (_) {
+      // no-op: never break due to logging helper
+    }
+  }
+
+  function buildBracketedMessage(event, details) {
+    const tag = String(event || "EVENT").toUpperCase();
+    // Prefer a human message if present, else assemble key=value summary
+    const msg =
+      typeof details?.message === "string" && details.message.trim().length
+        ? details.message.trim()
+        : summarizeDetails(details);
+    return `[${tag}] ${msg}`;
+  }
+
+  function summarizeDetails(details) {
+    if (!details || typeof details !== "object") return "";
+    const keysPreferred = [
+      "status",
+      "account_id",
+      "table_name",
+      "request_id",
+      "row_count",
+      "rows_written",
+      "rows_fetched",
+      "chunks_sent",
+      "date_range",
+      "error",
+      "note"
+    ];
+    const out = [];
+    for (const k of keysPreferred) {
+      if (details[k] !== undefined) {
+        const v = typeof details[k] === "object" ? JSON.stringify(details[k]) : String(details[k]);
+        out.push(`${k}=${v}`);
+      }
+    }
+    // If nothing matched, fall back to first few entries
+    if (!out.length) {
+      const entries = Object.entries(details).slice(0, 5);
+      for (const [k, v] of entries) {
+        const sv = typeof v === "object" ? JSON.stringify(v) : String(v);
+        out.push(`${k}=${sv}`);
+      }
+    }
+    return out.join(" ");
   }
 
   // BigQuery retry wrapper with exponential backoff
