@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PWA Debug - Check Resources</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        div { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>PWA Resource Check</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        const checks = [];
+        
+        function addCheck(name, status, message) {
+            const color = status === 'success' ? 'success' : status === 'error' ? 'error' : 'warning';
+            results.innerHTML += `<div class="${color}"><strong>${name}:</strong> ${message}</div>`;
+        }
+        
+        // Check CSS files
+        const cssFiles = [
+            './static/css/swiper-bundle.min.css',
+            './static/css/dark.css',
+            './static/css/light.css',
+            './static/css/style-android.css',
+            './static/css/style-ios.css'
+        ];
+        
+        cssFiles.forEach(file => {
+            fetch(file)
+                .then(r => {
+                    if (r.ok) {
+                        addCheck(file, 'success', 'Loaded successfully');
+                    } else {
+                        addCheck(file, 'error', `Failed: ${r.status} ${r.statusText}`);
+                    }
+                })
+                .catch(e => {
+                    addCheck(file, 'error', `Error: ${e.message}`);
+                });
+        });
+        
+        // Check JS files
+        const jsFiles = [
+            './static/js/swiper-bundle.min.js',
+            './static/js/ua-parser.js',
+            './pwabuilder-sw.js',
+            './manifest.json'
+        ];
+        
+        jsFiles.forEach(file => {
+            fetch(file)
+                .then(r => {
+                    if (r.ok) {
+                        addCheck(file, 'success', 'Loaded successfully');
+                    } else {
+                        addCheck(file, 'error', `Failed: ${r.status} ${r.statusText}`);
+                    }
+                })
+                .catch(e => {
+                    addCheck(file, 'error', `Error: ${e.message}`);
+                });
+        });
+        
+        // Check external resources
+        addCheck('OneSignal CDN', 'warning', 'External - requires internet');
+        addCheck('Google Translate', 'warning', 'External - requires internet');
+        
+        // Check console for errors
+        const originalError = console.error;
+        console.error = function(...args) {
+            addCheck('JavaScript Error', 'error', args.join(' '));
+            originalError.apply(console, args);
+        };
+        
+        setTimeout(() => {
+            addCheck('Check Complete', 'success', 'All checks finished. Review results above.');
+        }, 3000);
+    </script>
+</body>
+</html>
+

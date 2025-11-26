@@ -74,7 +74,7 @@ export default {
         pixelId: "1062466909039701", // FRM-154947
         accessToken:
           "EAAI6x8pJ7h8BO9SR2guoVa8av2ZB6UgnOzzXmFNmQPyfWnqLoxFRMm0CXjpR85QKQ3WvJHX0DX1mAAZCHm7VWwN5YY92xvri2Jg8X0WQanDjJ34ElkFb7gIrgZCjFicYZAQLElqJSk8jPQC4ejYeMZCr3hL6ZBlEge85V3henGuVZCmgZBXWn87JiwIKEq0fSxZCYEgZDZD",
-        eventSourceUrl: "https://montaukfishingcharter.net",
+        eventSourceUrl: null,
         eventName: event_name,
       },
       {
@@ -84,13 +84,13 @@ export default {
         eventSourceUrl: "https://suntechy.com",
         eventName: event_name,
       },
-      {
-        pixelId: "667494842414004", // FRM-155237
-        accessToken:
-          "EAATEj6L1BfgBOZBVZABBgL5oZApitqTvxM4Esvt3xkUk65xhIYDrryY2sMN0wxFcsVIZBSkE2x1nIwi1fpWUgpDQqssfgZABgEacx5ZBYWK0u9UkZAXaG1gQNp0ZAZAUZAzfNF5FZBZAy1TqebuHznKiDIyGuupWgENANFe5xOBXdZALDZCIg7C8PL4gC7R55RRon33ndSJAZDZD",
-        eventSourceUrl: "https://travelerassistusonlinetravel.com",
-        eventName: event_name,
-      },
+      // {
+      //   pixelId: "667494842414004", // FRM-155237
+      //   accessToken:
+      //     "EAATEj6L1BfgBOZBVZABBgL5oZApitqTvxM4Esvt3xkUk65xhIYDrryY2sMN0wxFcsVIZBSkE2x1nIwi1fpWUgpDQqssfgZABgEacx5ZBYWK0u9UkZAXaG1gQNp0ZAZAUZAzfNF5FZBZAy1TqebuHznKiDIyGuupWgENANFe5xOBXdZALDZCIg7C8PL4gC7R55RRon33ndSJAZDZD",
+      //   eventSourceUrl: "https://travelerassistusonlinetravel.com",
+      //   eventName: event_name,
+      // },
       {
         pixelId: "1162178602113617", // FRM-154742
         accessToken:
@@ -98,8 +98,26 @@ export default {
         eventSourceUrl: "https://uswheeltech.com",
         eventName: event_name,
       },
+      {
+        pixelId: "674276735757225", // FRM-183768
+        accessToken:
+          "EAAOVIXW2AZA8BP25fOUhaLUIJW3U7Pb8sTUPmlbkpDrEvxm5CA2Y5IBX5rQaRj3P2cj169zkwJ9OuUeiFyDyvkrgRySCDZBKGCNTBTuBXzFogvNeqpCWjqZAACLxvZBTsSFIxp5TmOPpETm4mimIeuxvDkwvZBaKmiEJM3sXyvxbwIzuBvRh6YNXoL1A9FqSsjgZDZD",
+        eventSourceUrl: "https://bastianstationery.com",
+        eventName: event_name,
+      },
+      {
+        pixelId: "1209506934430968", // FRM-180342
+        accessToken:
+          "EAATT2KLhQZA4BQJLyD3o1uu0N25bI79rxEvMO8jOADDlRivHiJ4J5MfW5cJHTdXcVbGpMhxi5ORP8GcsDeZB3RHFuzuwvris7wZBuAqvzKLu5fVFndelcQVpqK8JBuS9ZALYRNNiZCieNvmjB40NWZCS4vjQxaD26OXhgURE5joBJ5qMfzSEp3MRaD6yxsFIO1R5FzZBnenRmxrYs85wHy5u52sLH0hrRqmQGti3myKZAPVCw0s67gZDZD",
+        eventSourceUrl: null,
+        eventName: event_name,
+        frmId: "180342", // Flag to identify this config for special handling
+        transformEvents: true, // Flag to enable event transformation
+      },
     ];
 
+
+    
     // Function to send a request to Facebook Conversion API
     async function sendFbEvent(pixelId, accessToken, eventSourceUrl, eventName) {
       const FB_API = `https://graph.facebook.com/v16.0/${pixelId}/events?access_token=${accessToken}`;
@@ -127,7 +145,7 @@ export default {
           },
           },
         ],
-        // test_event_code: "TEST61728"
+        // test_event_code: "TEST37244"
       };
       console.log(`Sending event to Pixel ${pixelId}:`, JSON.stringify(fbEventData));
 
@@ -148,12 +166,37 @@ export default {
   }
 }
 
-    // Send requests for both configurations
+    // Separate regular configs from FRM-180342 (which needs special handling)
+    const regularConfigs = API_CONFIGS.filter((config) => !config.transformEvents);
+    const frm180342Config = API_CONFIGS.find((config) => config.frmId === "180342");
+
+    // Send requests for regular configurations
     const responses = await Promise.all(
-      API_CONFIGS.map((config) =>
+      regularConfigs.map((config) =>
         sendFbEvent(config.pixelId, config.accessToken, config.eventSourceUrl, config.eventName)
       )
     );
+
+    // Handle FRM-180342 separately with event transformation (PC brand only)
+    if (frm180342Config && event_name) {
+      const transformedEventName = transformEventNameForFRM180342(event_name);
+      if (transformedEventName) {
+        console.log(
+          `FRM-180342: Transforming "${event_name}" to "${transformedEventName}" (PC brand only)`
+        );
+        await sendFbEvent(
+          frm180342Config.pixelId,
+          frm180342Config.accessToken,
+          frm180342Config.eventSourceUrl,
+          transformedEventName
+        );
+      } else {
+        const brand = extractBrandFromEventName(event_name);
+        console.log(
+          `FRM-180342: Skipping event "${event_name}" (brand: ${brand}, only PC brand events are sent)`
+        );
+      }
+    }
 
       // --- NEW: Mirror pageview-* to purchase-* when FBC present ---
     const isLeadVariant = /^Lead-/i.test(String(event_name || ""));
@@ -172,11 +215,28 @@ export default {
         `FBC present. Mirroring "${event_name}" as "${overriddenEventName}" to CAPI.`
       );
 
+      // Mirror to regular configs only (exclude FRM-180342 which has its own handling)
       await Promise.all(
-        API_CONFIGS.map((config) =>
+        regularConfigs.map((config) =>
           sendFbEvent(config.pixelId, config.accessToken, config.eventSourceUrl, overriddenEventName)
         )
       );
+
+      // Handle FRM-180342 mirroring separately with transformation (PC brand only)
+      if (frm180342Config) {
+        const transformedMirrorEventName = transformEventNameForFRM180342(overriddenEventName);
+        if (transformedMirrorEventName) {
+          console.log(
+            `FRM-180342: Mirroring "${overriddenEventName}" as "${transformedMirrorEventName}" (PC brand only)`
+          );
+          await sendFbEvent(
+            frm180342Config.pixelId,
+            frm180342Config.accessToken,
+            frm180342Config.eventSourceUrl,
+            transformedMirrorEventName
+          );
+        }
+      }
     } else {
       console.log(
         `No mirror needed. isLeadVariant=${isLeadVariant} isPurchaseVariant=${isPurchaseVariant} hasFbc=${hasFbc}`
@@ -198,6 +258,31 @@ export default {
     });
   },
 };
+
+// Helper function to extract brand code from event name (last segment after final hyphen)
+function extractBrandFromEventName(eventName) {
+  if (!eventName || typeof eventName !== "string") return null;
+  const parts = eventName.split("-");
+  return parts.length > 0 ? parts[parts.length - 1] : null;
+}
+
+// Helper function to transform event name for FRM-180342
+// Only processes PC brand events: Lead-S2S-PC → CompleteRegistration, Purchase-S2S-PC → Purchase
+// Returns null for non-PC brands (to skip sending)
+function transformEventNameForFRM180342(eventName) {
+  if (!eventName || typeof eventName !== "string") return null;
+  
+  const brand = extractBrandFromEventName(eventName);
+  if (brand !== "PC") return null; // Only process PC brand events
+  
+  if (eventName.startsWith("Lead-")) {
+    return "CompleteRegistration";
+  } else if (eventName.startsWith("Purchase-")) {
+    return "Purchase";
+  }
+  
+  return null; // Unknown event type
+}
 
 async function logEventToKV(kv, event_name, userIP, userAgent, referer, stag, fbp, fbc, external_id, em) {
   const timestamp = new Date().toISOString();
@@ -262,20 +347,3 @@ async function getPurchaseEventsFromKV(kv, maxResults = 100) {
     nextCursor: cursor
   };
 }
-
-
-
-
-
---a08f6711379abf6d4c2e2350b17398b1d483915a95dbef60d74b341ee442
-
-Content-Disposition: form-data; name="wrangler.toml"
-
-
-
-name = "bold-disk-925a"
-main = "worker.js"
-compatibility_date = "2023-08-23"
-
-[unsafe.metadata.observability]
-enabled = true

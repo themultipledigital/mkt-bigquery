@@ -1,0 +1,33 @@
+# Wrangler configuration for USD/EUR exchange rate worker
+name = "usdeur-exchange-rate"
+main = "usdeur-exchange-rate.js"
+compatibility_date = "2024-11-01"
+workers_dev = true
+
+# Enable scheduled events (cron) for daily updates
+[triggers]
+crons = [
+  # Every day at 02:00 UTC (fetches yesterday's rate)
+  "0 2 * * *"
+]
+
+[observability]
+enabled = true
+
+# Environment variables:
+# - For local development: Uses .dev.vars file (already configured)
+# - For production: Set via `wrangler secrets put`
+#
+# Required variables (check .dev.vars):
+# - BQ_PROJECT_ID: BigQuery project ID (already in .dev.vars: "level-hope-462409-a8")
+# - BQ_DATASET: BigQuery dataset (should be "utils" for this worker)
+# - GS_CLIENT_EMAIL: Google Service Account email (already in .dev.vars)
+# - GS_PRIVATE_KEY: Google Service Account private key (already in .dev.vars)
+# - BQ_LOCATION: BigQuery location (already in .dev.vars: "US")
+#
+# Optional secrets:
+# - EXCHANGE_RATE_API_KEY: API key for exchangerate-api.io (optional, has free tier)
+# - FIXER_API_KEY: API key for fixer.io (optional fallback)
+#
+# Note: Make sure BQ_DATASET is set to "utils" (not "mkt_channels") for this worker
+

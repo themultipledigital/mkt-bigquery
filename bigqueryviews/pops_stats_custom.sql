@@ -5,83 +5,138 @@
 -- BigQuery View: POPS Stats Custom Fields
 
 -- Creates custom fields from exo_stats and tj_stats tables for Looker Studio compatibility
--- Version: 1.0.0
+-- Version: 1.1.0
+-- Updated: Added USD to EUR conversion for USD channels using exchange rate table
 
 SELECT 
 
-  date,
+  exo_data.date,
 
-  'ExoClick' AS channel,
+  exo_data.channel,
 
-  campaign_id,
+  exo_data.campaign_id,
 
-  campaign_name,
+  exo_data.campaign_name,
 
-  impressions,
+  exo_data.impressions,
 
-  clicks,
+  exo_data.clicks,
 
-  goals AS conversions,
+  exo_data.conversions,
 
-  conversion_value,
+  exo_data.conversion_value,
 
-  cost AS spend,
+  -- Convert USD spend to EUR using exchange rate
+  CASE 
+    WHEN usd_accounts.channel IS NOT NULL AND usdeur.rate IS NOT NULL 
+    THEN exo_data.cost * usdeur.rate 
+    ELSE exo_data.cost 
+  END AS spend,
 
-  retrieved_at,
+  exo_data.retrieved_at,
 
-  -- S2S metrics derived from goals_breakdown
+  exo_data.`ftd-s2s`,
 
-  (SELECT COALESCE(SUM(g.conversions), 0)
+  exo_data.`deposit-s2s`,
 
-     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+  exo_data.`reg-s2s`,
 
-     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
+  exo_data.`ftd-s2s_val`,
 
-  ) AS `ftd-s2s`,
+  exo_data.`deposit-s2s_val`,
 
-  (SELECT COALESCE(SUM(g.conversions), 0)
+  exo_data.`reg-s2s_val`
 
-     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+FROM (
+  SELECT 
 
-     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+    date,
 
-  ) AS `deposit-s2s`,
+    'ExoClick' AS channel,
 
-  (SELECT COALESCE(SUM(g.conversions), 0)
+    campaign_id,
 
-     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+    campaign_name,
 
-     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+    impressions,
 
-  ) AS `reg-s2s`,
+    clicks,
 
-  (SELECT COALESCE(SUM(g.conversion_value), 0)
+    goals AS conversions,
 
-     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+    conversion_value,
 
-     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
+    cost,
 
-  ) AS `ftd-s2s_val`,
+    retrieved_at,
 
-  (SELECT COALESCE(SUM(g.conversion_value), 0)
+    -- S2S metrics derived from goals_breakdown
 
-     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+    (SELECT COALESCE(SUM(g.conversions), 0)
 
-     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+       FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
 
-  ) AS `deposit-s2s_val`,
+       WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
 
-  (SELECT COALESCE(SUM(g.conversion_value), 0)
+    ) AS `ftd-s2s`,
 
-     FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+    (SELECT COALESCE(SUM(g.conversions), 0)
 
-     WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+       FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
 
-  ) AS `reg-s2s_val`
+       WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
 
+    ) AS `deposit-s2s`,
 
+    (SELECT COALESCE(SUM(g.conversions), 0)
 
-FROM `level-hope-462409-a8.mkt_channels.exo_stats`
+       FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+       WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+
+    ) AS `reg-s2s`,
+
+    (SELECT COALESCE(SUM(g.conversion_value), 0)
+
+       FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+       WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_first_deposit$')
+
+    ) AS `ftd-s2s_val`,
+
+    (SELECT COALESCE(SUM(g.conversion_value), 0)
+
+       FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+       WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_deposit$')
+
+    ) AS `deposit-s2s_val`,
+
+    (SELECT COALESCE(SUM(g.conversion_value), 0)
+
+       FROM UNNEST(IFNULL(goals_breakdown, [])) AS g
+
+       WHERE REGEXP_CONTAINS(LOWER(g.goal_name), r'^[a-z]{2,3}_registration_completed$')
+
+    ) AS `reg-s2s_val`
+
+  FROM `level-hope-462409-a8.mkt_channels.exo_stats`
+) AS exo_data
+
+-- Join with USD accounts table to identify USD channels (ensure no duplicates)
+LEFT JOIN (
+  SELECT DISTINCT channel, currency
+  FROM `level-hope-462409-a8.utils.usd_accounts`
+  WHERE channel IS NOT NULL
+) AS usd_accounts
+  ON exo_data.channel = usd_accounts.channel
+
+-- Join with USD/EUR exchange rate table to get daily rates (ensure no duplicates)
+LEFT JOIN (
+  SELECT DISTINCT date, rate
+  FROM `level-hope-462409-a8.utils.usdeur`
+) AS usdeur
+  ON exo_data.date = usdeur.date
 
 
 
@@ -91,41 +146,95 @@ UNION ALL
 
 SELECT 
 
-  date,
+  tj_data.date,
 
-  'TrafficJunky' AS channel,
+  tj_data.channel,
 
-  campaign_id,
+  tj_data.campaign_id,
 
-  campaign_name,
+  tj_data.campaign_name,
 
-  impressions,
+  tj_data.impressions,
 
-  clicks,
+  tj_data.clicks,
 
-  conversions,
+  tj_data.conversions,
 
-  0 AS conversion_value,  -- TJ doesn't have conversion_value, set to 0
+  tj_data.conversion_value,
 
-  cost AS spend,
+  -- Convert USD spend to EUR using exchange rate
+  CASE 
+    WHEN usd_accounts.channel IS NOT NULL AND usdeur.rate IS NOT NULL 
+    THEN tj_data.cost * usdeur.rate 
+    ELSE tj_data.cost 
+  END AS spend,
 
-  retrieved_at,
+  tj_data.retrieved_at,
 
-  0 AS `ftd-s2s`,
+  tj_data.`ftd-s2s`,
 
-  0 AS `deposit-s2s`,
+  tj_data.`deposit-s2s`,
 
-  0 AS `reg-s2s`,
+  tj_data.`reg-s2s`,
 
-  0.0 AS `ftd-s2s_val`,
+  tj_data.`ftd-s2s_val`,
 
-  0.0 AS `deposit-s2s_val`,
+  tj_data.`deposit-s2s_val`,
 
-  0.0 AS `reg-s2s_val`
+  tj_data.`reg-s2s_val`
 
+FROM (
+  SELECT 
 
+    date,
 
-FROM `level-hope-462409-a8.mkt_channels.tj_campaign_stats`
+    'TrafficJunky' AS channel,
+
+    campaign_id,
+
+    campaign_name,
+
+    impressions,
+
+    clicks,
+
+    conversions,
+
+    0 AS conversion_value,  -- TJ doesn't have conversion_value, set to 0
+
+    cost,
+
+    retrieved_at,
+
+    0 AS `ftd-s2s`,
+
+    0 AS `deposit-s2s`,
+
+    0 AS `reg-s2s`,
+
+    0.0 AS `ftd-s2s_val`,
+
+    0.0 AS `deposit-s2s_val`,
+
+    0.0 AS `reg-s2s_val`
+
+  FROM `level-hope-462409-a8.mkt_channels.tj_campaign_stats`
+) AS tj_data
+
+-- Join with USD accounts table to identify USD channels (ensure no duplicates)
+LEFT JOIN (
+  SELECT DISTINCT channel, currency
+  FROM `level-hope-462409-a8.utils.usd_accounts`
+  WHERE channel IS NOT NULL
+) AS usd_accounts
+  ON tj_data.channel = usd_accounts.channel
+
+-- Join with USD/EUR exchange rate table to get daily rates (ensure no duplicates)
+LEFT JOIN (
+  SELECT DISTINCT date, rate
+  FROM `level-hope-462409-a8.utils.usdeur`
+) AS usdeur
+  ON tj_data.date = usdeur.date
 
 
 
@@ -135,38 +244,92 @@ UNION ALL
 
 SELECT 
 
-  date,
+  ts_data.date,
 
-  'TrafficStars' AS channel,
+  ts_data.channel,
 
-  campaign_id,
+  ts_data.campaign_id,
 
-  campaign_name,
+  ts_data.campaign_name,
 
-  impressions,
+  ts_data.impressions,
 
-  clicks,
+  ts_data.clicks,
 
-  conversions,
+  ts_data.conversions,
 
-  0 AS conversion_value,  -- TS doesn't have conversion_value, set to 0
+  ts_data.conversion_value,
 
-  cost AS spend,
+  -- Convert USD spend to EUR using exchange rate
+  CASE 
+    WHEN usd_accounts.channel IS NOT NULL AND usdeur.rate IS NOT NULL 
+    THEN ts_data.cost * usdeur.rate 
+    ELSE ts_data.cost 
+  END AS spend,
 
-  retrieved_at,
+  ts_data.retrieved_at,
 
-  0 AS `ftd-s2s`,
+  ts_data.`ftd-s2s`,
 
-  0 AS `deposit-s2s`,
+  ts_data.`deposit-s2s`,
 
-  0 AS `reg-s2s`,
+  ts_data.`reg-s2s`,
 
-  0.0 AS `ftd-s2s_val`,
+  ts_data.`ftd-s2s_val`,
 
-  0.0 AS `deposit-s2s_val`,
+  ts_data.`deposit-s2s_val`,
 
-  0.0 AS `reg-s2s_val`
+  ts_data.`reg-s2s_val`
 
+FROM (
+  SELECT 
 
+    date,
 
-FROM `level-hope-462409-a8.mkt_channels.ts_stats_siteid`
+    'TrafficStars' AS channel,
+
+    campaign_id,
+
+    campaign_name,
+
+    impressions,
+
+    clicks,
+
+    conversions,
+
+    0 AS conversion_value,  -- TS doesn't have conversion_value, set to 0
+
+    cost,
+
+    retrieved_at,
+
+    0 AS `ftd-s2s`,
+
+    0 AS `deposit-s2s`,
+
+    0 AS `reg-s2s`,
+
+    0.0 AS `ftd-s2s_val`,
+
+    0.0 AS `deposit-s2s_val`,
+
+    0.0 AS `reg-s2s_val`
+
+  FROM `level-hope-462409-a8.mkt_channels.ts_stats_siteid`
+) AS ts_data
+
+-- Join with USD accounts table to identify USD channels (ensure no duplicates)
+LEFT JOIN (
+  SELECT DISTINCT channel, currency
+  FROM `level-hope-462409-a8.utils.usd_accounts`
+  WHERE channel IS NOT NULL
+) AS usd_accounts
+  ON ts_data.channel = usd_accounts.channel
+
+-- Join with USD/EUR exchange rate table to get daily rates (ensure no duplicates)
+LEFT JOIN (
+  SELECT DISTINCT date, rate
+  FROM `level-hope-462409-a8.utils.usdeur`
+) AS usdeur
+  ON ts_data.date = usdeur.date

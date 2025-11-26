@@ -1,0 +1,30 @@
+# Enable PHP error reporting (disable in production)
+# php_flag display_errors On
+# php_value error_reporting E_ALL
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Protect data and generated directories
+<FilesMatch "\.json$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow access to specific JSON files if needed
+<Files "pwas.json">
+    Order deny,allow
+    Deny from all
+</Files>
+
+# Set PHP configuration
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value memory_limit 256M
+</IfModule>
+
